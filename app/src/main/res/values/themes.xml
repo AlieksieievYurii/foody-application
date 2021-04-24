@@ -13,4 +13,10 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="TextAppearance.Display4" parent="TextAppearance.AppCompat.Display4">
+        <item name="android:textColor">@color/navy_light</item>
+        <item name="android:textSize">96sp</item>
+        <item name="fontFamily">@font/concert_one</item>
+    </style>
 </resources>

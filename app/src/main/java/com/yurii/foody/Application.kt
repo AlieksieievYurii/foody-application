@@ -12,4 +12,8 @@ class Application : Application() {
             Timber.plant(DebugTree())
         }
     }
+
+    companion object Configuration {
+        const val SERVER_URL = "http://10.17.96.189:80/"
+    }
 }

@@ -9,4 +9,14 @@
     <string name="label_password">Password</string>
     <string name="label_forgot_password">Forgot password?</string>
     <string name="label_close">Close</string>
+    <string name="label_name">Name</string>
+    <string name="label_surname">Surname</string>
+    <string name="label_phone">Phone</string>
+    <string name="label_i_want_to_cook">I want to cook</string>
+    <string name="label_cook_about">Show information about being a cook</string>
+    <string name="label_password_should_be">Password should be</string>
+    <string name="label_at_least_8_characters">At least 8 characters</string>
+    <string name="label_minimum_one_letter">Minimum one letter</string>
+    <string name="label_minimum_one_number">Minimum one number</string>
+    <string name="label_minimum_one_symbol">Minimum one symbol</string>
 </resources>

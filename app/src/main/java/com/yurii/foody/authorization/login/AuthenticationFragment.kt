@@ -16,7 +16,7 @@ class AuthenticationFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_authentication, container, false)
         binding.signUp.setOnClickListener {
-            findNavController().navigate(R.id.action_authenticationFragment_to_logInFragment)
+            findNavController().navigate(R.id.action_authenticationFragment_to_signUpFragment)
         }
         return binding.root
     }

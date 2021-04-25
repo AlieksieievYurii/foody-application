@@ -3,4 +3,10 @@
     <string name="label_foody">Foody</string>
     <string name="label_log_in">Log in</string>
     <string name="label_yurii_alieksieiev_2021">Yurii Alieksieiev 2021</string>
+    <string name="label_sing_up">Sing Up</string>
+    <string name="label_have_an_account">Have an account?</string>
+    <string name="label_e_mail">E-Mail</string>
+    <string name="label_password">Password</string>
+    <string name="label_forgot_password">Forgot password?</string>
+    <string name="label_close">Close</string>
 </resources>

@@ -16,5 +16,13 @@
     <fragment
         android:id="@+id/authenticationFragment"
         android:name="com.yurii.foody.authorization.login.AuthenticationFragment"
-        android:label="AuthenticationFragment" />
+        android:label="AuthenticationFragment" >
+        <action
+            android:id="@+id/action_authenticationFragment_to_logInFragment"
+            app:destination="@id/logInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/logInFragment"
+        android:name="com.yurii.foody.authorization.login.LogInFragment"
+        android:label="LogInFragment" />
 </navigation>

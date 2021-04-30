@@ -7,7 +7,7 @@ import com.yurii.foody.api.AuthResponseData
 import com.yurii.foody.utils.AuthDataStorage
 import com.yurii.foody.utils.toAuthDataStorage
 
-class AuthorizationRepository(
+class AuthorizationRepository private constructor(
     private val authDataStorage: AuthDataStorage,
     private val apiTokenAuth: ApiTokenAuth
 ) {
@@ -21,4 +21,14 @@ class AuthorizationRepository(
     }
 
     private suspend fun saveAuthCredentials(authResponseData: AuthResponseData) = authDataStorage.save(authResponseData.toAuthDataStorage())
+
+    companion object {
+        private var INSTANCE: AuthorizationRepository? = null
+        fun create(authDataStorage: AuthDataStorage, apiTokenAuth: ApiTokenAuth): AuthorizationRepository {
+            if (INSTANCE == null)
+                synchronized(AuthorizationRepository::class.java) { INSTANCE = AuthorizationRepository(authDataStorage, apiTokenAuth) }
+
+            return INSTANCE!!
+        }
+    }
 }

@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.yurii.foody.R
 import com.yurii.foody.api.Service
 import com.yurii.foody.authorization.AuthorizationRepository
@@ -53,6 +54,8 @@ class LogInFragment : Fragment() {
             is LogInViewModel.Event.ServerError -> errorDialog.show("Server error\nHttp Code: ${it.errorCode}")
             is LogInViewModel.Event.NetworkError -> errorDialog.show("NetWork error\n${it.message}")
             is LogInViewModel.Event.UnknownError -> errorDialog.show("Unknown Error\n${it.message}}")
+            is LogInViewModel.Event.Close -> findNavController().navigateUp()
+            is LogInViewModel.Event.SingUp -> findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)
         }
     }
 

@@ -27,6 +27,9 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
         data class ServerError(val errorCode: Int) : Event()
         data class NetworkError(val message: String?) : Event()
         data class UnknownError(val message: String?) : Event()
+
+        object SingUp : Event()
+        object Close : Event()
     }
 
     val emailField = ObservableField(String.Empty)
@@ -90,6 +93,9 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
         }
 
     }
+
+    fun onClickSingUp() = viewModelScope.launch { eventChannel.send(Event.SingUp) }
+    fun onClose() = viewModelScope.launch { eventChannel.send(Event.Close) }
 
     fun resetEmailValidation() {
         if (_emailValidation.value != FieldValidation.None)

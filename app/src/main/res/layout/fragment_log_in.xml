@@ -28,6 +28,7 @@
                 android:layout_alignParentStart="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/label_close"
+                android:onClick="@{() -> viewModel.onClose()}"
                 app:layout_constraintStart_toStartOf="@+id/guideline3"
                 app:layout_constraintTop_toTopOf="@+id/guideline2"
                 app:srcCompat="@drawable/ic_close_32" />
@@ -38,6 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:onClick="@{() -> viewModel.onClickSingUp()}"
                 android:text="@string/label_sing_up"
                 app:layout_constraintEnd_toStartOf="@+id/guideline5"
                 app:layout_constraintTop_toTopOf="@+id/guideline2" />

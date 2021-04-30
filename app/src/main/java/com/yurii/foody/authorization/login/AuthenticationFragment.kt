@@ -18,6 +18,10 @@ class AuthenticationFragment : Fragment() {
         binding.signUp.setOnClickListener {
             findNavController().navigate(R.id.action_authenticationFragment_to_signUpFragment)
         }
+
+        binding.logIn.setOnClickListener {
+            findNavController().navigate(R.id.action_authenticationFragment_to_logInFragment)
+        }
         return binding.root
     }
 }

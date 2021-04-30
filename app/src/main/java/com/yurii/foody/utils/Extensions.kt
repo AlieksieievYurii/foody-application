@@ -1,16 +1,51 @@
 package com.yurii.foody.utils
 
+import android.animation.Animator
 import android.app.Activity
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.databinding.ObservableField
 import androidx.fragment.app.Fragment
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.textfield.TextInputEditText
 import com.yurii.foody.api.AuthData
 import com.yurii.foody.api.AuthResponseData
+
+fun Fragment.statusBar(hide: Boolean) {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+        activity?.window?.setDecorFitsSystemWindows(!hide)
+    } else {
+        @Suppress("DEPRECATION")
+        if (hide)
+            activity?.window?.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        else
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    }
+}
+
+fun LottieAnimationView.setListener(callback: () -> Unit) {
+    this.addAnimatorListener(object : Animator.AnimatorListener {
+        override fun onAnimationStart(p0: Animator?) {
+            //Nothing
+        }
+
+        override fun onAnimationEnd(p0: Animator?) {
+            //Nothing
+        }
+
+        override fun onAnimationCancel(p0: Animator?) {
+            //Nothing
+        }
+
+        override fun onAnimationRepeat(p0: Animator?) {
+            callback.invoke()
+        }
+    })
+}
 
 fun TextInputEditText.setOnTextChangeListener(callback: (text: String) -> Unit) {
     this.addTextChangedListener(object : TextWatcher {

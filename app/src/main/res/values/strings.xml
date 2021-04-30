@@ -22,4 +22,8 @@
     <string name="label_must_not_empty">Must not be empty</string>
     <string name="label_wrong_credentials">Wrong credentials</string>
     <string name="label_ok">Ok</string>
+    <string name="label_change_role">Change role</string>
+    <string name="label_log_out">Log out</string>
+    <string name="hint_confirmation_email">Please confirm your email.\nThe confirmation has been sent to your email</string>
+    <string name="hint_confirmation_executor_role">Your cook request has been sent. \nPlease wait until the request will be aproved</string>
 </resources>

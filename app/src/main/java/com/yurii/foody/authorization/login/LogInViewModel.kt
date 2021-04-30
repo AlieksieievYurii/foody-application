@@ -113,7 +113,7 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
                 @Suppress("UNCHECKED_CAST")
                 return LogInViewModel(repository) as T
             }
-            throw IllegalArgumentException("Unable to construct viewmodel")
+            throw IllegalArgumentException("Unable to construct viewModel")
         }
     }
 }

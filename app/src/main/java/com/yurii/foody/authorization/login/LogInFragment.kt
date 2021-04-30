@@ -11,25 +11,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.yurii.foody.R
-import com.yurii.foody.api.Service
-import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.databinding.FragmentLogInBinding
 import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.LoadingDialog
-import com.yurii.foody.utils.AuthDataStorage
+import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
 import timber.log.Timber
 
 class LogInFragment : Fragment() {
-    private val viewModel: LogInViewModel by viewModels {
-        LogInViewModel.Factory(
-            AuthorizationRepository(
-                authDataStorage = AuthDataStorage.create(requireContext()),
-                apiTokenAuth = Service.authService
-            )
-        )
-    }
+    private val viewModel: LogInViewModel by viewModels { Injector.provideLogInViewModel(requireContext()) }
 
     private lateinit var binding: FragmentLogInBinding
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }

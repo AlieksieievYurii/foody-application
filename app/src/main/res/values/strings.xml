@@ -26,4 +26,11 @@
     <string name="label_log_out">Log out</string>
     <string name="hint_confirmation_email">Please confirm your email.\nThe confirmation has been sent to your email</string>
     <string name="hint_confirmation_executor_role">Your cook request has been sent. \nPlease wait until the request will be aproved</string>
+    <string name="label_choose_role">Choose Role</string>
+    <string name="label_client">Client</string>
+    <string name="label_cook">Cook</string>
+    <string name="label_administrator">Administrator</string>
+    <string name="label_network_error">Network error\n%s</string>
+    <string name="label_unknown_error">Unknown error\n%s</string>
+    <string name="label_server_error">Server error\nResponse code:%d</string>
 </resources>

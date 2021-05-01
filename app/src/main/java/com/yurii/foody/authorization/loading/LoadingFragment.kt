@@ -37,9 +37,9 @@ class LoadingFragment : Fragment() {
         when (it) {
             is LoadingViewModel.Event.NavigateToAuthenticationScreen -> navigateToAuthenticationScreen()
             is LoadingViewModel.Event.NavigateToChooseRoleScreen -> navigateToChooseRoleScreen(it.role)
-            is LoadingViewModel.Event.NetworkError -> errorDialog.show("Network error ${it.message}")
-            is LoadingViewModel.Event.ServerError -> errorDialog.show("Server error ${it.code}")
-            is LoadingViewModel.Event.UnknownError -> errorDialog.show("Unknown error ${it.message}")
+            is LoadingViewModel.Event.NetworkError -> errorDialog.show(getString(R.string.label_network_error, it.message))
+            is LoadingViewModel.Event.ServerError -> errorDialog.show(getString(R.string.label_server_error, it.code))
+            is LoadingViewModel.Event.UnknownError -> errorDialog.show(getString(R.string.label_unknown_error, it.message))
             is LoadingViewModel.Event.NavigateToUserIsNotConfirmedScreen -> navigateToConfirmationScreen(ConfirmationFragment.Mode.CONFIRMATION_EMAIL)
             is LoadingViewModel.Event.NavigateToUserRoleIsNotConfirmedScreen -> navigateToConfirmationScreen(ConfirmationFragment.Mode.CONFIRMATION_EXECUTOR_REQUEST)
         }

@@ -10,7 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.yurii.foody.R
 import com.yurii.foody.api.UserRoleEnum
-import com.yurii.foody.authorization.confirmation.ConfirmationFragment
 import com.yurii.foody.databinding.FragmentLoadingBinding
 import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.utils.Injector
@@ -36,12 +35,11 @@ class LoadingFragment : Fragment() {
     private fun observeEvents() = viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {
         when (it) {
             is LoadingViewModel.Event.NavigateToAuthenticationScreen -> navigateToAuthenticationScreen()
-            is LoadingViewModel.Event.NavigateToChooseRoleScreen -> navigateToChooseRoleScreen(it.role)
+            is LoadingViewModel.Event.NavigateToChooseRoleScreen -> navigateToChooseRoleScreen(it.role, it.isRoleConfirmed)
             is LoadingViewModel.Event.NetworkError -> errorDialog.show(getString(R.string.label_network_error, it.message))
             is LoadingViewModel.Event.ServerError -> errorDialog.show(getString(R.string.label_server_error, it.code))
             is LoadingViewModel.Event.UnknownError -> errorDialog.show(getString(R.string.label_unknown_error, it.message))
-            is LoadingViewModel.Event.NavigateToUserIsNotConfirmedScreen -> navigateToConfirmationScreen(ConfirmationFragment.Mode.CONFIRMATION_EMAIL)
-            is LoadingViewModel.Event.NavigateToUserRoleIsNotConfirmedScreen -> navigateToConfirmationScreen(ConfirmationFragment.Mode.CONFIRMATION_EXECUTOR_REQUEST)
+            is LoadingViewModel.Event.NavigateToUserIsNotConfirmedScreen -> navigateToUserIsNotConfirmedScreen()
         }
     }
 
@@ -49,12 +47,12 @@ class LoadingFragment : Fragment() {
         findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToAuthenticationFragment())
     }
 
-    private fun navigateToChooseRoleScreen(role: UserRoleEnum) {
-        findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToChooseRoleFragment(role))
+    private fun navigateToChooseRoleScreen(role: UserRoleEnum, isRoleConfirmed: Boolean) {
+        findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToChooseRoleFragment(role, isRoleConfirmed = isRoleConfirmed))
     }
 
-    private fun navigateToConfirmationScreen(mode: ConfirmationFragment.Mode) {
-        findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToConfirmationFragment(mode))
+    private fun navigateToUserIsNotConfirmedScreen() {
+        findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToConfirmationFragment(userIsNotConfirmed = true))
     }
 
     override fun onResume() {

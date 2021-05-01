@@ -17,13 +17,12 @@ import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 
 class LoadingViewModel(private val repository: AuthorizationRepository) : ViewModel() {
     sealed class Event {
-        data class NavigateToChooseRoleScreen(val role: UserRoleEnum) : Event()
+        data class NavigateToChooseRoleScreen(val role: UserRoleEnum, val isRoleConfirmed: Boolean) : Event()
         data class ServerError(val code: Int) : Event()
         data class NetworkError(val message: String?) : Event()
         data class UnknownError(val message: String?) : Event()
         object NavigateToAuthenticationScreen : Event()
         object NavigateToUserIsNotConfirmedScreen : Event()
-        object NavigateToUserRoleIsNotConfirmedScreen : Event()
     }
 
     private val eventChannel = Channel<Event>()
@@ -62,12 +61,8 @@ class LoadingViewModel(private val repository: AuthorizationRepository) : ViewMo
     private suspend fun checkUserRoleConfirmation(authData: AuthDataStorage.Data) {
         when (val response = repository.getUsersRoles(userId = authData.userId)) {
             is NetworkResponse.Success -> response.body.results.first().run {
-                if (isConfirmed)
-                    eventChannel.send(Event.NavigateToChooseRoleScreen(role))
-                else
-                    eventChannel.send(Event.NavigateToUserRoleIsNotConfirmedScreen)
+                eventChannel.send(Event.NavigateToChooseRoleScreen(role, isConfirmed))
             }
-
             is NetworkResponse.ServerError -> eventChannel.send(Event.ServerError(response.code))
             is NetworkResponse.NetworkError -> eventChannel.send(Event.NetworkError(response.error.message))
             is NetworkResponse.UnknownError -> eventChannel.send(Event.UnknownError(response.error.message))

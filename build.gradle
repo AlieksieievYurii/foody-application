@@ -11,7 +11,6 @@ buildscript {
         timber_version = "4.7.1"
         retrofit_version = "2.9.0"
         moshi_version = "1.9.3"
-        network_response_adapter_version = "4.1.0"
         lifecycle_version = "2.3.1"
         datastore_preferences_version = "1.0.0-beta01"
     }

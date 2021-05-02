@@ -1,8 +1,6 @@
 package com.yurii.foody.authorization.role
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.authorization.AuthorizationRepository
 import kotlinx.coroutines.channels.Channel
@@ -16,11 +14,13 @@ class ChooseRoleViewModel(private val repository: AuthorizationRepository, priva
         object NavigateToMainAdministratorScreen : Event()
         object NavigateToAuthenticationScreen : Event()
         object NavigateToUserRoleIsNotConfirmed : Event()
-        data class ShowRoleOptions(val userRole: UserRoleEnum) : Event()
     }
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
+
+    private val _showRoleOptions = MutableLiveData<UserRoleEnum>()
+    val showRoleOptions: LiveData<UserRoleEnum> = _showRoleOptions
 
     init {
         viewModelScope.launch {
@@ -64,7 +64,9 @@ class ChooseRoleViewModel(private val repository: AuthorizationRepository, priva
         }
     }
 
-    private suspend fun showRoleOptions(roleEnum: UserRoleEnum) = eventChannel.send(Event.ShowRoleOptions(roleEnum))
+    private suspend fun showRoleOptions(roleEnum: UserRoleEnum) {
+        _showRoleOptions.value = roleEnum
+    }
 
     private suspend fun navigate(userRoleEnum: UserRoleEnum) {
         when (userRoleEnum) {

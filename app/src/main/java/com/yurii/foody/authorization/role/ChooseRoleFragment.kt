@@ -37,11 +37,12 @@ class ChooseRoleFragment : Fragment() {
                 is ChooseRoleViewModel.Event.NavigateToMainAdministratorScreen -> navigateToMainAdministratorScreen()
                 is ChooseRoleViewModel.Event.NavigateToMainClientScreen -> navigateToMainClientScreen()
                 is ChooseRoleViewModel.Event.NavigateToMainExecutorScreen -> navigateToMainExecutorScreen()
-                is ChooseRoleViewModel.Event.ShowRoleOptions -> showRoleOptions(it.userRole)
                 is ChooseRoleViewModel.Event.NavigateToAuthenticationScreen -> navigateToAuthenticationScreen()
                 is ChooseRoleViewModel.Event.NavigateToUserRoleIsNotConfirmed -> navigateToUserRoleIsNotConfirmedScreen()
             }
         }
+
+        viewModel.showRoleOptions.observe(viewLifecycleOwner) { showRoleOptions(it) }
     }
 
     private fun navigateToMainClientScreen() {

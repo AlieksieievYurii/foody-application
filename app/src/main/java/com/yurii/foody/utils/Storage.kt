@@ -21,19 +21,43 @@ class AuthDataStorage private constructor(private val dataStore: DataStore<Prefe
         )
     }
 
-    val selectedRole: Flow<UserRoleEnum> = dataStore.data.map { preferences ->
-        UserRoleEnum.toEnum(preferences[KEY_USER_ROLE]!!)
+    val selectedRole: Flow<UserRoleEnum?> = dataStore.data.map { preferences ->
+        val role = preferences[KEY_SELECTED_USER_ROLE] ?: return@map null
+        UserRoleEnum.toEnum(role)
+    }
+
+    val userRole: Flow<UserRoleEnum?> = dataStore.data.map { preferences ->
+        val role = preferences[KEY_USER_ROLE] ?: return@map null
+        UserRoleEnum.toEnum(role)
+    }
+
+    var isRoleConfirmed: Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences[KEY_USER_ROLE_CONFIRMED] ?: false
     }
 
     suspend fun clearUserAuth() {
+        dataStore.edit { preferences -> preferences.clear() }
+    }
+
+    suspend fun clearCurrentSelectedUserRole() {
+        dataStore.edit { preferences -> preferences.remove(KEY_SELECTED_USER_ROLE) }
+    }
+
+    suspend fun seUserRoleStatus(isConfirmed: Boolean) {
         dataStore.edit { preferences ->
-            preferences.clear()
+            preferences[KEY_USER_ROLE_CONFIRMED] = isConfirmed
         }
     }
 
     suspend fun saveUserRole(role: UserRoleEnum) {
         dataStore.edit { preferences ->
             preferences[KEY_USER_ROLE] = role.role
+        }
+    }
+
+    suspend fun saveSelectedUserRole(role: UserRoleEnum) {
+        dataStore.edit { preferences ->
+            preferences[KEY_SELECTED_USER_ROLE] = role.role
         }
     }
 
@@ -49,7 +73,9 @@ class AuthDataStorage private constructor(private val dataStore: DataStore<Prefe
         private val KEY_TOKEN = stringPreferencesKey("key_token")
         private val KEY_EMAIL = stringPreferencesKey("key_email")
         private val KEY_USER_ID = intPreferencesKey("key_user_id")
+        private val KEY_USER_ROLE_CONFIRMED = booleanPreferencesKey("key_user_role_confirmed")
         private val KEY_USER_ROLE = stringPreferencesKey("key_user_role")
+        private val KEY_SELECTED_USER_ROLE = stringPreferencesKey("key_selected_user_role")
 
         private var INSTANCE: AuthDataStorage? = null
 

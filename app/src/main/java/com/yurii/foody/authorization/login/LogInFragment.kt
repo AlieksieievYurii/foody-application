@@ -75,17 +75,17 @@ class LogInFragment : Fragment() {
 
     private fun observeEmailValidation() = viewModel.emailValidation.observe(viewLifecycleOwner) {
         when (it) {
-            is FieldValidation.EmptyField -> setEditTextError(binding.errorEmail, R.string.label_must_not_empty)
-            is FieldValidation.WrongCredentials -> setEditTextError(binding.errorEmail, R.string.label_wrong_credentials)
-            is FieldValidation.None -> hideError(binding.errorEmail)
+            is FieldValidation.EmptyField -> setEditTextError(binding.errorEmailField, R.string.label_must_not_empty)
+            is FieldValidation.WrongCredentials -> setEditTextError(binding.errorEmailField, R.string.label_wrong_credentials)
+            is FieldValidation.None -> hideError(binding.errorEmailField)
         }
     }
 
     private fun observePasswordValidation() = viewModel.passwordValidation.observe(viewLifecycleOwner) {
         if (it is FieldValidation.EmptyField)
-            setEditTextError(binding.errorPassword, R.string.label_must_not_empty)
+            setEditTextError(binding.errorPasswordField, R.string.label_must_not_empty)
         else
-            hideError(binding.errorPassword)
+            hideError(binding.errorPasswordField)
     }
 
     private fun setEditTextError(textView: TextView, errorMessageResource: Int) {

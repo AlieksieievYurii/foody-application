@@ -17,7 +17,6 @@ import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
-import timber.log.Timber
 
 class LogInFragment : Fragment() {
     private val viewModel: LogInViewModel by viewModels { Injector.provideLogInViewModel(requireContext()) }
@@ -41,12 +40,13 @@ class LogInFragment : Fragment() {
 
     private fun observeEventFlow() = viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {
         when (it) {
-            is LogInViewModel.Event.Authenticated -> {Timber.i("OK")}
-            is LogInViewModel.Event.ServerError -> errorDialog.show("Server error\nHttp Code: ${it.errorCode}")
-            is LogInViewModel.Event.NetworkError -> errorDialog.show("NetWork error\n${it.message}")
-            is LogInViewModel.Event.UnknownError -> errorDialog.show("Unknown Error\n${it.message}}")
+            is LogInViewModel.Event.NavigateToChooseRoleScreen -> navigateToChooseRoleScreen()
+            is LogInViewModel.Event.ServerError -> errorDialog.show(getString(R.string.label_server_error, it.errorCode))
+            is LogInViewModel.Event.NetworkError -> errorDialog.show(getString(R.string.label_network_error,it.message))
+            is LogInViewModel.Event.UnknownError -> errorDialog.show(getString(R.string.label_unknown_error, it.message))
             is LogInViewModel.Event.Close -> findNavController().navigateUp()
-            is LogInViewModel.Event.SingUp -> findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)
+            is LogInViewModel.Event.NavigateToSingUpScreen -> navigateToSingUpScreen()
+            LogInViewModel.Event.NavigateToUserIsNotConfirmed -> navigateToUserIsNotConfirmed()
         }
     }
 
@@ -56,6 +56,18 @@ class LogInFragment : Fragment() {
             hideKeyboard()
         } else
             loadingDialog.close()
+    }
+
+    private fun navigateToChooseRoleScreen() {
+        findNavController().navigate(LogInFragmentDirections.actionLogInFragmentToChooseRoleFragment())
+    }
+
+    private fun navigateToSingUpScreen() {
+        findNavController().navigate(LogInFragmentDirections.actionLogInFragmentToSignUpFragment())
+    }
+
+    private fun navigateToUserIsNotConfirmed() {
+        findNavController().navigate(LogInFragmentDirections.actionLogInFragmentToConfirmationFragment(userIsNotConfirmed = true))
     }
 
     private fun observeEmailValidation() = viewModel.emailValidation.observe(viewLifecycleOwner) {

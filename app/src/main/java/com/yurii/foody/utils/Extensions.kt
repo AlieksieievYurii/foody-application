@@ -12,8 +12,8 @@ import androidx.databinding.ObservableField
 import androidx.fragment.app.Fragment
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.textfield.TextInputEditText
-import com.yurii.foody.api.AuthData
 import com.yurii.foody.api.AuthResponseData
+import com.yurii.foody.api.UserRoleEnum
 
 fun Fragment.statusBar(hide: Boolean) {
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
@@ -87,3 +87,13 @@ fun AuthResponseData.toAuthDataStorage(): AuthDataStorage.Data = AuthDataStorage
     email = this.email,
     userId = this.userId
 )
+
+fun UserRoleEnum.isInsideScope(userRoleEnum: UserRoleEnum): Boolean {
+    if (this == UserRoleEnum.ADMINISTRATOR && userRoleEnum in listOf(UserRoleEnum.CLIENT, UserRoleEnum.EXECUTOR))
+        return false
+
+    if (this == UserRoleEnum.EXECUTOR && userRoleEnum == UserRoleEnum.CLIENT)
+        return false
+
+    return true
+}

@@ -8,10 +8,13 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentSingupBinding
+import com.yurii.foody.utils.Injector
 
 class SignUpFragment : Fragment() {
+    private val viewModel: SignUpViewModel by viewModels { Injector.provideSignUpViewModel(requireContext()) }
     private lateinit var binding: FragmentSingupBinding
     private var isSuitablePassword: Boolean = false
 

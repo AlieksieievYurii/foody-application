@@ -6,23 +6,16 @@ import androidx.lifecycle.viewModelScope
 import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.authorization.AuthorizationRepository
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class ChooseRoleViewModel(
-    private val repository: AuthorizationRepository,
-    private val userRoleEnum: UserRoleEnum,
-    private val selectNewRole: Boolean,
-    private val isRoleConfirmed: Boolean
-) : ViewModel() {
+class ChooseRoleViewModel(private val repository: AuthorizationRepository, private val selectNewRole: Boolean) : ViewModel() {
     sealed class Event {
         object NavigateToMainClientScreen : Event()
         object NavigateToMainExecutorScreen : Event()
         object NavigateToMainAdministratorScreen : Event()
         object NavigateToAuthenticationScreen : Event()
-        data class NavigateToUserRoleIsNotConfirmed(val roleEnum: UserRoleEnum) : Event()
+        object NavigateToUserRoleIsNotConfirmed : Event()
         data class ShowRoleOptions(val userRole: UserRoleEnum) : Event()
     }
 
@@ -31,33 +24,24 @@ class ChooseRoleViewModel(
 
     init {
         viewModelScope.launch {
+            val userRole = repository.getUserRole()!!
             if (selectNewRole)
-                showRoleOptions()
+                showRoleOptions(userRole)
             else {
-                repository.getSelectedUserRoleFlow().catch {
-                    if (userRoleEnum == UserRoleEnum.CLIENT)
-                        navigate(UserRoleEnum.CLIENT)
+                val selectedUserRole = repository.getSelectedUserRole()
+                if (selectedUserRole == null) {
+                    if (userRole == UserRoleEnum.CLIENT)
+                        navigate(userRole)
                     else
-                        showRoleOptions()
-                }.collect { lastSelectedRole ->
-                    if (lastSelectedRole == UserRoleEnum.CLIENT)
-                        navigate(lastSelectedRole)
-                    else if (lastSelectedRole == UserRoleEnum.EXECUTOR && userRoleEnum in listOf(UserRoleEnum.EXECUTOR, UserRoleEnum.ADMINISTRATOR))
-                        navigateIfConfirmed(lastSelectedRole)
-                    else if (lastSelectedRole == UserRoleEnum.ADMINISTRATOR && userRoleEnum == UserRoleEnum.ADMINISTRATOR)
-                        navigateIfConfirmed(lastSelectedRole)
+                        showRoleOptions(userRole)
+                } else {
+                    if (repository.isUserRoleConfirmed())
+                        navigate(selectedUserRole)
                     else
-                        showRoleOptions()
+                        eventChannel.send(Event.NavigateToUserRoleIsNotConfirmed)
                 }
             }
         }
-    }
-
-    private suspend fun navigateIfConfirmed(roleEnum: UserRoleEnum) {
-        if (isRoleConfirmed)
-            navigate(roleEnum)
-        else
-            eventChannel.send(Event.NavigateToUserRoleIsNotConfirmed(roleEnum))
     }
 
     fun onLogOut() {
@@ -69,12 +53,12 @@ class ChooseRoleViewModel(
 
     fun onRoleSelected(userRoleEnum: UserRoleEnum) {
         viewModelScope.launch {
-            repository.saveUserRole(userRoleEnum)
+            repository.saveSelectedUserRole(userRoleEnum)
             navigate(userRoleEnum)
         }
     }
 
-    private suspend fun showRoleOptions() = eventChannel.send(Event.ShowRoleOptions(userRoleEnum))
+    private suspend fun showRoleOptions(roleEnum: UserRoleEnum) = eventChannel.send(Event.ShowRoleOptions(roleEnum))
 
     private suspend fun navigate(userRoleEnum: UserRoleEnum) {
         when (userRoleEnum) {
@@ -84,17 +68,12 @@ class ChooseRoleViewModel(
         }
     }
 
-    class Factory(
-        private val repository: AuthorizationRepository,
-        private val userRoleEnum: UserRoleEnum,
-        private val selectNewRole: Boolean,
-        private val isRoleConfirmed: Boolean
-    ) :
+    class Factory(private val repository: AuthorizationRepository, private val selectNewRole: Boolean) :
         ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ChooseRoleViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return ChooseRoleViewModel(repository, userRoleEnum, selectNewRole, isRoleConfirmed) as T
+                return ChooseRoleViewModel(repository, selectNewRole) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

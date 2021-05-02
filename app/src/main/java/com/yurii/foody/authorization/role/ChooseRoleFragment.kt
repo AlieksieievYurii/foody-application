@@ -15,13 +15,12 @@ import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.databinding.FragmentChooseRoleBinding
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
-import timber.log.Timber
 
 class ChooseRoleFragment : Fragment() {
     private lateinit var binding: FragmentChooseRoleBinding
     private val args: ChooseRoleFragmentArgs by navArgs()
     private val viewModel: ChooseRoleViewModel by viewModels {
-        Injector.provideChooseRoleViewModel(requireContext(), args.role, args.selectNewRole, args.isRoleConfirmed)
+        Injector.provideChooseRoleViewModel(requireContext(), args.selectNewRole)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -39,33 +38,30 @@ class ChooseRoleFragment : Fragment() {
                 is ChooseRoleViewModel.Event.NavigateToMainExecutorScreen -> navigateToMainExecutorScreen()
                 is ChooseRoleViewModel.Event.ShowRoleOptions -> showRoleOptions(it.userRole)
                 is ChooseRoleViewModel.Event.NavigateToAuthenticationScreen -> navigateToAuthenticationScreen()
-                is ChooseRoleViewModel.Event.NavigateToUserRoleIsNotConfirmed -> navigateToUserRoleIsNotConfirmedScreen(it.roleEnum)
+                is ChooseRoleViewModel.Event.NavigateToUserRoleIsNotConfirmed -> navigateToUserRoleIsNotConfirmedScreen()
             }
         }
     }
 
     private fun navigateToMainClientScreen() {
-        findNavController().navigate(R.id.action_chooseRoleFragment_to_fragmentTest)
+        findNavController().navigate(ChooseRoleFragmentDirections.actionChooseRoleFragmentToFragmentTest(UserRoleEnum.CLIENT))
     }
 
     private fun navigateToMainExecutorScreen() {
-        Timber.i("Navigate to Cook screen")
+        findNavController().navigate(ChooseRoleFragmentDirections.actionChooseRoleFragmentToFragmentTest(UserRoleEnum.EXECUTOR))
     }
 
     private fun navigateToMainAdministratorScreen() {
-        Timber.i("Navigate to Admin screen")
+        findNavController().navigate(ChooseRoleFragmentDirections.actionChooseRoleFragmentToFragmentTest(UserRoleEnum.ADMINISTRATOR))
     }
 
     private fun navigateToAuthenticationScreen() {
         findNavController().navigate(ChooseRoleFragmentDirections.actionChooseRoleFragmentToAuthenticationFragment())
     }
 
-    private fun navigateToUserRoleIsNotConfirmedScreen(roleEnum: UserRoleEnum) {
+    private fun navigateToUserRoleIsNotConfirmedScreen() {
         findNavController().navigate(
-            ChooseRoleFragmentDirections.actionChooseRoleFragmentToConfirmationFragment(
-                role = roleEnum,
-                userIsNotConfirmed = false
-            )
+            ChooseRoleFragmentDirections.actionChooseRoleFragmentToConfirmationFragment(userIsNotConfirmed = false)
         )
     }
 

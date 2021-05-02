@@ -54,7 +54,13 @@ class ChooseRoleViewModel(private val repository: AuthorizationRepository, priva
     fun onRoleSelected(userRoleEnum: UserRoleEnum) {
         viewModelScope.launch {
             repository.saveSelectedUserRole(userRoleEnum)
-            navigate(userRoleEnum)
+            if (userRoleEnum != UserRoleEnum.CLIENT)
+                if (repository.isUserRoleConfirmed())
+                    navigate(userRoleEnum)
+                else
+                    eventChannel.send(Event.NavigateToUserRoleIsNotConfirmed)
+            else
+                navigate(userRoleEnum)
         }
     }
 

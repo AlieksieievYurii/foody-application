@@ -41,13 +41,19 @@ class ConfirmationFragment : Fragment() {
             when (it) {
                 is ConfirmationViewModel.Event.NavigateToAuthorizationFragment -> navigateToAuthorizationFragment()
                 is ConfirmationViewModel.Event.NavigateToChoosingRoleScreen -> navigateToChoosingRoleFragment()
-                is ConfirmationViewModel.Event.ShowRoleIsNotConfirmed -> {
-                    binding.hint.setText(R.string.hint_confirmation_executor_role)
-                    binding.changeRole.isVisible = true
-                }
-                ConfirmationViewModel.Event.ShowUserIsNotConfirmed -> {
+            }
+        }
+
+        viewModel.showMessage.observe(viewLifecycleOwner) { mode ->
+            @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
+            when (mode) {
+                Mode.EMAIL_IS_NOT_CONFIRMED -> {
                     binding.hint.setText(R.string.hint_confirmation_email)
                     binding.changeRole.isVisible = false
+                }
+                Mode.ROLE_IS_NOT_CONFIRMED -> {
+                    binding.hint.setText(R.string.hint_confirmation_executor_role)
+                    binding.changeRole.isVisible = true
                 }
             }
         }

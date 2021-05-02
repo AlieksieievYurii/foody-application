@@ -1,17 +1,13 @@
 package com.yurii.foody.authorization.confirmation
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.yurii.foody.authorization.AuthorizationRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class ConfirmationViewModel(private val repository: AuthorizationRepository, private val mode: ConfirmationFragment.Mode) : ViewModel() {
+class ConfirmationViewModel(private val repository: AuthorizationRepository, mode: ConfirmationFragment.Mode) : ViewModel() {
     sealed class Event {
-        object ShowUserIsNotConfirmed : Event()
-        object ShowRoleIsNotConfirmed : Event()
         object NavigateToAuthorizationFragment : Event()
         object NavigateToChoosingRoleScreen : Event()
     }
@@ -19,16 +15,9 @@ class ConfirmationViewModel(private val repository: AuthorizationRepository, pri
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
-    init {
-        viewModelScope.launch {
-            eventChannel.send(
-                when (mode) {
-                    ConfirmationFragment.Mode.EMAIL_IS_NOT_CONFIRMED -> Event.ShowUserIsNotConfirmed
-                    ConfirmationFragment.Mode.ROLE_IS_NOT_CONFIRMED -> Event.ShowRoleIsNotConfirmed
-                }
-            )
-        }
-    }
+    private val _showMessage = MutableLiveData(mode)
+    val showMessage: LiveData<ConfirmationFragment.Mode> = _showMessage
+
 
     fun onLogOut() {
         viewModelScope.launch {

@@ -98,7 +98,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/label_password"
-                    android:inputType="textEmailAddress"
+                    android:inputType="textPassword"
                     android:maxLines="1"
                     android:text="@={viewModel.passwordField}"
                     app:textWatcher="@{() -> viewModel.resetPasswordValidation()}" />
@@ -120,7 +120,6 @@
                 style="@style/Button.Rounded.NavyText.Display2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="64dp"
                 android:layout_marginBottom="120dp"
                 android:onClick="@{() -> viewModel.logIn()}"
                 android:text="@string/label_log_in"
@@ -149,9 +148,10 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="150dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/background_bottom"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"

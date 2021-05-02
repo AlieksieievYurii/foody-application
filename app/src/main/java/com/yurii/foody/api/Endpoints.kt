@@ -1,18 +1,17 @@
 package com.yurii.foody.api
 
-import com.haroldadmin.cnradapter.NetworkResponse
 import retrofit2.http.*
 
 interface ApiTokenAuth {
     @POST("api-token-auth/")
-    suspend fun logIn(@Body authData: AuthData): NetworkResponse<AuthResponseData, Unit>
+    suspend fun logIn(@Body authData: AuthData): AuthResponseData
 }
 
 interface ApiUsers {
 
     @GET("/users/{id}")
-    suspend fun getUser(@Path("id") id: Long): NetworkResponse<User, Unit>
+    suspend fun getUser(@Path("id") id: Long): User
 
     @GET("/users/roles")
-    suspend fun getUsersRoles(@Query("user") userId: Int? = null): NetworkResponse<Pagination<UserRole>, Unit>
+    suspend fun getUsersRoles(@Query("user") userId: Int? = null): Pagination<UserRole>
 }

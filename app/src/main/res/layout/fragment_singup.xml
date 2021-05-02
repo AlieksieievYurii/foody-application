@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -9,6 +10,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
             android:background="@color/white">
 
             <ImageButton
@@ -70,7 +72,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                app:errorEnabled="true"
                 app:layout_constraintEnd_toStartOf="@+id/guideline7"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toBottomOf="@+id/title">
@@ -85,15 +86,28 @@
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/error_name_field"
+                style="@style/TextAppearance.Red.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_error_red_24"
+                app:layout_constraintStart_toStartOf="@+id/guideline6"
+                app:layout_constraintTop_toBottomOf="@+id/name_layout"
+                tools:text="TextView"
+                tools:visibility="visible" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/surname_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:errorEnabled="true"
                 app:layout_constraintEnd_toStartOf="@+id/guideline7"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/name_layout">
+                app:layout_constraintTop_toBottomOf="@+id/error_name_field">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/surname"
@@ -105,15 +119,28 @@
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/error_surname_field"
+                style="@style/TextAppearance.Red.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_error_red_24"
+                app:layout_constraintStart_toStartOf="@+id/guideline6"
+                app:layout_constraintTop_toBottomOf="@+id/surname_layout"
+                tools:text="TextView"
+                tools:visibility="visible" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/email_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:errorEnabled="true"
                 app:layout_constraintEnd_toStartOf="@+id/guideline7"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/surname_layout">
+                app:layout_constraintTop_toBottomOf="@+id/error_surname_field">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/email"
@@ -125,15 +152,28 @@
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/error_email_field"
+                style="@style/TextAppearance.Red.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_error_red_24"
+                app:layout_constraintStart_toStartOf="@+id/guideline6"
+                app:layout_constraintTop_toBottomOf="@+id/email_layout"
+                tools:text="TextView"
+                tools:visibility="visible" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/phone_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:errorEnabled="true"
                 app:layout_constraintEnd_toStartOf="@+id/guideline7"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/email_layout">
+                app:layout_constraintTop_toBottomOf="@+id/error_email_field">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/phone"
@@ -145,6 +185,20 @@
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/error_phone_field"
+                style="@style/TextAppearance.Red.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_error_red_24"
+                app:layout_constraintStart_toStartOf="@+id/guideline6"
+                app:layout_constraintTop_toBottomOf="@+id/phone_layout"
+                tools:text="TextView"
+                tools:visibility="visible" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/password_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -152,7 +206,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toStartOf="@+id/guideline7"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/phone_layout"
+                app:layout_constraintTop_toBottomOf="@+id/error_phone_field"
                 app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -170,7 +224,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/guideline7"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"

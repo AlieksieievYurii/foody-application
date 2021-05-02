@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.yurii.foody.R
+import com.yurii.foody.authorization.confirmation.ConfirmationFragment
 import com.yurii.foody.databinding.FragmentLogInBinding
 import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.LoadingDialog
@@ -42,7 +43,7 @@ class LogInFragment : Fragment() {
         when (it) {
             is LogInViewModel.Event.NavigateToChooseRoleScreen -> navigateToChooseRoleScreen()
             is LogInViewModel.Event.ServerError -> errorDialog.show(getString(R.string.label_server_error, it.errorCode))
-            is LogInViewModel.Event.NetworkError -> errorDialog.show(getString(R.string.label_network_error,it.message))
+            is LogInViewModel.Event.NetworkError -> errorDialog.show(getString(R.string.label_network_error, it.message))
             is LogInViewModel.Event.UnknownError -> errorDialog.show(getString(R.string.label_unknown_error, it.message))
             is LogInViewModel.Event.Close -> findNavController().navigateUp()
             is LogInViewModel.Event.NavigateToSingUpScreen -> navigateToSingUpScreen()
@@ -67,7 +68,9 @@ class LogInFragment : Fragment() {
     }
 
     private fun navigateToUserIsNotConfirmed() {
-        findNavController().navigate(LogInFragmentDirections.actionLogInFragmentToConfirmationFragment(userIsNotConfirmed = true))
+        findNavController().navigate(
+            LogInFragmentDirections.actionLogInFragmentToConfirmationFragment(mode = ConfirmationFragment.Mode.EMAIL_IS_NOT_CONFIRMED)
+        )
     }
 
     private fun observeEmailValidation() = viewModel.emailValidation.observe(viewLifecycleOwner) {

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.yurii.foody.R
+import com.yurii.foody.authorization.confirmation.ConfirmationFragment
 import com.yurii.foody.databinding.FragmentLoadingBinding
 import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.utils.Injector
@@ -51,7 +52,7 @@ class LoadingFragment : Fragment() {
     }
 
     private fun navigateToUserIsNotConfirmedScreen() {
-        findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToConfirmationFragment(userIsNotConfirmed = true))
+        findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToConfirmationFragment(ConfirmationFragment.Mode.ROLE_IS_NOT_CONFIRMED))
     }
 
     override fun onResume() {

@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.yurii.foody.R
 import com.yurii.foody.api.UserRoleEnum
+import com.yurii.foody.authorization.confirmation.ConfirmationFragment
 import com.yurii.foody.databinding.FragmentChooseRoleBinding
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
@@ -61,7 +62,7 @@ class ChooseRoleFragment : Fragment() {
 
     private fun navigateToUserRoleIsNotConfirmedScreen() {
         findNavController().navigate(
-            ChooseRoleFragmentDirections.actionChooseRoleFragmentToConfirmationFragment(userIsNotConfirmed = false)
+            ChooseRoleFragmentDirections.actionChooseRoleFragmentToConfirmationFragment(ConfirmationFragment.Mode.ROLE_IS_NOT_CONFIRMED)
         )
     }
 

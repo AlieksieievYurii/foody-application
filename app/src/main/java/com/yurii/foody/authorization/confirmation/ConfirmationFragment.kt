@@ -11,17 +11,19 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.yurii.foody.R
-import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.databinding.FragmentConfirmationBinding
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
 
 class ConfirmationFragment : Fragment() {
+    enum class Mode {
+        EMAIL_IS_NOT_CONFIRMED, ROLE_IS_NOT_CONFIRMED
+    }
+
     private val viewModel: ConfirmationViewModel by viewModels {
         Injector.provideConfirmationViewModel(
             requireContext(),
-            args.userIsNotConfirmed,
-            args.role,
+            args.mode
         )
     }
     private val args: ConfirmationFragmentArgs by navArgs()
@@ -38,7 +40,7 @@ class ConfirmationFragment : Fragment() {
         viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {
             when (it) {
                 is ConfirmationViewModel.Event.NavigateToAuthorizationFragment -> navigateToAuthorizationFragment()
-                is ConfirmationViewModel.Event.NavigateToChoosingRoleFragment -> navigateToChoosingRoleFragment(it.roleEnum)
+                is ConfirmationViewModel.Event.NavigateToChoosingRoleScreen -> navigateToChoosingRoleFragment()
                 is ConfirmationViewModel.Event.ShowRoleIsNotConfirmed -> {
                     binding.hint.setText(R.string.hint_confirmation_executor_role)
                     binding.changeRole.isVisible = true
@@ -55,7 +57,7 @@ class ConfirmationFragment : Fragment() {
         findNavController().navigate(ConfirmationFragmentDirections.actionConfirmationFragmentToAuthenticationFragment())
     }
 
-    private fun navigateToChoosingRoleFragment(role: UserRoleEnum) {
-        findNavController().navigate(ConfirmationFragmentDirections.actionConfirmationFragmentToChooseRoleFragment(role, selectNewRole = true))
+    private fun navigateToChoosingRoleFragment() {
+        findNavController().navigate(ConfirmationFragmentDirections.actionConfirmationFragmentToChooseRoleFragment(selectNewRole = true))
     }
 }

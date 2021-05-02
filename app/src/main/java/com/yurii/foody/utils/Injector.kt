@@ -2,8 +2,8 @@ package com.yurii.foody.utils
 
 import android.content.Context
 import com.yurii.foody.api.Service
-import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.authorization.AuthorizationRepository
+import com.yurii.foody.authorization.confirmation.ConfirmationFragment
 import com.yurii.foody.authorization.confirmation.ConfirmationViewModel
 import com.yurii.foody.authorization.loading.LoadingViewModel
 import com.yurii.foody.authorization.login.LogInViewModel
@@ -16,18 +16,13 @@ object Injector {
         api = Service
     )
 
-    fun provideChooseRoleViewModel(context: Context, role: UserRoleEnum, selectNewRole: Boolean, isUserRoleConfirmed: Boolean) =
-        ChooseRoleViewModel.Factory(
-            repository = provideAuthorizationRepository(context),
-            userRoleEnum = role,
-            selectNewRole = selectNewRole,
-            isUserRoleConfirmed
-        )
+    fun provideChooseRoleViewModel(context: Context, selectNewRole: Boolean) =
+        ChooseRoleViewModel.Factory(repository = provideAuthorizationRepository(context), selectNewRole = selectNewRole)
 
     fun provideLogInViewModel(context: Context) = LogInViewModel.Factory(repository = provideAuthorizationRepository(context))
 
     fun provideLoadingViewModel(context: Context) = LoadingViewModel.Factory(repository = provideAuthorizationRepository(context))
 
-    fun provideConfirmationViewModel(context: Context, userIsNotConfirmed: Boolean, role: UserRoleEnum) =
-        ConfirmationViewModel.Factory(provideAuthorizationRepository(context), userIsNotConfirmed, role)
+    fun provideConfirmationViewModel(context: Context, mode: ConfirmationFragment.Mode) =
+        ConfirmationViewModel.Factory(provideAuthorizationRepository(context), mode)
 }

@@ -3,11 +3,11 @@ package com.yurii.foody.authorization.loading
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.haroldadmin.cnradapter.NetworkResponse
+import com.yurii.foody.api.ResponseException
 import com.yurii.foody.api.User
-import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.utils.AuthDataStorage
+import com.yurii.foody.utils.isInsideScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -17,10 +17,10 @@ import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 
 class LoadingViewModel(private val repository: AuthorizationRepository) : ViewModel() {
     sealed class Event {
-        data class NavigateToChooseRoleScreen(val role: UserRoleEnum, val isRoleConfirmed: Boolean) : Event()
         data class ServerError(val code: Int) : Event()
         data class NetworkError(val message: String?) : Event()
         data class UnknownError(val message: String?) : Event()
+        object NavigateToChooseRoleScreen : Event()
         object NavigateToAuthenticationScreen : Event()
         object NavigateToUserIsNotConfirmedScreen : Event()
     }
@@ -40,32 +40,52 @@ class LoadingViewModel(private val repository: AuthorizationRepository) : ViewMo
 
     private suspend fun checkAuthorization(authData: AuthDataStorage.Data) {
         repository.setToken(authData.token)
-        when (val response = repository.getUser(authData.userId.toLong())) {
-            is NetworkResponse.Success -> checkEmailConfirmation(response.body, authData)
-            is NetworkResponse.ServerError -> eventChannel.send(
-                if (response.code == HTTP_UNAUTHORIZED) Event.NavigateToAuthenticationScreen
-                else Event.ServerError(response.code)
-            )
-            is NetworkResponse.NetworkError -> eventChannel.send(Event.NetworkError(response.error.message))
-            is NetworkResponse.UnknownError -> eventChannel.send(Event.UnknownError(response.error.message))
+        repository.getUser(authData.userId.toLong()).catch { exception -> handleResponseError(exception) }.collect { user ->
+            checkEmailConfirmation(user)
         }
     }
 
-    private suspend fun checkEmailConfirmation(user: User, authData: AuthDataStorage.Data) {
+    private suspend fun handleResponseError(error: Throwable) {
+        when (error) {
+            is ResponseException.NetworkError -> handleNetworkError(error.responseMessage)
+            is ResponseException.ServerError -> handleServerError(error.code)
+            is ResponseException.UnknownError -> handleUnknownError(error.responseMessage)
+        }
+    }
+
+    private suspend fun handleServerError(errorCode: Int) {
+        if (errorCode == HTTP_UNAUTHORIZED) {
+            repository.clearUserAuth()
+            eventChannel.send(Event.NavigateToAuthenticationScreen)
+        } else
+            eventChannel.send(Event.ServerError(errorCode))
+    }
+
+    private suspend fun handleNetworkError(message: String?) {
+        eventChannel.send(Event.NetworkError(message))
+    }
+
+    private suspend fun handleUnknownError(message: String?) {
+        eventChannel.send(Event.UnknownError(message))
+    }
+
+    private suspend fun checkEmailConfirmation(user: User) {
         if (user.isEmailConfirmed)
-            checkUserRoleConfirmation(authData)
+            fetchUserRole(user)
         else
             eventChannel.send(Event.NavigateToUserIsNotConfirmedScreen)
     }
 
-    private suspend fun checkUserRoleConfirmation(authData: AuthDataStorage.Data) {
-        when (val response = repository.getUsersRoles(userId = authData.userId)) {
-            is NetworkResponse.Success -> response.body.results.first().run {
-                eventChannel.send(Event.NavigateToChooseRoleScreen(role, isConfirmed))
+    private suspend fun fetchUserRole(user: User) {
+        repository.getUsersRoles(user.id).catch { exception -> handleResponseError(exception) }.collect {
+            val roleResponse = it.results.first()
+            repository.setUserRoleStatus(roleResponse.isConfirmed)
+            repository.saveUserRole(roleResponse.role)
+            repository.getSelectedUserRole()?.run {
+                if (!isInsideScope(roleResponse.role))
+                    repository.clearCurrentSelectedUserRole()
             }
-            is NetworkResponse.ServerError -> eventChannel.send(Event.ServerError(response.code))
-            is NetworkResponse.NetworkError -> eventChannel.send(Event.NetworkError(response.error.message))
-            is NetworkResponse.UnknownError -> eventChannel.send(Event.UnknownError(response.error.message))
+            eventChannel.send(Event.NavigateToChooseRoleScreen)
         }
     }
 

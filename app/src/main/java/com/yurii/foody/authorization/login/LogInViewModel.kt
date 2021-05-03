@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST
+import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 
 class LogInViewModel(private val repository: AuthorizationRepository) : ViewModel() {
     sealed class Event {
@@ -88,7 +89,7 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
 
     private suspend fun handleUserRole(userId: Int) {
         repository.getUsersRoles(userId).catch { exception ->
-            handleResponseError(exception)
+            handleResponseError(exception, isAuthenticated = true)
         }.collect { userRolePagination ->
             val role = userRolePagination.results.first()
             repository.saveUserRole(role.role)
@@ -98,12 +99,12 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
         }
     }
 
-    private suspend fun handleResponseError(error: Throwable) {
+    private suspend fun handleResponseError(error: Throwable, isAuthenticated: Boolean = false) {
         _isLoading.value = false
         when (error) {
             is ResponseException.NetworkError -> eventChannel.send(Event.NetworkError(error.responseMessage))
             is ResponseException.ServerError -> {
-                if (error.code == HTTP_BAD_REQUEST)
+                if (isAuthenticated && error.code == HTTP_UNAUTHORIZED || error.code == HTTP_BAD_REQUEST)
                     _emailValidation.value = FieldValidation.WrongCredentials
                 else
                     eventChannel.send(Event.ServerError(error.code))

@@ -10,6 +10,8 @@
         <action
             android:id="@+id/action_loadingFragment_to_authenticationFragment"
             app:destination="@id/authenticationFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out"
             app:popUpTo="@id/loadingFragment"
             app:popUpToInclusive="true" />
         <action
@@ -35,10 +37,18 @@
         android:label="AuthenticationFragment" >
         <action
             android:id="@+id/action_authenticationFragment_to_logInFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out"
+            app:popEnterAnim="@anim/slide_in_2"
+            app:popExitAnim="@anim/slide_out_2"
             app:destination="@id/logInFragment" />
         <action
             android:id="@+id/action_authenticationFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out"
+            app:popEnterAnim="@anim/slide_in_2"
+            app:popExitAnim="@anim/slide_out_2" />
     </fragment>
     <fragment
         android:id="@+id/logInFragment"

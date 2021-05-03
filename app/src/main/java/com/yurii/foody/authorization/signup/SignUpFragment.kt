@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.transition.TransitionInflater
 import com.yurii.foody.R
 import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.databinding.FragmentSignupBinding
@@ -39,6 +40,11 @@ class SignUpFragment : Fragment() {
         observeEvents()
 
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
     }
 
     private fun observePasswordRequirements() {

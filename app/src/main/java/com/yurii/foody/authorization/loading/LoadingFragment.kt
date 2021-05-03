@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.yurii.foody.R
 import com.yurii.foody.authorization.confirmation.ConfirmationFragment
@@ -44,7 +45,8 @@ class LoadingFragment : Fragment() {
     }
 
     private fun navigateToAuthenticationScreen() {
-        findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToAuthenticationFragment())
+        val extras = FragmentNavigatorExtras(binding.title to "title_transition")
+        findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToAuthenticationFragment(), extras)
     }
 
     private fun navigateToChooseRoleScreen() {

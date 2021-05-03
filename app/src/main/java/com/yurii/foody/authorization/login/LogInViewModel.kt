@@ -4,9 +4,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.api.*
 import com.yurii.foody.authorization.AuthorizationRepository
-import com.yurii.foody.utils.Empty
-import com.yurii.foody.utils.FieldValidation
-import com.yurii.foody.utils.value
+import com.yurii.foody.utils.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -52,6 +50,9 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
     private fun isDataValidated(): Boolean {
         if (emailField.value.isEmpty()) {
             _emailValidation.value = FieldValidation.EmptyField
+            return false
+        } else if (emailField.value.notMatches(EMAIL_REGEX)) {
+            _emailValidation.value = FieldValidation.WrongEmailFormat
             return false
         }
 

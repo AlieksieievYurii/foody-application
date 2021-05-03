@@ -37,4 +37,5 @@
     <string name="label_got_it">got it</string>
     <string name="label_wrong_email">Wrong email</string>
     <string name="label_wrong_phone_format">Wrong phone</string>
+    <string name="description_cook">You can become a cook. Your responsibilities will be about cooking and sending food to clients. Your request must be approved by the administration</string>
 </resources>

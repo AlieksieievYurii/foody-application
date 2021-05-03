@@ -53,7 +53,7 @@ class SignUpFragment : Fragment() {
             when (it) {
                 SignUpViewModel.Event.CloseScreen -> findNavController().navigateUp()
                 SignUpViewModel.Event.NavigateToLogInScreen -> navigateToLogInScreen()
-                SignUpViewModel.Event.ShowInfoAboutCook -> cookInfoDialog.show("Cook")
+                SignUpViewModel.Event.ShowInfoAboutCook -> cookInfoDialog.show(getString(R.string.description_cook))
                 is SignUpViewModel.Event.ShowErrorDialog -> errorDialog.show(it.message)
             }
         }

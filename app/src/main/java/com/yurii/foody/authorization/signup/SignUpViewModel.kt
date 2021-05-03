@@ -45,6 +45,9 @@ class SignUpViewModel(private val repository: AuthorizationRepository) : ViewMod
     private val _phoneFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val phoneFieldValidation: LiveData<FieldValidation> = _phoneFieldValidation
 
+    private val _passwordValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val passwordValidation: LiveData<FieldValidation> = _passwordValidation
+
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
@@ -161,7 +164,12 @@ class SignUpViewModel(private val repository: AuthorizationRepository) : ViewMod
             _phoneFieldValidation.value = FieldValidation.WrongPhoneFormat
         }
 
-        return isValid && isPasswordSuitable
+        if (!isPasswordSuitable) {
+            isValid = false
+            _passwordValidation.value = FieldValidation.DoesNotFitRequirements
+        }
+
+        return isValid
     }
 
 

@@ -7,4 +7,5 @@ sealed class FieldValidation {
     object EmailIsAlreadyUsed : FieldValidation()
     object WrongEmailFormat: FieldValidation()
     object WrongPhoneFormat: FieldValidation()
+    object DoesNotFitRequirements: FieldValidation()
 }

@@ -16,6 +16,7 @@ import com.yurii.foody.databinding.FragmentSignupBinding
 import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.InformationDialog
 import com.yurii.foody.ui.LoadingDialog
+import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
@@ -46,6 +47,13 @@ class SignUpFragment : Fragment() {
         binding.password.addTextChangedListener {
             viewModel.isPasswordSuitable = binding.passwordRequirements.checkPassword(it!!.toString())
             viewModel.passwordField.set(it.toString())
+        }
+
+        viewModel.passwordValidation.observe(viewLifecycleOwner) {
+            if (it == FieldValidation.DoesNotFitRequirements) {
+                binding.passwordRequirements.highlight()
+                binding.passwordRequirements.isVisible = true
+            }
         }
     }
 

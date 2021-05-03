@@ -47,6 +47,10 @@ class PasswordRequirementsFragment(context: Context, attrs: AttributeSet) : Fram
         return isLengthOkay
     }
 
+    fun highlight() {
+        binding.line.setBackgroundResource(R.color.red)
+    }
+
 
     private fun setState(imageView: ImageView, isOkay: Boolean) {
         imageView.setImageResource(if (isOkay) R.drawable.ic_check_circle_outline_24_yellow else R.drawable.ic_check_circle_outline_24_gray)

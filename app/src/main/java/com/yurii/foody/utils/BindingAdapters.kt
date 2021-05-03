@@ -24,5 +24,6 @@ fun errorField(textView: TextView, fieldValidation: FieldValidation) {
         FieldValidation.EmailIsAlreadyUsed -> R.string.label_email_is_already_used
         FieldValidation.WrongEmailFormat -> R.string.label_wrong_email
         FieldValidation.WrongPhoneFormat -> R.string.label_wrong_phone_format
+        FieldValidation.DoesNotFitRequirements -> TODO()
     })
 }

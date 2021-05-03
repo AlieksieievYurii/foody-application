@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.yurii.foody.api.*
 import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.utils.Empty
+import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.value
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.catch
@@ -13,12 +14,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST
-
-sealed class FieldValidation {
-    object None : FieldValidation()
-    object EmptyField : FieldValidation()
-    object WrongCredentials : FieldValidation()
-}
 
 class LogInViewModel(private val repository: AuthorizationRepository) : ViewModel() {
     sealed class Event {
@@ -35,13 +30,13 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
     val emailField = ObservableField(String.Empty)
     val passwordField = ObservableField(String.Empty)
 
-    private val _emailValidation = MutableLiveData<FieldValidation>()
+    private val _emailValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val emailValidation: LiveData<FieldValidation> = _emailValidation
 
-    private val _passwordValidation = MutableLiveData<FieldValidation>()
+    private val _passwordValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val passwordValidation: LiveData<FieldValidation> = _passwordValidation
 
-    private val _isLoading = MutableLiveData<Boolean>()
+    private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
@@ -122,13 +117,13 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
     fun onClose() = viewModelScope.launch { eventChannel.send(Event.Close) }
 
     fun resetEmailValidation() {
-        if (_emailValidation.value != FieldValidation.None)
-            _emailValidation.value = FieldValidation.None
+        if (_emailValidation.value != FieldValidation.NoErrors)
+            _emailValidation.value = FieldValidation.NoErrors
     }
 
     fun resetPasswordValidation() {
-        if (_passwordValidation.value != FieldValidation.None)
-            _passwordValidation.value = FieldValidation.None
+        if (_passwordValidation.value != FieldValidation.NoErrors)
+            _passwordValidation.value = FieldValidation.NoErrors
     }
 
     class Factory(private val repository: AuthorizationRepository) : ViewModelProvider.Factory {

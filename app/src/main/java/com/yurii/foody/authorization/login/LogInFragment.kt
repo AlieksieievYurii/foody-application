@@ -32,8 +32,6 @@ class LogInFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         observeLoading()
-        observeEmailValidation()
-        observePasswordValidation()
         observeEventFlow()
 
         return binding.root
@@ -71,32 +69,5 @@ class LogInFragment : Fragment() {
         findNavController().navigate(
             LogInFragmentDirections.actionLogInFragmentToConfirmationFragment(mode = ConfirmationFragment.Mode.EMAIL_IS_NOT_CONFIRMED)
         )
-    }
-
-    private fun observeEmailValidation() = viewModel.emailValidation.observe(viewLifecycleOwner) {
-        when (it) {
-            is FieldValidation.EmptyField -> setEditTextError(binding.errorEmailField, R.string.label_must_not_empty)
-            is FieldValidation.WrongCredentials -> setEditTextError(binding.errorEmailField, R.string.label_wrong_credentials)
-            is FieldValidation.None -> hideError(binding.errorEmailField)
-        }
-    }
-
-    private fun observePasswordValidation() = viewModel.passwordValidation.observe(viewLifecycleOwner) {
-        if (it is FieldValidation.EmptyField)
-            setEditTextError(binding.errorPasswordField, R.string.label_must_not_empty)
-        else
-            hideError(binding.errorPasswordField)
-    }
-
-    private fun setEditTextError(textView: TextView, errorMessageResource: Int) {
-        textView.apply {
-            visibility = View.VISIBLE
-            setText(errorMessageResource)
-        }
-    }
-
-    private fun hideError(textView: TextView) {
-        if (textView.isVisible)
-            textView.visibility = View.GONE
     }
 }

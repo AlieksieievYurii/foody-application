@@ -1,5 +1,7 @@
 package com.yurii.foody.api
 
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Parser
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.yurii.foody.Application
@@ -54,7 +56,7 @@ object Service {
             emit(call())
         } catch (exception: Exception) {
             when (exception) {
-                is HttpException -> throw ResponseException.ServerError(exception.code(), exception.message())
+                is HttpException -> throw ResponseException.ServerError(exception.code(), exception.message(), exception.response()?.errorBody())
                 is IOException -> throw ResponseException.NetworkError(exception.message ?: "No error message")
                 else -> throw ResponseException.UnknownError(exception.message ?: "No error message", exception)
             }
@@ -63,7 +65,12 @@ object Service {
 }
 
 sealed class ResponseException : Exception() {
-    data class ServerError(val code: Int, val responseMessage: String) : ResponseException()
+    data class ServerError(val code: Int, val responseMessage: String, val errorBody: ResponseBody?) : ResponseException() {
+        fun getErrorResponse(): JsonObject? = errorBody?.run {
+            Parser.default().parse(errorBody.charStream()) as JsonObject
+        }
+    }
+
     data class NetworkError(val responseMessage: String) : ResponseException()
     data class UnknownError(val responseMessage: String, val thrownException: Exception) : ResponseException()
 }

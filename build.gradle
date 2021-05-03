@@ -13,6 +13,7 @@ buildscript {
         moshi_version = "1.9.3"
         lifecycle_version = "2.3.1"
         datastore_preferences_version = "1.0.0-beta01"
+        klaxon_version = "5.5"
     }
     repositories {
         google()

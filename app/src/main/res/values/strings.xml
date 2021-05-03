@@ -38,4 +38,6 @@
     <string name="label_wrong_email">Wrong email</string>
     <string name="label_wrong_phone_format">Wrong phone</string>
     <string name="description_cook">You can become a cook. Your responsibilities will be about cooking and sending food to clients. Your request must be approved by the administration</string>
+    <string name="hint_registration_done_client">Your registration has done. Please confirm your email. The confirmation link has been sent to %s.</string>
+    <string name="hint_registration_done_cook">Your registration as a cook has done. Please confirm your email. The confirmation link has been sent to %s.</string>
 </resources>

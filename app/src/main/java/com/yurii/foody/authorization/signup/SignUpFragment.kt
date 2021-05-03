@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.yurii.foody.R
+import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.databinding.FragmentSignupBinding
 import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.InformationDialog
@@ -60,7 +61,10 @@ class SignUpFragment : Fragment() {
 
         viewModel.showRegistrationHasDodeDialog.observeOnLifecycle(viewLifecycleOwner) {
             it?.run {
-                registrationHasDoneDialog.show("Dupa ${this.email} ${this.userRoleEnum.role}")
+                registrationHasDoneDialog.show(
+                    if (it.userRoleEnum == UserRoleEnum.CLIENT) getString(R.string.hint_registration_done_client, it.email)
+                    else getString(R.string.hint_registration_done_cook, it.email)
+                )
             }
         }
 

@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.yurii.foody.authorization.signup.SignUpViewModel" />
+    </data>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -20,6 +27,7 @@
                 android:layout_alignParentStart="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/label_close"
+                android:onClick="@{() -> viewModel.close()}"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toTopOf="@+id/guideline4"
                 app:srcCompat="@drawable/ic_close_32" />
@@ -30,6 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:onClick="@{() -> viewModel.logIn()}"
                 android:text="@string/label_log_in"
                 app:layout_constraintEnd_toStartOf="@+id/guideline7"
                 app:layout_constraintTop_toTopOf="@+id/guideline4" />
@@ -83,7 +92,9 @@
                     android:layout_marginTop="24dp"
                     android:hint="@string/label_name"
                     android:inputType="text"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:text="@={viewModel.nameField}"
+                    app:textWatcher="@{() -> viewModel.resetNameValidation()}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -95,6 +106,7 @@
                 android:layout_marginTop="4dp"
                 android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_error_red_24"
+                app:errorField="@{viewModel.nameFieldValidation}"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toBottomOf="@+id/name_layout"
                 tools:text="TextView"
@@ -116,7 +128,9 @@
                     android:layout_marginTop="24dp"
                     android:hint="@string/label_surname"
                     android:inputType="text"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:text="@={viewModel.surnameField}"
+                    app:textWatcher="@{() -> viewModel.resetSurnameValidation()}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -128,6 +142,7 @@
                 android:layout_marginTop="4dp"
                 android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_error_red_24"
+                app:errorField="@{viewModel.surnameFieldValidation}"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toBottomOf="@+id/surname_layout"
                 tools:text="TextView"
@@ -149,7 +164,9 @@
                     android:layout_marginTop="24dp"
                     android:hint="@string/label_e_mail"
                     android:inputType="text"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:text="@={viewModel.emailField}"
+                    app:textWatcher="@{() -> viewModel.resetEmailValidation()}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -161,6 +178,7 @@
                 android:layout_marginTop="4dp"
                 android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_error_red_24"
+                app:errorField="@{viewModel.emailFieldValidation}"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toBottomOf="@+id/email_layout"
                 tools:text="TextView"
@@ -182,7 +200,9 @@
                     android:layout_marginTop="24dp"
                     android:hint="@string/label_phone"
                     android:inputType="phone"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    app:textWatcher="@{() -> viewModel.resetPhoneValidation()}"
+                    android:text="@={viewModel.phoneField}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -194,6 +214,7 @@
                 android:layout_marginTop="4dp"
                 android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_error_red_24"
+                app:errorField="@{viewModel.phoneFieldValidation}"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toBottomOf="@+id/phone_layout"
                 tools:text="TextView"
@@ -216,7 +237,8 @@
                     android:layout_marginTop="24dp"
                     android:hint="@string/label_password"
                     android:inputType="textPassword"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:text="@={viewModel.passwordField}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.yurii.foody.authorization.signup.PasswordRequirementsFragment
@@ -236,6 +258,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:checked="@={viewModel.isCook}"
                 android:text="@string/label_i_want_to_cook"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
@@ -247,7 +270,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/label_log_in"
+                android:onClick="@{() -> viewModel.singUp()}"
+                android:text="@string/label_sing_up"
                 app:layout_constraintEnd_toStartOf="@+id/guideline7"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toBottomOf="@id/cook" />
@@ -268,6 +292,7 @@
                 android:layout_marginStart="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/label_cook_about"
+                android:onClick="@{() -> viewModel.showInfoAboutCook()}"
                 app:layout_constraintBottom_toBottomOf="@+id/cook"
                 app:layout_constraintStart_toEndOf="@+id/cook"
                 app:layout_constraintTop_toTopOf="@+id/cook"

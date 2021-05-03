@@ -21,5 +21,8 @@ fun errorField(textView: TextView, fieldValidation: FieldValidation) {
         FieldValidation.EmptyField -> R.string.label_must_not_empty
         FieldValidation.WrongCredentials -> R.string.label_wrong_credentials
         FieldValidation.NoErrors -> return
+        FieldValidation.EmailIsAlreadyUsed -> R.string.label_email_is_already_used
+        FieldValidation.WrongEmailFormat -> R.string.label_wrong_email
+        FieldValidation.WrongPhoneFormat -> R.string.label_wrong_phone_format
     })
 }

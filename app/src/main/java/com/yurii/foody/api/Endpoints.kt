@@ -5,6 +5,10 @@ import retrofit2.http.*
 interface ApiTokenAuth {
     @POST("api-token-auth/")
     suspend fun logIn(@Body authData: AuthData): AuthResponseData
+
+    @POST("/users/register")
+    suspend fun registerUser(@Body user: RegistrationForm): RegistrationForm
+
 }
 
 interface ApiUsers {

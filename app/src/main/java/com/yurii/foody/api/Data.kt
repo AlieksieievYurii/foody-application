@@ -3,7 +3,6 @@ package com.yurii.foody.api
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.util.*
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 enum class UserRoleEnum(val role: String) {
     @Json(name = "client")
@@ -39,4 +38,19 @@ data class User(
     @Json(name = "last_name") val lastName: String,
     @Json(name = "phone_number") val phoneNumber: String,
     @Json(name = "is_email_confirmed") val isEmailConfirmed: Boolean
+)
+
+@JsonClass(generateAdapter = true)
+data class UserRegistration(
+    val email: String,
+    @Json(name = "first_name") val firstName: String,
+    @Json(name = "last_name") val lastName: String,
+    @Json(name = "phone_number") val phoneNumber: String,
+    val password: String? = null, // When this data is used as a response, password is not given
+)
+
+@JsonClass(generateAdapter = true)
+data class RegistrationForm(
+    val user: UserRegistration,
+    val role: UserRoleEnum
 )

@@ -16,6 +16,8 @@ class AuthorizationRepository private constructor(
             it
         }
 
+    suspend fun register(user: RegistrationForm) = Service.asFlow { api.authService.registerUser(user) }
+
     fun setToken(token: String) = api.createAuthenticatedService(token)
 
     suspend fun clearUserAuth() = authDataStorage.clearUserAuth()

@@ -97,3 +97,5 @@ fun UserRoleEnum.isInsideScope(userRoleEnum: UserRoleEnum): Boolean {
 
     return true
 }
+
+fun String.notMatches(regex: String) = Regex(regex).find(this) == null

@@ -52,7 +52,7 @@ class LoadingFragment : Fragment() {
     }
 
     private fun navigateToUserIsNotConfirmedScreen() {
-        findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToConfirmationFragment(ConfirmationFragment.Mode.ROLE_IS_NOT_CONFIRMED))
+        findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToConfirmationFragment(ConfirmationFragment.Mode.EMAIL_IS_NOT_CONFIRMED))
     }
 
     override fun onResume() {

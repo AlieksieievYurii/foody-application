@@ -1,15 +1,20 @@
 package com.yurii.foody.ui
 
 import android.content.Context
-import android.widget.Button
-import android.widget.TextView
+import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import com.yurii.foody.R
+import com.yurii.foody.databinding.DialogErrorBinding
 
 class ErrorDialog(context: Context) {
+    private val binding: DialogErrorBinding by lazy {
+        DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_error, null, false)
+    }
+
     private val dialog: AlertDialog by lazy {
         AlertDialog.Builder(context)
-            .setView(R.layout.dialog_error)
+            .setView(binding.root)
             .create()
     }
 
@@ -17,8 +22,10 @@ class ErrorDialog(context: Context) {
         if (dialog.isShowing)
             return
         dialog.show()
-        dialog.findViewById<TextView>(R.id.error)?.text = message
-        dialog.findViewById<Button>(R.id.ok)?.setOnClickListener { close() }
+        binding.apply {
+            error.text = message
+            ok.setOnClickListener { close() }
+        }
     }
 
     private fun close() {

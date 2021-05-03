@@ -16,6 +16,7 @@ import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.InformationDialog
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.utils.Injector
+import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
 
 class SignUpFragment : Fragment() {
@@ -73,5 +74,10 @@ class SignUpFragment : Fragment() {
 
     private fun navigateToLogInScreen() {
         findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToLogInFragment())
+    }
+
+    override fun onStop() {
+        super.onStop()
+        hideKeyboard()
     }
 }

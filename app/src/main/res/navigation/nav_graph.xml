@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
     app:startDestination="@id/loadingFragment">
 
     <fragment
         android:id="@+id/loadingFragment"
         android:name="com.yurii.foody.authorization.loading.LoadingFragment"
-        android:label="LoadingFragment" >
+        android:label="LoadingFragment"
+        tools:layout="@layout/fragment_loading">
         <action
             android:id="@+id/action_loadingFragment_to_authenticationFragment"
             app:destination="@id/authenticationFragment"
@@ -25,7 +28,7 @@
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/slide_out"
             app:popUpTo="@id/loadingFragment"
-            app:popUpToInclusive="true" >
+            app:popUpToInclusive="true">
             <argument
                 android:name="selectNewRole"
                 android:defaultValue="false" />
@@ -34,14 +37,15 @@
     <fragment
         android:id="@+id/authenticationFragment"
         android:name="com.yurii.foody.authorization.login.AuthenticationFragment"
-        android:label="AuthenticationFragment" >
+        android:label="AuthenticationFragment"
+        tools:layout="@layout/fragment_authentication">
         <action
             android:id="@+id/action_authenticationFragment_to_logInFragment"
+            app:destination="@id/logInFragment"
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/slide_out"
             app:popEnterAnim="@anim/slide_in_2"
-            app:popExitAnim="@anim/slide_out_2"
-            app:destination="@id/logInFragment" />
+            app:popExitAnim="@anim/slide_out_2" />
         <action
             android:id="@+id/action_authenticationFragment_to_signUpFragment"
             app:destination="@id/signUpFragment"
@@ -53,14 +57,15 @@
     <fragment
         android:id="@+id/logInFragment"
         android:name="com.yurii.foody.authorization.login.LogInFragment"
-        android:label="LogInFragment" >
+        android:label="LogInFragment"
+        tools:layout="@layout/fragment_log_in">
         <action
             android:id="@+id/action_logInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment"
             app:popUpTo="@id/authenticationFragment" />
         <action
             android:id="@+id/action_logInFragment_to_chooseRoleFragment"
-            app:destination="@id/chooseRoleFragment" >
+            app:destination="@id/chooseRoleFragment">
             <argument
                 android:name="selectNewRole"
                 android:defaultValue="false" />
@@ -72,7 +77,8 @@
     <fragment
         android:id="@+id/signUpFragment"
         android:name="com.yurii.foody.authorization.signup.SignUpFragment"
-        android:label="SignUpFragment" >
+        android:label="SignUpFragment"
+        tools:layout="@layout/fragment_signup">
         <action
             android:id="@+id/action_signUpFragment_to_logInFragment"
             app:destination="@id/logInFragment"
@@ -82,7 +88,8 @@
     <fragment
         android:id="@+id/confirmationFragment"
         android:name="com.yurii.foody.authorization.confirmation.ConfirmationFragment"
-        android:label="ConfirmationFragment" >
+        android:label="ConfirmationFragment"
+        tools:layout="@layout/fragment_confirmation">
         <action
             android:id="@+id/action_confirmationFragment_to_authenticationFragment"
             app:destination="@id/authenticationFragment"
@@ -92,7 +99,7 @@
             android:id="@+id/action_confirmationFragment_to_chooseRoleFragment"
             app:destination="@id/chooseRoleFragment"
             app:popUpTo="@id/confirmationFragment"
-            app:popUpToInclusive="true" >
+            app:popUpToInclusive="true">
             <argument
                 android:name="selectNewRole"
                 android:defaultValue="true" />
@@ -104,7 +111,8 @@
     <fragment
         android:id="@+id/chooseRoleFragment"
         android:name="com.yurii.foody.authorization.role.ChooseRoleFragment"
-        android:label="ChooseRoleFragment" >
+        android:label="ChooseRoleFragment"
+        tools:layout="@layout/fragment_choose_role">
         <action
             android:id="@+id/action_chooseRoleFragment_to_authenticationFragment"
             app:destination="@id/authenticationFragment"
@@ -125,10 +133,11 @@
     <fragment
         android:id="@+id/fragmentTest"
         android:name="com.yurii.foody.authorization.FragmentTest"
-        android:label="FragmentTest" >
+        android:label="FragmentTest"
+        tools:layout="@layout/fragment_test">
         <action
             android:id="@+id/action_fragmentTest_to_chooseRoleFragment"
-            app:destination="@id/chooseRoleFragment" >
+            app:destination="@id/chooseRoleFragment">
             <argument
                 android:name="selectNewRole"
                 android:defaultValue="true" />

@@ -5,12 +5,14 @@ import androidx.lifecycle.*
 import com.yurii.foody.api.*
 import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.utils.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST
 import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 
@@ -66,12 +68,14 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
 
     private fun performLogIn() {
         viewModelScope.launch {
-            repository.logIn(AuthData(emailField.value, passwordField.value)).onStart { _isLoading.value = true }
-                .catch { exception ->
-                    handleResponseError(exception)
-                }.collect {
-                    handleUser(it.userId)
-                }
+            withContext(Dispatchers.IO) {
+                repository.logIn(AuthData(emailField.value, passwordField.value)).onStart { _isLoading.postValue(true) }
+                    .catch { exception ->
+                        handleResponseError(exception)
+                    }.collect {
+                        handleUser(it.userId)
+                    }
+            }
         }
     }
 
@@ -83,7 +87,7 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
                 handleUserRole(user.id)
             else {
                 eventChannel.send(Event.NavigateToUserIsNotConfirmed)
-                _isLoading.value = false
+                _isLoading.postValue(false)
             }
         }
     }
@@ -95,18 +99,18 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
             val role = userRolePagination.results.first()
             repository.saveUserRole(role.role)
             repository.setUserRoleStatus(role.isConfirmed)
-            _isLoading.value = false
+            _isLoading.postValue(false)
             eventChannel.send(Event.NavigateToChooseRoleScreen)
         }
     }
 
     private suspend fun handleResponseError(error: Throwable, isAuthenticated: Boolean = false) {
-        _isLoading.value = false
+        _isLoading.postValue(false)
         when (error) {
             is ResponseException.NetworkError -> eventChannel.send(Event.NetworkError(error.responseMessage))
             is ResponseException.ServerError -> {
                 if (isAuthenticated && error.code == HTTP_UNAUTHORIZED || error.code == HTTP_BAD_REQUEST)
-                    _emailValidation.value = FieldValidation.WrongCredentials
+                    _emailValidation.postValue(FieldValidation.WrongCredentials)
                 else
                     eventChannel.send(Event.ServerError(error.code))
             }

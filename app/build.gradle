@@ -74,4 +74,5 @@ dependencies {
     testImplementation "org.hamcrest:hamcrest-all:$hamcrest_version"
     androidTestImplementation "androidx.test.ext:junit:$junit_android_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3'
 }

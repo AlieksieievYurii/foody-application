@@ -8,11 +8,13 @@ import com.yurii.foody.api.User
 import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.utils.AuthDataStorage
 import com.yurii.foody.utils.isInsideScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 
 class LoadingViewModel(private val repository: AuthorizationRepository) : ViewModel() {
@@ -40,8 +42,10 @@ class LoadingViewModel(private val repository: AuthorizationRepository) : ViewMo
 
     private suspend fun checkAuthorization(authData: AuthDataStorage.Data) {
         repository.setToken(authData.token)
-        repository.getUser(authData.userId.toLong()).catch { exception -> handleResponseError(exception) }.collect { user ->
-            checkEmailConfirmation(user)
+        withContext(Dispatchers.IO) {
+            repository.getUser(authData.userId.toLong()).catch { exception -> handleResponseError(exception) }.collect { user ->
+                checkEmailConfirmation(user)
+            }
         }
     }
 

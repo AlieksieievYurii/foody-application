@@ -69,7 +69,9 @@ dependencies {
     //DataStore Preferences
     implementation "androidx.datastore:datastore-preferences:$datastore_preferences_version"
 
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    //Testing
+    testImplementation "junit:junit:$junit_version"
+    testImplementation "org.hamcrest:hamcrest-all:$hamcrest_version"
+    androidTestImplementation "androidx.test.ext:junit:$junit_android_ext_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
 }

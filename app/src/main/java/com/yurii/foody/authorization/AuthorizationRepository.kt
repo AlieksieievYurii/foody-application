@@ -1,5 +1,6 @@
 package com.yurii.foody.authorization
 
+import androidx.annotation.VisibleForTesting
 import com.yurii.foody.api.*
 import com.yurii.foody.utils.AuthDataStorage
 import com.yurii.foody.utils.AuthDataStorageInterface
@@ -24,7 +25,7 @@ interface AuthorizationRepositoryInterface {
     suspend fun isUserRoleConfirmed(): Boolean
 }
 
-class AuthorizationRepository private constructor(
+class AuthorizationRepository @VisibleForTesting constructor(
     private val authDataStorage: AuthDataStorageInterface,
     private val api: ApiServiceInterface
 ) : AuthorizationRepositoryInterface {

@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -49,7 +47,7 @@ class LogInFragment : Fragment() {
         }
     }
 
-    private fun observeLoading() = viewModel.isLoading.observe(viewLifecycleOwner) {
+    private fun observeLoading() = viewModel.isLoading.observeOnLifecycle(viewLifecycleOwner) {
         if (it) {
             loadingDialog.show()
             hideKeyboard()

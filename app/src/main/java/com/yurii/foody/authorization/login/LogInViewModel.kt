@@ -7,10 +7,7 @@ import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST
@@ -37,8 +34,8 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
     private val _passwordValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val passwordValidation: LiveData<FieldValidation> = _passwordValidation
 
-    private val _isLoading = MutableLiveData(false)
-    val isLoading: LiveData<Boolean> = _isLoading
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
@@ -69,7 +66,7 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
     private fun performLogIn() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                repository.logIn(AuthData(emailField.value, passwordField.value)).onStart { _isLoading.postValue(true) }
+                repository.logIn(AuthData(emailField.value, passwordField.value)).onStart { _isLoading.value = true }
                     .catch { exception ->
                         handleResponseError(exception)
                     }.collect {
@@ -87,7 +84,7 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
                 handleUserRole(user.id)
             else {
                 eventChannel.send(Event.NavigateToUserIsNotConfirmed)
-                _isLoading.postValue(false)
+                _isLoading.value = false
             }
         }
     }
@@ -99,13 +96,13 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
             val role = userRolePagination.results.first()
             repository.saveUserRole(role.role)
             repository.setUserRoleStatus(role.isConfirmed)
-            _isLoading.postValue(false)
+            _isLoading.value = false
             eventChannel.send(Event.NavigateToChooseRoleScreen)
         }
     }
 
     private suspend fun handleResponseError(error: Throwable, isAuthenticated: Boolean = false) {
-        _isLoading.postValue(false)
+        _isLoading.value = false
         when (error) {
             is ResponseException.NetworkError -> eventChannel.send(Event.NetworkError(error.responseMessage))
             is ResponseException.ServerError -> {

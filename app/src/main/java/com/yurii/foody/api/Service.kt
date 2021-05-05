@@ -17,7 +17,13 @@ private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
     .build()
 
-object Service {
+interface ApiServiceInterface {
+    fun createAuthenticatedService(token: String)
+    val authService: ApiTokenAuth
+    val usersService: ApiUsers
+}
+
+object Service : ApiServiceInterface {
     private val service by lazy {
         Retrofit.Builder()
             .baseUrl(Application.SERVER_URL)
@@ -27,7 +33,7 @@ object Service {
 
     private var authenticatedService: Retrofit? = null
 
-    fun createAuthenticatedService(token: String) {
+    override fun createAuthenticatedService(token: String) {
         authenticatedService = service.newBuilder()
             .client(createHttpClient(token))
             .build()
@@ -48,8 +54,8 @@ object Service {
             it.proceed(newRequest)
         }.build()
 
-    val authService: ApiTokenAuth by lazy { service.create(ApiTokenAuth::class.java) }
-    val usersService: ApiUsers by lazy { authenticatedService().create(ApiUsers::class.java) }
+    override val authService: ApiTokenAuth by lazy { service.create(ApiTokenAuth::class.java) }
+    override val usersService: ApiUsers by lazy { authenticatedService().create(ApiUsers::class.java) }
 
     fun <T : Any> asFlow(call: suspend () -> T) = flow {
         try {

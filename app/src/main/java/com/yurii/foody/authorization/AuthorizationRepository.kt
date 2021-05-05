@@ -26,7 +26,7 @@ interface AuthorizationRepositoryInterface {
 
 class AuthorizationRepository private constructor(
     private val authDataStorage: AuthDataStorageInterface,
-    private val api: Service
+    private val api: ApiServiceInterface
 ) : AuthorizationRepositoryInterface {
 
     override suspend fun logIn(authData: AuthData): Flow<AuthResponseData> =

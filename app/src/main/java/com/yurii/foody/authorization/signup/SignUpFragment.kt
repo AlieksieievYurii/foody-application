@@ -83,6 +83,7 @@ class SignUpFragment : Fragment() {
         }
 
         viewModel.isLoading.observeOnLifecycle(viewLifecycleOwner) { isLoading ->
+            hideKeyboard()
             if (isLoading)
                 loadingDialog.show()
             else

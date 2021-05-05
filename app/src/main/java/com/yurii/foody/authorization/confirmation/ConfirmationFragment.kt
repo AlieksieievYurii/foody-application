@@ -44,7 +44,7 @@ class ConfirmationFragment : Fragment() {
             }
         }
 
-        viewModel.showMessage.observe(viewLifecycleOwner) { mode ->
+        viewModel.showMessage.observeOnLifecycle(viewLifecycleOwner) { mode ->
             @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
             when (mode) {
                 Mode.EMAIL_IS_NOT_CONFIRMED -> {

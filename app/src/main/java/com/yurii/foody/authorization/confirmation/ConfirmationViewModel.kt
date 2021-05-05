@@ -4,6 +4,8 @@ import androidx.lifecycle.*
 import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.authorization.AuthorizationRepositoryInterface
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
@@ -16,8 +18,8 @@ class ConfirmationViewModel(private val repository: AuthorizationRepositoryInter
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
-    private val _showMessage = MutableLiveData(mode)
-    val showMessage: LiveData<ConfirmationFragment.Mode> = _showMessage
+    private val _showMessage = MutableStateFlow(mode)
+    val showMessage: StateFlow<ConfirmationFragment.Mode> = _showMessage
 
 
     fun onLogOut() {

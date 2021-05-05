@@ -2,6 +2,7 @@ package com.yurii.foody.authorization
 
 import com.yurii.foody.api.*
 import com.yurii.foody.utils.AuthDataStorage
+import com.yurii.foody.utils.AuthDataStorageInterface
 import com.yurii.foody.utils.toAuthDataStorage
 import kotlinx.coroutines.flow.*
 
@@ -24,18 +25,18 @@ interface AuthorizationRepositoryInterface {
 }
 
 class AuthorizationRepository private constructor(
-    private val authDataStorage: AuthDataStorage,
+    private val authDataStorage: AuthDataStorageInterface,
     private val api: Service
 ) : AuthorizationRepositoryInterface {
 
     override suspend fun logIn(authData: AuthData): Flow<AuthResponseData> =
         Service.asFlow { api.authService.logIn(authData) }.map {
-            authDataStorage.save(it.toAuthDataStorage())
+            authDataStorage.saveAuthData(it.toAuthDataStorage())
             api.createAuthenticatedService(it.token)
             it
         }
 
-    override suspend fun logOut() = authDataStorage.clearUserAuth()
+    override suspend fun logOut() = authDataStorage.cleanAllAuthData()
 
     override suspend fun register(user: RegistrationForm) = Service.asFlow { api.authService.registerUser(user) }
 
@@ -45,12 +46,7 @@ class AuthorizationRepository private constructor(
 
     override suspend fun getUsersRoles(userId: Int?) = Service.asFlow { api.usersService.getUsersRoles(userId) }
 
-    override suspend fun setSelectedUserRole(userRole: UserRoleEnum?) {
-        if (userRole == null)
-            authDataStorage.clearCurrentSelectedUserRole()
-        else
-            authDataStorage.saveSelectedUserRole(userRole)
-    }
+    override suspend fun setSelectedUserRole(userRole: UserRoleEnum?) = authDataStorage.saveSelectedUserRole(userRole)
 
     override suspend fun setUserRole(userRoleEnum: UserRoleEnum) = authDataStorage.saveUserRole(userRoleEnum)
 

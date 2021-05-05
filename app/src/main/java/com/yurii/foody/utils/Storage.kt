@@ -10,10 +10,22 @@ import kotlinx.coroutines.flow.map
 
 private val Context.authDataStore by preferencesDataStore(name = "auth_preferences")
 
-class AuthDataStorage private constructor(private val dataStore: DataStore<Preferences>) {
+interface AuthDataStorageInterface {
+    val authData: Flow<AuthDataStorage.Data?>
+    val selectedRole: Flow<UserRoleEnum?>
+    val userRole: Flow<UserRoleEnum?>
+    var isRoleConfirmed: Flow<Boolean>
+    suspend fun setUserRoleStatus(isConfirmed: Boolean)
+    suspend fun saveUserRole(role: UserRoleEnum?)
+    suspend fun saveSelectedUserRole(role: UserRoleEnum?)
+    suspend fun saveAuthData(data: AuthDataStorage.Data?)
+    suspend fun cleanAllAuthData()
+}
+
+class AuthDataStorage private constructor(private val dataStore: DataStore<Preferences>) : AuthDataStorageInterface {
     data class Data(val token: String, val email: String, val userId: Int)
 
-    val authData: Flow<Data?> = dataStore.data.map { preferences ->
+    override val authData: Flow<Data?> = dataStore.data.map { preferences ->
         Data(
             token = preferences[KEY_TOKEN] ?: return@map null,
             email = preferences[KEY_EMAIL] ?: return@map null,
@@ -21,52 +33,54 @@ class AuthDataStorage private constructor(private val dataStore: DataStore<Prefe
         )
     }
 
-    val selectedRole: Flow<UserRoleEnum?> = dataStore.data.map { preferences ->
+    override val selectedRole: Flow<UserRoleEnum?> = dataStore.data.map { preferences ->
         val role = preferences[KEY_SELECTED_USER_ROLE] ?: return@map null
         UserRoleEnum.toEnum(role)
     }
 
-    val userRole: Flow<UserRoleEnum?> = dataStore.data.map { preferences ->
+    override val userRole: Flow<UserRoleEnum?> = dataStore.data.map { preferences ->
         val role = preferences[KEY_USER_ROLE] ?: return@map null
         UserRoleEnum.toEnum(role)
     }
 
-    var isRoleConfirmed: Flow<Boolean> = dataStore.data.map { preferences ->
+    override var isRoleConfirmed: Flow<Boolean> = dataStore.data.map { preferences ->
         preferences[KEY_USER_ROLE_CONFIRMED] ?: false
     }
 
-    suspend fun clearUserAuth() {
-        dataStore.edit { preferences -> preferences.clear() }
-    }
-
-    suspend fun clearCurrentSelectedUserRole() {
-        dataStore.edit { preferences -> preferences.remove(KEY_SELECTED_USER_ROLE) }
-    }
-
-    suspend fun setUserRoleStatus(isConfirmed: Boolean) {
+    override suspend fun setUserRoleStatus(isConfirmed: Boolean) {
         dataStore.edit { preferences ->
             preferences[KEY_USER_ROLE_CONFIRMED] = isConfirmed
         }
     }
 
-    suspend fun saveUserRole(role: UserRoleEnum) {
+    override suspend fun saveUserRole(role: UserRoleEnum?) {
         dataStore.edit { preferences ->
-            preferences[KEY_USER_ROLE] = role.role
+            role?.run { preferences[KEY_USER_ROLE] = this.role } ?: preferences.remove(KEY_USER_ROLE)
         }
     }
 
-    suspend fun saveSelectedUserRole(role: UserRoleEnum) {
+    override suspend fun saveSelectedUserRole(role: UserRoleEnum?) {
         dataStore.edit { preferences ->
-            preferences[KEY_SELECTED_USER_ROLE] = role.role
+            role?.run { preferences[KEY_SELECTED_USER_ROLE] = this.role } ?: preferences.remove(KEY_SELECTED_USER_ROLE)
         }
     }
 
-    suspend fun save(data: Data) {
+    override suspend fun saveAuthData(data: Data?) {
         dataStore.edit { preferences ->
-            preferences[KEY_TOKEN] = data.token
-            preferences[KEY_EMAIL] = data.email
-            preferences[KEY_USER_ID] = data.userId
+            data?.run {
+                preferences[KEY_TOKEN] = token
+                preferences[KEY_EMAIL] = email
+                preferences[KEY_USER_ID] = userId
+            } ?: kotlin.run {
+                preferences.remove(KEY_TOKEN)
+                preferences.remove(KEY_EMAIL)
+                preferences.remove(KEY_USER_ID)
+            }
         }
+    }
+
+    override suspend fun cleanAllAuthData() {
+        dataStore.edit { preferences -> preferences.clear() }
     }
 
     companion object {

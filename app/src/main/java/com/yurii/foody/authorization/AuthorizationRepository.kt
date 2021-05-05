@@ -5,44 +5,64 @@ import com.yurii.foody.utils.AuthDataStorage
 import com.yurii.foody.utils.toAuthDataStorage
 import kotlinx.coroutines.flow.*
 
+interface AuthorizationRepositoryInterface {
+    suspend fun logIn(authData: AuthData): Flow<AuthResponseData>
+    suspend fun logOut()
+    suspend fun register(user: RegistrationForm): Flow<RegistrationForm>
+    fun setToken(token: String)
+    suspend fun getUser(id: Long): Flow<User>
+    suspend fun getUsersRoles(userId: Int? = null): Flow<Pagination<UserRole>>
+
+    suspend fun setSelectedUserRole(userRole: UserRoleEnum?)
+    suspend fun setUserRole(userRoleEnum: UserRoleEnum)
+    suspend fun setUserRoleStatus(isConfirmed: Boolean)
+
+    suspend fun getSelectedUserRole(): UserRoleEnum?
+    suspend fun getUserRole(): UserRoleEnum?
+    suspend fun getAuthenticationData(): AuthDataStorage.Data?
+    suspend fun isUserRoleConfirmed(): Boolean
+}
+
 class AuthorizationRepository private constructor(
     private val authDataStorage: AuthDataStorage,
     private val api: Service
-) {
-    suspend fun logIn(authData: AuthData): Flow<AuthResponseData> =
+) : AuthorizationRepositoryInterface {
+
+    override suspend fun logIn(authData: AuthData): Flow<AuthResponseData> =
         Service.asFlow { api.authService.logIn(authData) }.map {
-            saveAuthCredentials(it)
+            authDataStorage.save(it.toAuthDataStorage())
             api.createAuthenticatedService(it.token)
             it
         }
 
-    suspend fun register(user: RegistrationForm) = Service.asFlow { api.authService.registerUser(user) }
+    override suspend fun logOut() = authDataStorage.clearUserAuth()
 
-    fun setToken(token: String) = api.createAuthenticatedService(token)
+    override suspend fun register(user: RegistrationForm) = Service.asFlow { api.authService.registerUser(user) }
 
-    suspend fun clearUserAuth() = authDataStorage.clearUserAuth()
+    override fun setToken(token: String) = api.createAuthenticatedService(token)
 
-    suspend fun getUser(id: Long) = Service.asFlow { api.usersService.getUser(id) }
+    override suspend fun getUser(id: Long) = Service.asFlow { api.usersService.getUser(id) }
 
-    suspend fun getUsersRoles(userId: Int? = null) = Service.asFlow { api.usersService.getUsersRoles(userId) }
+    override suspend fun getUsersRoles(userId: Int?) = Service.asFlow { api.usersService.getUsersRoles(userId) }
 
-    fun getLogInAuthenticatedDataFlow() = authDataStorage.authData
+    override suspend fun setSelectedUserRole(userRole: UserRoleEnum?) {
+        if (userRole == null)
+            authDataStorage.clearCurrentSelectedUserRole()
+        else
+            authDataStorage.saveSelectedUserRole(userRole)
+    }
 
-    suspend fun getSelectedUserRole() = authDataStorage.selectedRole.first()
+    override suspend fun setUserRole(userRoleEnum: UserRoleEnum) = authDataStorage.saveUserRole(userRoleEnum)
 
-    suspend fun getUserRole(): UserRoleEnum? = authDataStorage.userRole.first()
+    override suspend fun setUserRoleStatus(isConfirmed: Boolean) = authDataStorage.setUserRoleStatus(isConfirmed)
 
-    suspend fun isUserRoleConfirmed() = authDataStorage.isRoleConfirmed.first()
+    override suspend fun getSelectedUserRole() = authDataStorage.selectedRole.first()
 
-    suspend fun saveUserRole(userRoleEnum: UserRoleEnum) = authDataStorage.saveUserRole(userRoleEnum)
+    override suspend fun getUserRole() = authDataStorage.userRole.first()
 
-    suspend fun saveSelectedUserRole(userRoleEnum: UserRoleEnum) = authDataStorage.saveSelectedUserRole(userRoleEnum)
+    override suspend fun getAuthenticationData() = authDataStorage.authData.first()
 
-    suspend fun clearCurrentSelectedUserRole() = authDataStorage.clearCurrentSelectedUserRole()
-
-    suspend fun setUserRoleStatus(isConfirmed: Boolean) = authDataStorage.seUserRoleStatus(isConfirmed)
-
-    private suspend fun saveAuthCredentials(authResponseData: AuthResponseData) = authDataStorage.save(authResponseData.toAuthDataStorage())
+    override suspend fun isUserRoleConfirmed() = authDataStorage.isRoleConfirmed.first()
 
     companion object {
         private var INSTANCE: AuthorizationRepository? = null

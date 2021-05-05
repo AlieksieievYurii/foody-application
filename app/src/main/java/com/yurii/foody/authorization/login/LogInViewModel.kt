@@ -4,6 +4,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.api.*
 import com.yurii.foody.authorization.AuthorizationRepository
+import com.yurii.foody.authorization.AuthorizationRepositoryInterface
 import com.yurii.foody.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -13,7 +14,7 @@ import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST
 import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 
-class LogInViewModel(private val repository: AuthorizationRepository) : ViewModel() {
+class LogInViewModel(private val repository: AuthorizationRepositoryInterface) : ViewModel() {
     sealed class Event {
         object NavigateToChooseRoleScreen : Event()
         data class ServerError(val errorCode: Int) : Event()
@@ -94,7 +95,7 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
             handleResponseError(exception, isAuthenticated = true)
         }.collect { userRolePagination ->
             val role = userRolePagination.results.first()
-            repository.saveUserRole(role.role)
+            repository.setUserRole(role.role)
             repository.setUserRoleStatus(role.isConfirmed)
             _isLoading.value = false
             eventChannel.send(Event.NavigateToChooseRoleScreen)

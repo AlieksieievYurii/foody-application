@@ -13,11 +13,11 @@ private val Context.authDataStore by preferencesDataStore(name = "auth_preferenc
 class AuthDataStorage private constructor(private val dataStore: DataStore<Preferences>) {
     data class Data(val token: String, val email: String, val userId: Int)
 
-    val authData: Flow<Data> = dataStore.data.map { preferences ->
+    val authData: Flow<Data?> = dataStore.data.map { preferences ->
         Data(
-            token = preferences[KEY_TOKEN]!!,
-            email = preferences[KEY_EMAIL]!!,
-            userId = preferences[KEY_USER_ID]!!
+            token = preferences[KEY_TOKEN] ?: return@map null,
+            email = preferences[KEY_EMAIL] ?: return@map null,
+            userId = preferences[KEY_USER_ID] ?: return@map null
         )
     }
 
@@ -43,7 +43,7 @@ class AuthDataStorage private constructor(private val dataStore: DataStore<Prefe
         dataStore.edit { preferences -> preferences.remove(KEY_SELECTED_USER_ROLE) }
     }
 
-    suspend fun seUserRoleStatus(isConfirmed: Boolean) {
+    suspend fun setUserRoleStatus(isConfirmed: Boolean) {
         dataStore.edit { preferences ->
             preferences[KEY_USER_ROLE_CONFIRMED] = isConfirmed
         }

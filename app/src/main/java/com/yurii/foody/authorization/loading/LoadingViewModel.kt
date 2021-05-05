@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.yurii.foody.api.ResponseException
 import com.yurii.foody.api.User
 import com.yurii.foody.authorization.AuthorizationRepository
+import com.yurii.foody.authorization.AuthorizationRepositoryInterface
 import com.yurii.foody.utils.AuthDataStorage
 import com.yurii.foody.utils.isInsideScope
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 
-class LoadingViewModel(private val repository: AuthorizationRepository) : ViewModel() {
+class LoadingViewModel(private val repository: AuthorizationRepositoryInterface) : ViewModel() {
     sealed class Event {
         data class ServerError(val code: Int) : Event()
         data class NetworkError(val message: String?) : Event()
@@ -32,11 +33,9 @@ class LoadingViewModel(private val repository: AuthorizationRepository) : ViewMo
 
     init {
         viewModelScope.launch {
-            repository.getLogInAuthenticatedDataFlow().catch {
-                eventChannel.send(Event.NavigateToAuthenticationScreen)
-            }.collect {
-                checkAuthorization(it)
-            }
+            repository.getAuthenticationData()?.run {
+                checkAuthorization(this)
+            } ?: eventChannel.send(Event.NavigateToAuthenticationScreen)
         }
     }
 
@@ -59,7 +58,7 @@ class LoadingViewModel(private val repository: AuthorizationRepository) : ViewMo
 
     private suspend fun handleServerError(errorCode: Int) {
         if (errorCode == HTTP_UNAUTHORIZED) {
-            repository.clearUserAuth()
+            repository.logOut()
             eventChannel.send(Event.NavigateToAuthenticationScreen)
         } else
             eventChannel.send(Event.ServerError(errorCode))
@@ -84,10 +83,10 @@ class LoadingViewModel(private val repository: AuthorizationRepository) : ViewMo
         repository.getUsersRoles(user.id).catch { exception -> handleResponseError(exception) }.collect {
             val roleResponse = it.results.first()
             repository.setUserRoleStatus(roleResponse.isConfirmed)
-            repository.saveUserRole(roleResponse.role)
+            repository.setUserRole(roleResponse.role)
             repository.getSelectedUserRole()?.run {
                 if (!isInsideScope(roleResponse.role))
-                    repository.clearCurrentSelectedUserRole()
+                    repository.setSelectedUserRole(null)
             }
             eventChannel.send(Event.NavigateToChooseRoleScreen)
         }

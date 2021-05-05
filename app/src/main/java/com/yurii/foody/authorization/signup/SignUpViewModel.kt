@@ -8,6 +8,7 @@ import com.yurii.foody.api.RegistrationForm
 import com.yurii.foody.api.UserRegistration
 import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.authorization.AuthorizationRepository
+import com.yurii.foody.authorization.AuthorizationRepositoryInterface
 import com.yurii.foody.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST
 
-class SignUpViewModel(private val repository: AuthorizationRepository) : ViewModel() {
+class SignUpViewModel(private val repository: AuthorizationRepositoryInterface) : ViewModel() {
     sealed class Event {
         object NavigateToLogInScreen : Event()
         object CloseScreen : Event()

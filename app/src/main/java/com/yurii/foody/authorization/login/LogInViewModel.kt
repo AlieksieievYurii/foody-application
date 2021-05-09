@@ -81,6 +81,7 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
         repository.getUser(userId.toLong()).catch { exception ->
             handleResponseError(exception)
         }.collect { user ->
+            repository.saveUser(user)
             if (user.isEmailConfirmed)
                 handleUserRole(user.id)
             else {

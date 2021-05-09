@@ -43,6 +43,7 @@ class LoadingViewModel(private val repository: AuthorizationRepositoryInterface)
         repository.setToken(authData.token)
         withContext(Dispatchers.IO) {
             repository.getUser(authData.userId.toLong()).catch { exception -> handleResponseError(exception) }.collect { user ->
+                repository.saveUser(user)
                 checkEmailConfirmation(user)
             }
         }

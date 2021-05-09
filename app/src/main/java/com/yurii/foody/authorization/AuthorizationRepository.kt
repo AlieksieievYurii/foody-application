@@ -6,6 +6,7 @@ import com.yurii.foody.utils.AuthDataStorage
 import com.yurii.foody.utils.AuthDataStorageInterface
 import com.yurii.foody.utils.toAuthDataStorage
 import kotlinx.coroutines.flow.*
+import java.lang.IllegalStateException
 
 interface AuthorizationRepositoryInterface {
     suspend fun logIn(authData: AuthData): Flow<AuthResponseData>
@@ -18,11 +19,13 @@ interface AuthorizationRepositoryInterface {
     suspend fun setSelectedUserRole(userRole: UserRoleEnum?)
     suspend fun setUserRole(userRoleEnum: UserRoleEnum)
     suspend fun setUserRoleStatus(isConfirmed: Boolean)
+    suspend fun saveUser(user: User?)
 
     suspend fun getSelectedUserRole(): UserRoleEnum?
     suspend fun getUserRole(): UserRoleEnum?
     suspend fun getAuthenticationData(): AuthDataStorage.Data?
     suspend fun isUserRoleConfirmed(): Boolean
+    suspend fun getSavedUser(): User?
 }
 
 class AuthorizationRepository @VisibleForTesting constructor(
@@ -45,6 +48,8 @@ class AuthorizationRepository @VisibleForTesting constructor(
 
     override suspend fun getUser(id: Long) = Service.asFlow { api.usersService.getUser(id) }
 
+    override suspend fun getSavedUser(): User? = authDataStorage.currentUser.first()
+
     override suspend fun getUsersRoles(userId: Int?) = Service.asFlow { api.usersService.getUsersRoles(userId) }
 
     override suspend fun setSelectedUserRole(userRole: UserRoleEnum?) = authDataStorage.saveSelectedUserRole(userRole)
@@ -52,6 +57,7 @@ class AuthorizationRepository @VisibleForTesting constructor(
     override suspend fun setUserRole(userRoleEnum: UserRoleEnum) = authDataStorage.saveUserRole(userRoleEnum)
 
     override suspend fun setUserRoleStatus(isConfirmed: Boolean) = authDataStorage.setUserRoleStatus(isConfirmed)
+    override suspend fun saveUser(user: User?) = authDataStorage.saveUser(user)
 
     override suspend fun getSelectedUserRole() = authDataStorage.selectedRole.first()
 

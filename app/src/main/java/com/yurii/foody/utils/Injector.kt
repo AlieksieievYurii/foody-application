@@ -9,6 +9,7 @@ import com.yurii.foody.authorization.loading.LoadingViewModel
 import com.yurii.foody.authorization.login.LogInViewModel
 import com.yurii.foody.authorization.role.ChooseRoleViewModel
 import com.yurii.foody.authorization.signup.SignUpViewModel
+import com.yurii.foody.screens.admin.AdminPanelViewModel
 
 object Injector {
 
@@ -28,4 +29,6 @@ object Injector {
         ConfirmationViewModel.Factory(provideAuthorizationRepository(context), mode)
 
     fun provideSignUpViewModel(context: Context) = SignUpViewModel.Factory(repository = provideAuthorizationRepository(context))
+
+    fun provideAdminPanelViewModel(context: Context) = AdminPanelViewModel.Factory(repository = provideAuthorizationRepository(context))
 }

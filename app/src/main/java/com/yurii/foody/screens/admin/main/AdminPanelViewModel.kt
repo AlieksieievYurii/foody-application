@@ -1,9 +1,8 @@
-package com.yurii.foody.screens.admin
+package com.yurii.foody.screens.admin.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.authorization.AuthorizationRepositoryInterface
 import kotlinx.coroutines.channels.Channel

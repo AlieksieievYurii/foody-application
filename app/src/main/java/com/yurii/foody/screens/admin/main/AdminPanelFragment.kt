@@ -1,4 +1,4 @@
-package com.yurii.foody.screens.admin
+package com.yurii.foody.screens.admin.main
 
 import android.os.Bundle
 import android.view.LayoutInflater

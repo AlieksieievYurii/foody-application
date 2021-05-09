@@ -129,6 +129,9 @@
         <action
             android:id="@+id/action_chooseRoleFragment_to_confirmationFragment"
             app:destination="@id/confirmationFragment" />
+        <action
+            android:id="@+id/action_chooseRoleFragment_to_adminPanelFragment"
+            app:destination="@id/adminPanelFragment" />
     </fragment>
     <fragment
         android:id="@+id/fragmentTest"
@@ -146,4 +149,9 @@
             android:name="role"
             app:argType="com.yurii.foody.api.UserRoleEnum" />
     </fragment>
+    <fragment
+        android:id="@+id/adminPanelFragment"
+        android:name="com.yurii.foody.screens.admin.main.AdminPanelFragment"
+        android:label="AdminPanelFragment"
+        tools:layout="@layout/fragment_navigation_admin_panel"/>
 </navigation>

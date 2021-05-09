@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.yurii.foody.screens.admin.AdminPanelViewModel" />
+            type="com.yurii.foody.screens.admin.main.AdminPanelViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

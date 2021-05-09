@@ -9,7 +9,7 @@ import com.yurii.foody.authorization.loading.LoadingViewModel
 import com.yurii.foody.authorization.login.LogInViewModel
 import com.yurii.foody.authorization.role.ChooseRoleViewModel
 import com.yurii.foody.authorization.signup.SignUpViewModel
-import com.yurii.foody.screens.admin.AdminPanelViewModel
+import com.yurii.foody.screens.admin.main.AdminPanelViewModel
 
 object Injector {
 

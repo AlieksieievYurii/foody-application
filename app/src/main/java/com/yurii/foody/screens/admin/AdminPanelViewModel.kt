@@ -13,6 +13,9 @@ import kotlinx.coroutines.launch
 
 class AdminPanelViewModel(private val repository: AuthorizationRepositoryInterface) : ViewModel() {
     sealed class Event {
+        object NavigateToRequests : Event()
+        object NavigateToProductsEditor : Event()
+        object NavigateToCategoriesEditor : Event()
         data class SetHeaderInformation(val name: String, val surName: String) : Event()
     }
 
@@ -25,6 +28,18 @@ class AdminPanelViewModel(private val repository: AuthorizationRepositoryInterfa
                 eventChannel.send(Event.SetHeaderInformation(name = this.firstName, surName = this.lastName))
             }
         }
+    }
+
+    fun onClickRequests() {
+        viewModelScope.launch { eventChannel.send(Event.NavigateToRequests) }
+    }
+
+    fun onClickProductEditor() {
+        viewModelScope.launch { eventChannel.send(Event.NavigateToProductsEditor) }
+    }
+
+    fun onClickCategoriesEditor() {
+        viewModelScope.launch { eventChannel.send(Event.NavigateToCategoriesEditor) }
     }
 
     class Factory(private val repository: AuthorizationRepository) : ViewModelProvider.Factory {

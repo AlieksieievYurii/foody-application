@@ -42,4 +42,8 @@
     <string name="hint_registration_done_cook">Your registration as a cook has done. Please confirm your email. The confirmation link has been sent to %s.</string>
     <string name="label_personal_information">Personal Information</string>
     <string name="label_help">Help</string>
+    <string name="label_open_left_menu">Open left menu</string>
+    <string name="label_products">Products</string>
+    <string name="label_categories">Categories</string>
+    <string name="label_requests">Requests</string>
 </resources>

@@ -46,4 +46,5 @@
     <string name="label_products">Products</string>
     <string name="label_categories">Categories</string>
     <string name="label_requests">Requests</string>
+    <string name="list_is_empty">List is empty</string>
 </resources>

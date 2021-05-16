@@ -54,3 +54,12 @@ data class RegistrationForm(
     val user: UserRegistration,
     val role: UserRoleEnum
 )
+
+@JsonClass(generateAdapter = true)
+data class Product(
+    val id: Int,
+    val name: String,
+    val description: String,
+    val price: Float,
+    @Json(name = "cooking_time") val cookingTime: Float
+)

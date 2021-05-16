@@ -21,6 +21,7 @@ interface ApiServiceInterface {
     fun createAuthenticatedService(token: String)
     val authService: ApiTokenAuth
     val usersService: ApiUsers
+    val productsService: ApiProducts
 }
 
 object Service : ApiServiceInterface {
@@ -56,6 +57,7 @@ object Service : ApiServiceInterface {
 
     override val authService: ApiTokenAuth by lazy { service.create(ApiTokenAuth::class.java) }
     override val usersService: ApiUsers by lazy { authenticatedService().create(ApiUsers::class.java) }
+    override val productsService: ApiProducts by lazy { authenticatedService().create(ApiProducts::class.java) }
 
     fun <T : Any> asFlow(call: suspend () -> T) = flow {
         try {

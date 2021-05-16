@@ -19,3 +19,8 @@ interface ApiUsers {
     @GET("/users/roles")
     suspend fun getUsersRoles(@Query("user") userId: Int? = null): Pagination<UserRole>
 }
+
+interface ApiProducts {
+    @GET("/products")
+    suspend fun getProducts(@Query("page") page: Int, @Query("size") size: Int): Pagination<Product>
+}

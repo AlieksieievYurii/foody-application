@@ -69,6 +69,10 @@ dependencies {
     //DataStore Preferences
     implementation "androidx.datastore:datastore-preferences:$datastore_preferences_version"
 
+    // Paging with refresh layout
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swiperefreshlayout_version"
+
     //Testing
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.hamcrest:hamcrest-all:$hamcrest_version"

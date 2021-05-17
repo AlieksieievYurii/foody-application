@@ -153,5 +153,13 @@
         android:id="@+id/adminPanelFragment"
         android:name="com.yurii.foody.screens.admin.main.AdminPanelFragment"
         android:label="AdminPanelFragment"
-        tools:layout="@layout/fragment_navigation_admin_panel"/>
+        tools:layout="@layout/fragment_navigation_admin_panel">
+        <action
+            android:id="@+id/action_adminPanelFragment_to_productsEditorFragment"
+            app:destination="@id/productsEditorFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/productsEditorFragment"
+        android:name="com.yurii.foody.screens.admin.products.ProductsEditorFragment"
+        android:label="ProductsEditorFragment" />
 </navigation>

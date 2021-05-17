@@ -10,6 +10,7 @@ import com.yurii.foody.authorization.login.LogInViewModel
 import com.yurii.foody.authorization.role.ChooseRoleViewModel
 import com.yurii.foody.authorization.signup.SignUpViewModel
 import com.yurii.foody.screens.admin.main.AdminPanelViewModel
+import com.yurii.foody.screens.admin.products.ProductsEditorViewModel
 
 object Injector {
 
@@ -17,6 +18,8 @@ object Injector {
         authDataStorage = AuthDataStorage.create(context),
         api = Service
     )
+
+    private fun provideProductRepository() = ProductsRepository.create(api = Service)
 
     fun provideChooseRoleViewModel(context: Context, selectNewRole: Boolean) =
         ChooseRoleViewModel.Factory(repository = provideAuthorizationRepository(context), selectNewRole = selectNewRole)
@@ -31,4 +34,6 @@ object Injector {
     fun provideSignUpViewModel(context: Context) = SignUpViewModel.Factory(repository = provideAuthorizationRepository(context))
 
     fun provideAdminPanelViewModel(context: Context) = AdminPanelViewModel.Factory(repository = provideAuthorizationRepository(context))
+
+    fun provideProductEditorViewModel(context: Context) = ProductsEditorViewModel.Factory(repository = provideProductRepository())
 }

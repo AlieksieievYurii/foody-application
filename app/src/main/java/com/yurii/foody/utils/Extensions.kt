@@ -10,6 +10,7 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.databinding.ObservableField
 import androidx.fragment.app.Fragment
+import androidx.paging.PagingSource
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.textfield.TextInputEditText
 import com.yurii.foody.api.AuthResponseData
@@ -99,3 +100,5 @@ fun UserRoleEnum.isInsideScope(userRoleEnum: UserRoleEnum): Boolean {
 }
 
 fun String.notMatches(regex: String) = Regex(regex).find(this) == null
+
+class EmptyListException : Exception()

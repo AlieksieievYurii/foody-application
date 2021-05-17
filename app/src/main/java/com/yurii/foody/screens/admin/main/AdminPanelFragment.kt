@@ -9,6 +9,7 @@ import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentNavigationAdminPanelBinding
 import com.yurii.foody.utils.Injector
@@ -39,7 +40,7 @@ class AdminPanelFragment : Fragment(), OnBackPressed {
     }
 
     private fun navigateToProductEditor() {
-        Timber.i("Product editor")
+        findNavController().navigate(AdminPanelFragmentDirections.actionAdminPanelFragmentToProductsEditorFragment())
     }
 
     private fun navigateToRequests() {

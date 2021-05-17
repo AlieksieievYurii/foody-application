@@ -16,42 +16,77 @@ import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentListBinding
 
 class ListFragment(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
+    sealed class State {
+        object Loading : State()
+        object Empty : State()
+        object Ready : State()
+        data class Error(val error: Throwable) : State()
+    }
+
     private val binding: FragmentListBinding = DataBindingUtil.inflate(
         LayoutInflater.from(context),
         R.layout.fragment_list, this, true
     )
 
-    private var isSwipeListenerSet: Boolean = false
-
-    var isLoading: Boolean = false
+    var state: State = State.Loading
         set(value) {
             field = value
-            binding.loading.isVisible = value
-            binding.list.isVisible = !value
-            binding.refresh.isEnabled = !value && isSwipeListenerSet
-        }
-
-    var isListEmpty: Boolean = false
-        set(value) {
-            field = value
-            binding.emptyList.isVisible = value
-            binding.list.isVisible = !value
-        }
-
-    var isUpdating: Boolean = false
-        set(value) {
-            field = value
-            binding.refresh.isRefreshing = isUpdating
+            binding.apply {
+                when (value) {
+                    State.Loading -> {
+                        loading.isVisible = true
+                        list.isVisible = false
+                        emptyList.isVisible = false
+                        refresh.isEnabled = false
+                        retry.isVisible = false
+                        error.isVisible = false
+                    }
+                    State.Empty -> {
+                        refresh.isEnabled = true
+                        refresh.isRefreshing = false
+                        emptyList.isVisible = true
+                        loading.isVisible = false
+                        list.isVisible = false
+                        retry.isVisible = false
+                        error.isVisible = false
+                    }
+                    State.Ready -> {
+                        emptyList.isVisible = false
+                        loading.isVisible = false
+                        list.isVisible = true
+                        refresh.isEnabled = true
+                        refresh.isRefreshing = false
+                        retry.isVisible = false
+                        error.isVisible = false
+                    }
+                    is State.Error -> {
+                        loading.isVisible = false
+                        list.isVisible = false
+                        emptyList.isVisible = false
+                        refresh.isEnabled = false
+                        refresh.isRefreshing = false
+                        retry.isVisible = true
+                        error.isVisible = true
+                        error.text = value.error.message
+                    }
+                }
+            }
         }
 
     fun <T : Any, HV : RecyclerView.ViewHolder> setAdapter(adapter: PagingDataAdapter<T, HV>) {
         binding.list.adapter = adapter.withLoadStateFooter(LoaderStateAdapter())
+        binding.list.layoutAnimation = android.view.animation.AnimationUtils.loadLayoutAnimation(context, R.anim.list_animation)
     }
 
     fun setOnRefreshListener(callback: () -> Unit) {
-        isSwipeListenerSet = true
         binding.refresh.isEnabled = true
         binding.refresh.setOnRefreshListener {
+            callback.invoke()
+        }
+    }
+
+    fun setOnRetryListener(callback: () -> Unit) {
+        binding.retry.setOnClickListener {
             callback.invoke()
         }
     }

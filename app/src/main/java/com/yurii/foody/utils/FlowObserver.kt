@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FlowObserver<T>(
@@ -20,7 +21,7 @@ class FlowObserver<T>(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private fun onStart() {
         job = lifecycleOwner.lifecycleScope.launch {
-            flow.collect { collector(it) }
+            flow.collectLatest { collector(it) }
         }
     }
 

@@ -72,3 +72,6 @@ data class ProductAvailability(
     @Json(name = "is_active") val isActive: Boolean,
     @Json(name = "product") val productId: Int
 )
+
+@JsonClass(generateAdapter = true)
+data class ProductRating(@Json(name = "product") val productId: Int, val rating: Float)

@@ -39,3 +39,8 @@ interface ApiProductAvailability {
         @Query("size") size: Int
     ): Pagination<ProductAvailability>
 }
+
+interface ApiProductRating {
+    @GET("/products/feedback/product-rating")
+    suspend fun getProductsRatings(@Query("product_ids") productIds: String): List<ProductRating>
+}

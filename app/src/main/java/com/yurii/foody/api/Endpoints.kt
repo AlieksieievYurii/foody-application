@@ -44,3 +44,13 @@ interface ApiProductRating {
     @GET("/products/feedback/product-rating")
     suspend fun getProductsRatings(@Query("product_ids") productIds: String): List<ProductRating>
 }
+
+interface ApiProductImage {
+    @GET("/products/images/")
+    suspend fun getProductsImages(
+        @Query("page") page: Int? = null,
+        @Query("size") size: Int,
+        @Query("product_ids") productIds: String,
+        @Query("is_default") isDefault: Boolean,
+    ): Pagination<ProductImage>
+}

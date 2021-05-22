@@ -75,3 +75,11 @@ data class ProductAvailability(
 
 @JsonClass(generateAdapter = true)
 data class ProductRating(@Json(name = "product") val productId: Int, val rating: Float)
+
+data class ProductImage(
+    val id: Int,
+    @Json(name = "image_url") val imageUrl: String,
+    @Json(name = "is_default") val isDefault: Boolean,
+    @Json(name = "is_external") val isExternal: Boolean,
+    @Json(name = "product") val productId: Int
+)

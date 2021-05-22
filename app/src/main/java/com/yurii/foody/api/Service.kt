@@ -24,6 +24,7 @@ interface ApiServiceInterface {
     val productsService: ApiProducts
     val productAvailability: ApiProductAvailability
     val productsRatings: ApiProductRating
+    val productImage: ApiProductImage
 }
 
 object Service : ApiServiceInterface {
@@ -62,6 +63,7 @@ object Service : ApiServiceInterface {
     override val productsService: ApiProducts by lazy { authenticatedService().create(ApiProducts::class.java) }
     override val productAvailability: ApiProductAvailability by lazy { authenticatedService().create(ApiProductAvailability::class.java) }
     override val productsRatings: ApiProductRating by lazy { authenticatedService().create(ApiProductRating::class.java) }
+    override val productImage: ApiProductImage by lazy { authenticatedService().create(ApiProductImage::class.java) }
 
     fun <T : Any> asFlow(call: suspend () -> T) = flow {
         try {

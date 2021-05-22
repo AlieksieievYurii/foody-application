@@ -22,9 +22,20 @@ interface ApiUsers {
 
 interface ApiProducts {
     @GET("/products")
-    suspend fun getProducts(@Query("search") search: String? = null,
-                            @Query("availability__is_available") isAvailable: Boolean? = null,
-                            @Query("availability__is_active") isActive: Boolean? = null,
-                            @Query("page") page: Int,
-                            @Query("size") size: Int): Pagination<Product>
+    suspend fun getProducts(
+        @Query("search") search: String? = null,
+        @Query("availability__is_available") isAvailable: Boolean? = null,
+        @Query("availability__is_active") isActive: Boolean? = null,
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): Pagination<Product>
+}
+
+interface ApiProductAvailability {
+    @GET("/products/availabilities")
+    suspend fun getProductAvailability(
+        @Query("product_ids") productIds: String,
+        @Query("page") page: Int? = null,
+        @Query("size") size: Int
+    ): Pagination<ProductAvailability>
 }

@@ -63,3 +63,12 @@ data class Product(
     val price: Float,
     @Json(name = "cooking_time") val cookingTime: Float
 )
+
+@JsonClass(generateAdapter = true)
+data class ProductAvailability(
+    val id: Int,
+    val available: Int,
+    @Json(name = "is_available") val isAvailable: Boolean,
+    @Json(name = "is_active") val isActive: Boolean,
+    @Json(name = "product") val productId: Int
+)

@@ -11,7 +11,8 @@ class ProductsRepository(private val api: ApiProducts) {
 
     private val pagingConfig = PagingConfig(pageSize = 10, initialLoadSize = 10, enablePlaceholders = false)
 
-    fun getProductsPager() = Pager(config = pagingConfig, pagingSourceFactory = { ProductPagingSource(api) }).flow
+    fun getProductsPager(query: ProductPagingSource.Query? = null) =
+        Pager(config = pagingConfig, pagingSourceFactory = { ProductPagingSource(api, query) }).flow
 
     companion object {
         private var INSTANCE: ProductsRepository? = null

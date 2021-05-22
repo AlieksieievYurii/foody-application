@@ -17,7 +17,16 @@ import retrofit2.HttpException
 import java.io.IOException
 
 
-class ProductPagingSource(private val apiProducts: ApiProducts) : PagingSource<Int, Product>() {
+class ProductPagingSource(
+    private val apiProducts: ApiProducts,
+    private val query: Query? = null
+) : PagingSource<Int, Product>() {
+    data class Query(
+        var search: String? = null,
+        var isActive: Boolean? = null,
+        var isAvailable: Boolean? = null
+    )
+
     override fun getRefreshKey(state: PagingState<Int, Product>): Int {
         return 1
     }
@@ -25,7 +34,7 @@ class ProductPagingSource(private val apiProducts: ApiProducts) : PagingSource<I
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
         return try {
             val page = params.key ?: 1
-            val response = apiProducts.getProducts(page, params.loadSize)
+            val response = apiProducts.getProducts(query?.search, query?.isAvailable, query?.isActive, page, params.loadSize)
 
             if (response.results.isEmpty())
                 return LoadResult.Error(EmptyListException())

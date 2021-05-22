@@ -25,6 +25,8 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
 
     private var searchJob: Job? = null
 
+    private val query = ProductPagingSource.Query()
+
     init {
         searchProduct()
     }
@@ -32,10 +34,25 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
     private fun searchProduct() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            repository.getProductsPager().cachedIn(viewModelScope).collectLatest {
+            repository.getProductsPager(query).cachedIn(viewModelScope).collectLatest {
                 _products.value = it
             }
         }
+    }
+
+    fun search(text: String? = null) {
+        query.search = text
+        searchProduct()
+    }
+
+    fun filterActive(enable: Boolean) {
+        query.isActive = if (enable) true else null
+        searchProduct()
+    }
+
+    fun filterAvailable(enable: Boolean) {
+        query.isAvailable = if (enable) true else null
+        searchProduct()
     }
 
     fun onLoadStateChange(state: CombinedLoadStates) {

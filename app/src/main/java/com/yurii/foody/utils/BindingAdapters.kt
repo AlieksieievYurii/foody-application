@@ -5,7 +5,6 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import coil.load
-import coil.transform.BlurTransformation
 import com.google.android.material.textfield.TextInputEditText
 import com.yurii.foody.R
 

@@ -16,6 +16,8 @@ buildscript {
         klaxon_version = "5.5"
         paging_version = "3.0.0"
         swiperefreshlayout_version = "1.1.0"
+        rounedimage_version="2.3.0"
+        coil_version="1.2.1"
 
         //Testing
         hamcrest_version = "1.3"

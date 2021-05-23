@@ -73,6 +73,12 @@ dependencies {
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swiperefreshlayout_version"
 
+    //Rounded Images
+    implementation "com.makeramen:roundedimageview:$rounedimage_version"
+
+    //Coil(Image Loader)
+    implementation "io.coil-kt:coil:$coil_version"
+
     //Testing
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.hamcrest:hamcrest-all:$hamcrest_version"

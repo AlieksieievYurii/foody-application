@@ -23,4 +23,10 @@
         android:checkable="true"
         app:showAsAction="never" />
 
+    <item android:id="@+id/delete"
+        android:title="Delete"
+        android:visible="false"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_baseline_delete_24"/>
+
 </menu>

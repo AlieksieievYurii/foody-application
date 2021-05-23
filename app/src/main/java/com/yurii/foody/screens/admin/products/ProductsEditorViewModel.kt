@@ -26,6 +26,8 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
 
     private val query = ProductPagingSource.Query()
 
+    val selectableMode = MutableStateFlow(false)
+
     init {
         searchProduct()
     }

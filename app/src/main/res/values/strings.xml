@@ -54,4 +54,5 @@
     <string name="label_is_unavailable">Unavailable</string>
     <string name="label_disabled">Disabled</string>
     <string name="label_add_product">Add product</string>
+    <string name="label_select">Select</string>
 </resources>

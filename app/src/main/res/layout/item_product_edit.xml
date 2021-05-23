@@ -13,11 +13,11 @@
     </data>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:clickable="true"
-        app:cardBackgroundColor="@{ product.isActive ? @color/white : @color/light_red }"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="9dp"

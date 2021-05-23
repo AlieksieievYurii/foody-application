@@ -28,6 +28,12 @@ class ListFragment(context: Context, attrs: AttributeSet) : FrameLayout(context,
         R.layout.fragment_list, this, true
     )
 
+    var isRefreshEnable: Boolean = true
+        set(value) {
+            field = value
+            binding.refresh.isEnabled = value
+        }
+
     var state: State = State.Loading
         set(value) {
             field = value
@@ -37,12 +43,12 @@ class ListFragment(context: Context, attrs: AttributeSet) : FrameLayout(context,
                         loading.isVisible = true
                         list.isVisible = false
                         emptyList.isVisible = false
-                        refresh.isEnabled = false
+                        refresh.isEnabled = isRefreshEnable
                         retry.isVisible = false
                         error.isVisible = false
                     }
                     State.Empty -> {
-                        refresh.isEnabled = true
+                        refresh.isEnabled = isRefreshEnable
                         refresh.isRefreshing = false
                         emptyList.isVisible = true
                         loading.isVisible = false
@@ -54,7 +60,7 @@ class ListFragment(context: Context, attrs: AttributeSet) : FrameLayout(context,
                         emptyList.isVisible = false
                         loading.isVisible = false
                         list.isVisible = true
-                        refresh.isEnabled = true
+                        refresh.isEnabled = isRefreshEnable
                         refresh.isRefreshing = false
                         retry.isVisible = false
                         error.isVisible = false
@@ -63,7 +69,7 @@ class ListFragment(context: Context, attrs: AttributeSet) : FrameLayout(context,
                         loading.isVisible = false
                         list.isVisible = false
                         emptyList.isVisible = false
-                        refresh.isEnabled = false
+                        refresh.isEnabled = isRefreshEnable
                         refresh.isRefreshing = false
                         retry.isVisible = true
                         error.isVisible = true

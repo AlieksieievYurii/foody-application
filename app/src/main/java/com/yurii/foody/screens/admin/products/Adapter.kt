@@ -2,6 +2,7 @@ package com.yurii.foody.screens.admin.products
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.paging.PagingDataAdapter
 import androidx.paging.PagingSource
@@ -14,6 +15,10 @@ import com.yurii.foody.api.ProductAvailability
 import com.yurii.foody.api.Service
 import com.yurii.foody.databinding.ItemProductEditBinding
 import com.yurii.foody.utils.EmptyListException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -85,7 +90,9 @@ class ProductPagingSource(
     }
 }
 
-class ProductAdapter : PagingDataAdapter<ProductData, ProductAdapter.ProductViewHolder>(COMPARATOR) {
+class ProductAdapter(private val selectableMode: MutableStateFlow<Boolean>, private val scope: CoroutineScope) :
+    PagingDataAdapter<ProductData, ProductAdapter.ProductViewHolder>(COMPARATOR) {
+
     companion object {
         private val COMPARATOR = object : DiffUtil.ItemCallback<ProductData>() {
             override fun areItemsTheSame(oldItem: ProductData, newItem: ProductData): Boolean =
@@ -96,26 +103,62 @@ class ProductAdapter : PagingDataAdapter<ProductData, ProductAdapter.ProductView
         }
     }
 
-    class ProductViewHolder(private val binding: ItemProductEditBinding) : RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(product: ProductData) {
-            binding.product = product
-        }
-
-        companion object {
-            fun create(viewGroup: ViewGroup): ProductViewHolder {
-                val binding: ItemProductEditBinding =
-                    DataBindingUtil.inflate(LayoutInflater.from(viewGroup.context), R.layout.item_product_edit, viewGroup, false)
-                return ProductViewHolder(binding)
-            }
-        }
-    }
-
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         holder.bind(getItem(position)!!)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-        return ProductViewHolder.create(parent)
+        return ProductViewHolder.create(parent, selectableMode, scope)
+    }
+
+    fun getSelectedItems() = snapshot().items.filter { it.isSelected }
+
+    class ProductViewHolder(
+        private val binding: ItemProductEditBinding,
+        private val selectableMode: MutableStateFlow<Boolean>,
+        private val scope: CoroutineScope
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(product: ProductData) {
+            binding.product = product
+
+            applySelectableEffect(product)
+
+            binding.body.setOnClickListener {
+                if (selectableMode.value)
+                    applySelectableEffect(product.apply { isSelected = !isSelected })
+            }
+
+            scope.launch {
+                selectableMode.collectLatest {
+                    if (it)
+                        return@collectLatest
+
+                    binding.body.setOnLongClickListener {
+                        selectableMode.value = true
+                        applySelectableEffect(product.apply { isSelected = true })
+                        true
+                    }
+                    applySelectableEffect(product.apply { isSelected = false })
+                }
+            }
+        }
+
+        private fun applySelectableEffect(product: ProductData) {
+            val color = when {
+                product.isSelected -> R.color.gray
+                product.isActive -> R.color.white
+                else -> R.color.light_red
+            }
+            binding.body.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, color))
+        }
+
+        companion object {
+            fun create(viewGroup: ViewGroup, selectableMode: MutableStateFlow<Boolean>, scope: CoroutineScope): ProductViewHolder {
+                val binding: ItemProductEditBinding =
+                    DataBindingUtil.inflate(LayoutInflater.from(viewGroup.context), R.layout.item_product_edit, viewGroup, false)
+                return ProductViewHolder(binding, selectableMode, scope)
+            }
+        }
     }
 }

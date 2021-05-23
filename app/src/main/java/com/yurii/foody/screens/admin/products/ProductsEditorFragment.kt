@@ -31,6 +31,9 @@ class ProductsEditorFragment : Fragment() {
 
         binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
 
+        binding.add.setOnClickListener { //TODO(Navigate to editfragment)
+        }
+
         observeEvents()
         initOptionMenu()
 

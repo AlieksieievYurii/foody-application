@@ -17,7 +17,7 @@
             tools:visibility="gone"
             android:textAlignment="center"
             android:text="@string/list_is_empty"
-            style="@style/TextAppearance.Navy.Display1"
+            style="@style/TextAppearance.Gray.Body1"
             app:drawableTopCompat="@drawable/ic_empty_illustration" />
 
         <TextView

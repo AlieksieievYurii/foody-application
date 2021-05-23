@@ -1,8 +1,11 @@
 package com.yurii.foody.utils
 
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
+import coil.load
+import coil.transform.BlurTransformation
 import com.google.android.material.textfield.TextInputEditText
 import com.yurii.foody.R
 
@@ -26,4 +29,11 @@ fun errorField(textView: TextView, fieldValidation: FieldValidation) {
         FieldValidation.WrongPhoneFormat -> R.string.label_wrong_phone_format
         FieldValidation.DoesNotFitRequirements -> TODO()
     })
+}
+
+@BindingAdapter("imageUrl")
+fun loadImage(imageView: ImageView, url: String) {
+    imageView.load(url) {
+        error(R.drawable.ic_baseline_error_outline_24)
+    }
 }

@@ -33,6 +33,6 @@ fun errorField(textView: TextView, fieldValidation: FieldValidation) {
 @BindingAdapter("imageUrl")
 fun loadImage(imageView: ImageView, url: String) {
     imageView.load(url) {
-        error(R.drawable.ic_baseline_error_outline_24)
+        error(R.drawable.image_error_placeholder)
     }
 }

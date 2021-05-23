@@ -2,7 +2,6 @@ package com.yurii.foody.screens.admin.products
 
 import androidx.lifecycle.*
 import androidx.paging.*
-import com.yurii.foody.api.Product
 import com.yurii.foody.utils.EmptyListException
 import com.yurii.foody.utils.ProductsRepository
 import kotlinx.coroutines.Job
@@ -17,8 +16,8 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
         data class ShowError(val exception: Throwable) : ListState()
     }
 
-    private val _products: MutableStateFlow<PagingData<Product>> = MutableStateFlow(PagingData.empty())
-    val products: StateFlow<PagingData<Product>> = _products
+    private val _products: MutableStateFlow<PagingData<ProductData>> = MutableStateFlow(PagingData.empty())
+    val products: StateFlow<PagingData<ProductData>> = _products
 
     private val _listState: MutableLiveData<ListState> = MutableLiveData()
     val listState: LiveData<ListState> = _listState

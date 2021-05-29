@@ -48,13 +48,16 @@ class AdminPanelFragment : Fragment(), OnBackPressed {
             false
         }
 
+        viewModel.user.observe(viewLifecycleOwner) {
+            setHeaderText("${it.firstName} ${it.lastName}")
+        }
+
         return binding.root
     }
 
     private fun observeEvents() {
         viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {
             when (it) {
-                is AdminPanelViewModel.Event.SetHeaderInformation -> setHeaderText("${it.name} ${it.surName}")
                 AdminPanelViewModel.Event.NavigateToCategoriesEditor -> navigateToCategoriesEditor()
                 AdminPanelViewModel.Event.NavigateToProductsEditor -> navigateToProductEditor()
                 AdminPanelViewModel.Event.NavigateToRequests -> navigateToRequests()

@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentNavigationAdminPanelBinding
 import com.yurii.foody.utils.Injector
@@ -39,8 +40,9 @@ class AdminPanelFragment : Fragment(), OnBackPressed {
 
                 }
                 R.id.item_log_out -> {
-                    viewModel.logOut()
-
+                    askUserToAcceptLoggingOut {
+                        viewModel.logOut()
+                    }
                 }
 
             }
@@ -53,6 +55,14 @@ class AdminPanelFragment : Fragment(), OnBackPressed {
         }
 
         return binding.root
+    }
+
+    private fun askUserToAcceptLoggingOut(callback: () -> Unit) {
+        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.label_log_out)
+            .setMessage(R.string.message_logout_confirmation)
+            .setPositiveButton(R.string.label_yes) { _, _ -> callback.invoke() }
+            .setNegativeButton(R.string.label_no) { _, _ -> }
+            .show()
     }
 
     private fun observeEvents() {

@@ -59,4 +59,5 @@
     <string name="label_delete_items_message">Are you sure to delete the selected products?</string>
     <string name="label_yes">Yes</string>
     <string name="label_no">No</string>
+    <string name="message_logout_confirmation">Are you sure to logout?</string>
 </resources>

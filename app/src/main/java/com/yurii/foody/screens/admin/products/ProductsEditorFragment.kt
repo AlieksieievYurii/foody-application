@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentProductEditorBinding
@@ -51,6 +52,14 @@ class ProductsEditorFragment : Fragment() {
         observeSelectableMode()
 
         return binding.root
+    }
+
+    private fun askUserToAcceptDeleting(callback: () -> Unit) {
+        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.label_delete_items)
+            .setMessage(R.string.label_delete_items_message)
+            .setPositiveButton(R.string.label_yes) { _, _ -> callback.invoke() }
+            .setNegativeButton(R.string.label_no) { _, _ -> }
+            .show()
     }
 
     private fun observeSelectableMode() {
@@ -100,7 +109,9 @@ class ProductsEditorFragment : Fragment() {
                     true
                 }
                 R.id.delete -> {
-                    deleteSelectedProducts()
+                    askUserToAcceptDeleting {
+                        deleteSelectedProducts()
+                    }
                     true
                 }
                 else -> false
@@ -109,7 +120,7 @@ class ProductsEditorFragment : Fragment() {
     }
 
     private fun deleteSelectedProducts() {
-        if(listAdapter.getSelectedItems().isNotEmpty())
+        if (listAdapter.getSelectedItems().isNotEmpty())
             viewModel.deleteItems(listAdapter.getSelectedItems())
         viewModel.selectableMode.value = false
     }

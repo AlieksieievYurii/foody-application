@@ -15,6 +15,8 @@ class AdminPanelViewModel(private val repository: AuthorizationRepositoryInterfa
         object NavigateToRequests : Event()
         object NavigateToProductsEditor : Event()
         object NavigateToCategoriesEditor : Event()
+        object NavigateToLogInScreen : Event()
+        object NavigateToChangeRole : Event()
         data class SetHeaderInformation(val name: String, val surName: String) : Event()
     }
 
@@ -26,6 +28,21 @@ class AdminPanelViewModel(private val repository: AuthorizationRepositoryInterfa
             repository.getSavedUser()?.run {
                 eventChannel.send(Event.SetHeaderInformation(name = this.firstName, surName = this.lastName))
             }
+        }
+    }
+
+    fun logOut() {
+        viewModelScope.launch {
+            repository.logOut()
+            eventChannel.send(Event.NavigateToLogInScreen)
+        }
+    }
+
+    fun changeRole() {
+        viewModelScope.launch {
+
+            repository.setSelectedUserRole(null)
+            eventChannel.send(Event.NavigateToChangeRole)
         }
     }
 

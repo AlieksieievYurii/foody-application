@@ -6,7 +6,6 @@ import com.yurii.foody.utils.AuthDataStorage
 import com.yurii.foody.utils.AuthDataStorageInterface
 import com.yurii.foody.utils.toAuthDataStorage
 import kotlinx.coroutines.flow.*
-import java.lang.IllegalStateException
 
 interface AuthorizationRepositoryInterface {
     suspend fun logIn(authData: AuthData): Flow<AuthResponseData>

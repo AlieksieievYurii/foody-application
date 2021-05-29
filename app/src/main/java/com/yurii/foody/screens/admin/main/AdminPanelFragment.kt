@@ -25,6 +25,29 @@ class AdminPanelFragment : Fragment(), OnBackPressed {
         binding.content.viewModel = viewModel
         binding.content.openMenu.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
         observeEvents()
+
+        binding.navView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.item_personal_information -> {
+
+                }
+                R.id.item_help -> {
+
+                }
+                R.id.item_change_role -> {
+                    viewModel.changeRole()
+
+                }
+                R.id.item_log_out -> {
+                    viewModel.logOut()
+
+                }
+
+            }
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            false
+        }
+
         return binding.root
     }
 
@@ -35,8 +58,18 @@ class AdminPanelFragment : Fragment(), OnBackPressed {
                 AdminPanelViewModel.Event.NavigateToCategoriesEditor -> navigateToCategoriesEditor()
                 AdminPanelViewModel.Event.NavigateToProductsEditor -> navigateToProductEditor()
                 AdminPanelViewModel.Event.NavigateToRequests -> navigateToRequests()
+                AdminPanelViewModel.Event.NavigateToChangeRole -> navigateToChooseRoleScreen()
+                AdminPanelViewModel.Event.NavigateToLogInScreen -> navigateToLogInScreen()
             }
         }
+    }
+
+    private fun navigateToLogInScreen() {
+        findNavController().navigate(AdminPanelFragmentDirections.actionAdminPanelFragmentToAuthenticationFragment())
+    }
+
+    private fun navigateToChooseRoleScreen() {
+        findNavController().navigate(AdminPanelFragmentDirections.actionAdminPanelFragmentToChooseRoleFragment(selectNewRole = true))
     }
 
     private fun navigateToProductEditor() {

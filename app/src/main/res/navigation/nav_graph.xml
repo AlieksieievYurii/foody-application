@@ -65,7 +65,9 @@
             app:popUpTo="@id/authenticationFragment" />
         <action
             android:id="@+id/action_logInFragment_to_chooseRoleFragment"
-            app:destination="@id/chooseRoleFragment">
+            app:destination="@id/chooseRoleFragment"
+            app:popUpTo="@id/authenticationFragment"
+            app:popUpToInclusive="true">
             <argument
                 android:name="selectNewRole"
                 android:defaultValue="false" />
@@ -131,7 +133,9 @@
             app:destination="@id/confirmationFragment" />
         <action
             android:id="@+id/action_chooseRoleFragment_to_adminPanelFragment"
-            app:destination="@id/adminPanelFragment" />
+            app:destination="@id/adminPanelFragment"
+            app:popUpTo="@id/chooseRoleFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/fragmentTest"
@@ -157,6 +161,16 @@
         <action
             android:id="@+id/action_adminPanelFragment_to_productsEditorFragment"
             app:destination="@id/productsEditorFragment" />
+        <action
+            android:id="@+id/action_adminPanelFragment_to_authenticationFragment"
+            app:destination="@id/authenticationFragment"
+            app:popUpTo="@id/adminPanelFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_adminPanelFragment_to_chooseRoleFragment"
+            app:destination="@id/chooseRoleFragment"
+            app:popUpTo="@id/adminPanelFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/productsEditorFragment"

@@ -30,8 +30,7 @@ data class ProductData(
     val isAvailable: Boolean,
     val isActive: Boolean,
     val rating: Float,
-    val thumbnailUrl: String,
-    var isSelected: Boolean = false
+    val thumbnailUrl: String
 ) {
     companion object {
         fun createFrom(product: Product, productAvailability: ProductAvailability?, rating: Float?, thumbnailUrl: String?) = ProductData(
@@ -90,9 +89,22 @@ class ProductPagingSource(
     }
 }
 
-class ProductAdapter(private val selectableMode: MutableStateFlow<Boolean>, private val scope: CoroutineScope) :
-    PagingDataAdapter<ProductData, ProductAdapter.ProductViewHolder>(COMPARATOR) {
+interface ProductViewHolderCallback {
+    fun onClick(product: ProductData)
+    fun isSelected(product: ProductData): Boolean
+}
 
+class ProductAdapter(private val selectableMode: MutableStateFlow<Boolean>, private val scope: CoroutineScope) :
+    PagingDataAdapter<ProductData, ProductAdapter.ProductViewHolder>(COMPARATOR), ProductViewHolderCallback {
+    private val selectedProducts: MutableSet<ProductData> = mutableSetOf()
+    init {
+        scope.launch {
+            selectableMode.collectLatest {
+                if (!it)
+                    selectedProducts.clear()
+            }
+        }
+    }
     companion object {
         private val COMPARATOR = object : DiffUtil.ItemCallback<ProductData>() {
             override fun areItemsTheSame(oldItem: ProductData, newItem: ProductData): Boolean =
@@ -104,19 +116,31 @@ class ProductAdapter(private val selectableMode: MutableStateFlow<Boolean>, priv
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
-        holder.bind(getItem(position)!!)
+        getItem(position)?.run { holder.bind(this) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-        return ProductViewHolder.create(parent, selectableMode, scope)
+        return ProductViewHolder.create(parent, selectableMode, scope, this)
     }
 
-    fun getSelectedItems() = snapshot().items.filter { it.isSelected }
+    fun getSelectedItems() = selectedProducts.toList()
+
+    override fun onClick(product: ProductData) {
+        if (selectableMode.value)
+            if (isSelected(product))
+                selectedProducts.remove(product)
+            else
+                selectedProducts.add(product)
+    }
+
+    override fun isSelected(product: ProductData): Boolean = selectedProducts.contains(product)
+
 
     class ProductViewHolder(
         private val binding: ItemProductEditBinding,
         private val selectableMode: MutableStateFlow<Boolean>,
-        private val scope: CoroutineScope
+        private val scope: CoroutineScope,
+        private val callback: ProductViewHolderCallback
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(product: ProductData) {
@@ -125,8 +149,10 @@ class ProductAdapter(private val selectableMode: MutableStateFlow<Boolean>, priv
             applySelectableEffect(product)
 
             binding.body.setOnClickListener {
+                callback.onClick(product)
+
                 if (selectableMode.value)
-                    applySelectableEffect(product.apply { isSelected = !isSelected })
+                    applySelectableEffect(product)
             }
 
             scope.launch {
@@ -136,29 +162,37 @@ class ProductAdapter(private val selectableMode: MutableStateFlow<Boolean>, priv
 
                     binding.body.setOnLongClickListener {
                         selectableMode.value = true
-                        applySelectableEffect(product.apply { isSelected = true })
+                        callback.onClick(product)
+                        applySelectableEffect(product)
                         true
                     }
-                    applySelectableEffect(product.apply { isSelected = false })
+                    applySelectableEffect(product)
                 }
             }
         }
 
         private fun applySelectableEffect(product: ProductData) {
             val color = when {
-                product.isSelected -> R.color.gray
+                callback.isSelected(product) -> R.color.gray
                 product.isActive -> R.color.white
                 else -> R.color.light_red
             }
             binding.body.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, color))
         }
 
+
         companion object {
-            fun create(viewGroup: ViewGroup, selectableMode: MutableStateFlow<Boolean>, scope: CoroutineScope): ProductViewHolder {
+            fun create(
+                viewGroup: ViewGroup,
+                selectableMode: MutableStateFlow<Boolean>,
+                scope: CoroutineScope,
+                callback: ProductViewHolderCallback
+            ): ProductViewHolder {
                 val binding: ItemProductEditBinding =
                     DataBindingUtil.inflate(LayoutInflater.from(viewGroup.context), R.layout.item_product_edit, viewGroup, false)
-                return ProductViewHolder(binding, selectableMode, scope)
+                return ProductViewHolder(binding, selectableMode, scope, callback)
             }
         }
     }
+
 }

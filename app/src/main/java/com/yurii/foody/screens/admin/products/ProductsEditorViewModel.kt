@@ -4,9 +4,10 @@ import androidx.lifecycle.*
 import androidx.paging.*
 import com.yurii.foody.utils.EmptyListException
 import com.yurii.foody.utils.ProductsRepository
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class ProductsEditorViewModel(private val repository: ProductsRepository) : ViewModel() {
     sealed class ListState {
@@ -14,6 +15,11 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
         object ShowLoading : ListState()
         object ShowResult : ListState()
         data class ShowError(val exception: Throwable) : ListState()
+    }
+
+    sealed class Event {
+        object Refresh : Event()
+        object ShowItemsRemovedSnackBar : Event()
     }
 
     private val _products: MutableStateFlow<PagingData<ProductData>> = MutableStateFlow(PagingData.empty())
@@ -28,6 +34,12 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
 
     val selectableMode = MutableStateFlow(false)
 
+    private val _loading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading
+
+    private val _eventChannel = Channel<Event>(Channel.BUFFERED)
+    val eventFlow: Flow<Event> = _eventChannel.receiveAsFlow()
+
     init {
         searchProduct()
     }
@@ -37,6 +49,17 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
         searchJob = viewModelScope.launch {
             repository.getProductsPager(query).cachedIn(viewModelScope).collectLatest {
                 _products.value = it
+            }
+        }
+    }
+
+    fun deleteItems(items: List<ProductData>) {
+        viewModelScope.launch {
+            _loading.value = true
+            repository.deleteProducts(items.map { it.id }).catch {exception ->
+                Timber.i("${exception}")
+            }.collectLatest {
+                _eventChannel.send(Event.Refresh)
             }
         }
     }
@@ -59,7 +82,14 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
     fun onLoadStateChange(state: CombinedLoadStates) {
         viewModelScope.launch {
             when (state.refresh) {
-                is LoadState.NotLoading -> _listState.setValue(ListState.ShowResult)
+                is LoadState.NotLoading -> {
+                    _listState.value = ListState.ShowResult
+                    if (_loading.value) {
+                        _loading.value = false
+                        selectableMode.value = false
+                        _eventChannel.send(Event.ShowItemsRemovedSnackBar)
+                    }
+                }
                 LoadState.Loading -> _listState.setValue(ListState.ShowLoading)
                 is LoadState.Error -> {
                     val loadStateError = state.refresh as LoadState.Error

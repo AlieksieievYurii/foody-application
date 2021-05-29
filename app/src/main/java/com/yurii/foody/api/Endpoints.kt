@@ -1,5 +1,6 @@
 package com.yurii.foody.api
 
+import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiTokenAuth {
@@ -29,6 +30,9 @@ interface ApiProducts {
         @Query("page") page: Int,
         @Query("size") size: Int
     ): Pagination<Product>
+
+    @DELETE("/products/delete_many/")
+    suspend fun deleteProducts(@Query("ids") ids: String): Response<Unit>
 }
 
 interface ApiProductAvailability {

@@ -13,6 +13,8 @@ class ProductsRepository(private val service: Service) {
     fun getProductsPager(query: ProductPagingSource.Query? = null) =
         Pager(config = pagingConfig, pagingSourceFactory = { ProductPagingSource(service, query) }).flow
 
+    suspend fun deleteProducts(items: List<Int>) = Service.asFlow { service.productsService.deleteProducts(items.joinToString(",")) }
+
     companion object {
         private var INSTANCE: ProductsRepository? = null
         fun create(api: Service): ProductsRepository {

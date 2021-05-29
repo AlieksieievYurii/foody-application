@@ -5,7 +5,9 @@ import com.beust.klaxon.Parser
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.yurii.foody.Application
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import okhttp3.*
 import retrofit2.HttpException
 import retrofit2.Retrofit
@@ -75,7 +77,7 @@ object Service : ApiServiceInterface {
                 else -> throw ResponseException.UnknownError(exception.message ?: "No error message", exception)
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 }
 
 sealed class ResponseException : Exception() {

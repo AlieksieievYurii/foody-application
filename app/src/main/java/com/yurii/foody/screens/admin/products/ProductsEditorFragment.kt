@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentProductEditorBinding
 import com.yurii.foody.ui.ListFragment
+import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
 
@@ -25,6 +26,7 @@ class ProductsEditorFragment : Fragment() {
     private lateinit var binding: FragmentProductEditorBinding
     private val listAdapter: ProductAdapter by lazy { ProductAdapter(viewModel.selectableMode, lifecycleScope) }
     private lateinit var searchView: SearchView
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_product_editor, container, false)
@@ -98,13 +100,18 @@ class ProductsEditorFragment : Fragment() {
                     true
                 }
                 R.id.delete -> {
-                    Snackbar.make(binding.root, "${listAdapter.getSelectedItems().count()} have been deleted", Snackbar.LENGTH_SHORT).show()
-                    viewModel.selectableMode.value = false
+                    deleteSelectedProducts()
                     true
                 }
                 else -> false
             }
         }
+    }
+
+    private fun deleteSelectedProducts() {
+        if(listAdapter.getSelectedItems().isNotEmpty())
+            viewModel.deleteItems(listAdapter.getSelectedItems())
+        viewModel.selectableMode.value = false
     }
 
     private fun observeEvents() {
@@ -126,6 +133,21 @@ class ProductsEditorFragment : Fragment() {
 
         listAdapter.loadStateFlow.observeOnLifecycle(viewLifecycleOwner) { loadState ->
             viewModel.onLoadStateChange(loadState)
+        }
+
+        viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {
+            when (it) {
+                ProductsEditorViewModel.Event.Refresh -> listAdapter.refresh()
+                is ProductsEditorViewModel.Event.ShowItemsRemovedSnackBar -> Snackbar.make(
+                    binding.root,
+                    "The items have been removed",
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        }
+
+        viewModel.loading.observeOnLifecycle(viewLifecycleOwner) {
+            if (it) loadingDialog.show() else loadingDialog.close()
         }
     }
 }

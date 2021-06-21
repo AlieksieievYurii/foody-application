@@ -60,4 +60,19 @@
     <string name="label_yes">Yes</string>
     <string name="label_no">No</string>
     <string name="message_logout_confirmation">Are you sure to logout?</string>
+    <string name="hint_product_name">Product name</string>
+    <string name="hint_description">Description</string>
+    <string name="hint_available">Available</string>
+    <string name="hint_price">Price</string>
+    <string name="hint_cooking_time">Cooking time</string>
+    <string name="content_desc_increase">Button increase</string>
+    <string name="content_desc_decrease">Button descrease</string>
+    <string name="hint_url">Image url</string>
+    <string name="error_select_image">Select image</string>
+    <string name="error_enter_image_url">Enter image url</string>
+    <string name="label_photo_uploading">Photo uploading</string>
+    <string name="label_add">Add</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_external">External</string>
+    <string name="label_internal">Internal</string>
 </resources>

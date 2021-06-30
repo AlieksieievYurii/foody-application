@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import coil.load
 import com.yurii.foody.R
 import com.yurii.foody.databinding.DialogPhotoUploadBinding
+import com.yurii.foody.utils.loadImage
 import java.lang.IllegalStateException
 
 class UploadPhotoDialog(private val context: Context, private val registry: ActivityResultRegistry) {
@@ -38,7 +39,6 @@ class UploadPhotoDialog(private val context: Context, private val registry: Acti
 
         init {
             binding.photoType.setOnCheckedChangeListener { _, id ->
-                imageUri = null
                 mode = when (id) {
                     R.id.external -> {
                         showExternalUploadingOption()
@@ -53,36 +53,30 @@ class UploadPhotoDialog(private val context: Context, private val registry: Acti
             }
         }
 
-        private fun onImageIsSelected(uri: Uri?) {
+        private fun onImageIsSelected(uri: Uri) {
             imageUri = uri
+            showPreview(uri.toString())
+        }
+
+        private fun showPreview(urlOrUri: String) {
             binding.apply {
                 preview.isVisible = true
-                preview.load(uri)
+                preview.loadImage(urlOrUri)
                 error.isVisible = false
             }
         }
 
         private fun showExternalUploadingOption() {
+            imageUri = null // It's necessary to reset the URI if internal image was selected
             binding.apply {
                 imageUrlLayout.isVisible = true
                 action.text = context.getText(R.string.label_upload)
-                action.setOnClickListener {
-                    preview.isVisible = true
-                    preview.load(binding.imageUrl.text.toString())
-                    error.isVisible = false
-                }
-
+                action.setOnClickListener { showPreview(binding.imageUrl.text.toString()) }
                 error.isVisible = false
                 preview.isVisible = false
                 imageUrl.setOnKeyListener { _, keyCode, keyEvent ->
                     if (keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                        binding.preview.apply {
-                            isVisible = true
-                            error.isVisible = false
-                            load(binding.imageUrl.text.toString()) {
-                                error(R.drawable.image_error_placeholder)
-                            }
-                        }
+                        showPreview(binding.imageUrl.text.toString())
                         return@setOnKeyListener true
                     }
                     false
@@ -138,7 +132,7 @@ class UploadPhotoDialog(private val context: Context, private val registry: Acti
                     Mode.INTERNAL -> onInternalImageIsSelected(callback)
                 }
             }
-
+            showExternalUploadingOption()
         }
     }
 

@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.load
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentEditCreateProductBinding
 import com.yurii.foody.ui.UploadPhotoDialog
@@ -62,8 +63,18 @@ class ProductEditorFragment : Fragment() {
         }
     }
 
+    private fun askUserToConfirmDeletionImage(callback: () -> Unit) {
+        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.label_delete_image)
+            .setMessage(R.string.message_delete_image_confirmation)
+            .setPositiveButton(R.string.label_yes) { _, _ -> callback.invoke() }
+            .setNegativeButton(R.string.label_no) { _, _ -> }
+            .show()
+    }
+
     private fun onDeleteAdditionalImage(image: AdditionalImageData) {
-        viewModel.removeAdditionalImage(image)
+        askUserToConfirmDeletionImage {
+            viewModel.removeAdditionalImage(image)
+        }
     }
 
     override fun onDestroy() {

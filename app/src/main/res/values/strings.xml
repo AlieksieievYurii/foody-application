@@ -79,4 +79,6 @@
     <string name="label_images">Images</string>
     <string name="label_category">Category</string>
     <string name="label_active">Active</string>
+    <string name="label_delete_image">Delete Image</string>
+    <string name="message_delete_image_confirmation">Are you sure to delete image?</string>
 </resources>

@@ -8,7 +8,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.yurii.foody.R
 import com.yurii.foody.databinding.ItemProductImageBinding
 import com.yurii.foody.utils.loadImage

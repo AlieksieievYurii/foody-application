@@ -31,7 +31,7 @@ class ImagesListAdapter(private val onAddNewImage: () -> Unit, private val onIte
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             ITEM_TYPE_IMAGE -> ImageHolder.create(parent)
-            ITEM_TYPE_BUTTON_ADD -> ButtonHolder.create(parent, onAddNewImage)
+            ITEM_TYPE_BUTTON_ADD -> ButtonHolder.create(parent)
             else -> throw IllegalStateException("Unhandled view type")
         }
     }
@@ -49,6 +49,8 @@ class ImagesListAdapter(private val onAddNewImage: () -> Unit, private val onIte
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ImageHolder)
             holder.bind(getItem(position), onItemDelete)
+        else if (holder is ButtonHolder)
+            holder.bind(onAddNewImage)
     }
 
     class ImageHolder private constructor(private val binding: ItemProductImageBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -74,11 +76,14 @@ class ImagesListAdapter(private val onAddNewImage: () -> Unit, private val onIte
         }
     }
 
-    class ButtonHolder private constructor(view: View) : RecyclerView.ViewHolder(view) {
+    class ButtonHolder private constructor(private val view: View) : RecyclerView.ViewHolder(view) {
+        fun bind(onClick: () -> Unit) {
+            view.findViewById<Button>(R.id.add).setOnClickListener { onClick() }
+        }
+
         companion object {
-            fun create(viewGroup: ViewGroup, onClick: () -> Unit): ButtonHolder {
+            fun create(viewGroup: ViewGroup, ): ButtonHolder {
                 val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_button_add, viewGroup, false)
-                view.findViewById<Button>(R.id.add).setOnClickListener { onClick() }
                 return ButtonHolder(view)
             }
         }

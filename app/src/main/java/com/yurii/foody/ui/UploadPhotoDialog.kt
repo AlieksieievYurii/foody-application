@@ -58,6 +58,10 @@ class UploadPhotoDialog(private val context: Context, private val registry: Acti
             showPreview(uri.toString())
         }
 
+        fun dismiss() {
+            dialog.dismiss()
+        }
+
         private fun showPreview(urlOrUri: String) {
             binding.apply {
                 preview.isVisible = true
@@ -143,7 +147,15 @@ class UploadPhotoDialog(private val context: Context, private val registry: Acti
         data class Internal(val uri: Uri) : Result()
     }
 
+    private var currentDialog: Dialog? = null
+
     fun show(callback: (result: Result) -> Unit) {
-        Dialog(context, registry).show(callback)
+        currentDialog = Dialog(context, registry).also {
+            it.show(callback)
+        }
+    }
+
+    fun dismiss() {
+        currentDialog?.dismiss()
     }
 }

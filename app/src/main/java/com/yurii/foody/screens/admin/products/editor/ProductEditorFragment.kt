@@ -65,4 +65,9 @@ class ProductEditorFragment : Fragment() {
     private fun onDeleteAdditionalImage(image: AdditionalImageData) {
         viewModel.removeAdditionalImage(image)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        uploadImageDialog.dismiss()
+    }
 }

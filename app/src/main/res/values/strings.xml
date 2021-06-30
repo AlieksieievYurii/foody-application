@@ -75,4 +75,8 @@
     <string name="label_cancel">Cancel</string>
     <string name="label_external">External</string>
     <string name="label_internal">Internal</string>
+    <string name="label_upload">Upload</string>
+    <string name="label_images">Images</string>
+    <string name="label_category">Category</string>
+    <string name="label_active">Active</string>
 </resources>

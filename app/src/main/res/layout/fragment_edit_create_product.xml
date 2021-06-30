@@ -75,16 +75,6 @@
                             app:riv_oval="false"
                             app:riv_tile_mode="clamp"
                             tools:src="@tools:sample/avatars" />
-
-                        <ImageButton
-                            android:id="@+id/delete_default_image"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_margin="8dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="@string/label_close"
-                            app:srcCompat="@drawable/ic_baseline_delete_24" />
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
 

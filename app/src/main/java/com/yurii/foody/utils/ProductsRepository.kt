@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.yurii.foody.api.Product
 import com.yurii.foody.api.ProductAvailability
+import com.yurii.foody.api.ProductCategory
 import com.yurii.foody.api.Service
 import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.screens.admin.products.ProductPagingSource
@@ -19,6 +20,8 @@ class ProductsRepository(private val service: Service) {
 
     suspend fun createProductAvailability(productAvailability: ProductAvailability) =
         service.productAvailability.createProductAvailability(productAvailability)
+
+    suspend fun createProductCategory(productCategory: ProductCategory) = service.productCategory.createProductCategory(productCategory)
 
     suspend fun deleteProducts(items: List<Int>) = Service.asFlow { service.productsService.deleteProducts(items.joinToString(",")) }
 

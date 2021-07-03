@@ -69,3 +69,8 @@ interface ApiCategories {
     @GET("/products/categories/")
     suspend fun getCategories(): List<Category>
 }
+
+interface ApiProductCategory {
+    @POST("/products/productCategory/")
+    suspend fun createProductCategory(@Body productCategory: ProductCategory)
+}

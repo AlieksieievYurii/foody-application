@@ -61,7 +61,7 @@ data class Product(
     val name: String,
     val description: String,
     val price: Float,
-    @Json(name = "cooking_time") val cookingTime: Float
+    @Json(name = "cooking_time") val cookingTime: Int
 )
 
 @JsonClass(generateAdapter = true)

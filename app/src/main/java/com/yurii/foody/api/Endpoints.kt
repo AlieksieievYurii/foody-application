@@ -31,6 +31,9 @@ interface ApiProducts {
         @Query("size") size: Int
     ): Pagination<Product>
 
+    @POST("/products/")
+    suspend fun createProduct(@Body product: Product): Product
+
     @DELETE("/products/delete_many/")
     suspend fun deleteProducts(@Query("ids") ids: String): Response<Unit>
 }

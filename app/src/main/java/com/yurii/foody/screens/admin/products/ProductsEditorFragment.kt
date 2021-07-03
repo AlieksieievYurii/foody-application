@@ -23,7 +23,7 @@ import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
 
 class ProductsEditorFragment : Fragment() {
-    private val viewModel: ProductsEditorViewModel by viewModels { Injector.provideProductEditorViewModel(requireContext()) }
+    private val viewModel: ProductsEditorViewModel by viewModels { Injector.provideProductsEditorViewModel() }
     private lateinit var binding: FragmentProductEditorBinding
     private val listAdapter: ProductAdapter by lazy { ProductAdapter(viewModel.selectableMode, lifecycleScope) }
     private lateinit var searchView: SearchView
@@ -44,7 +44,8 @@ class ProductsEditorFragment : Fragment() {
                 findNavController().navigateUp()
         }
 
-        binding.add.setOnClickListener { //TODO(Navigate to editfragment)
+        binding.add.setOnClickListener {
+            findNavController().navigate(ProductsEditorFragmentDirections.actionProductsEditorFragmentToProductEditorFragment() )
         }
 
         observeEvents()

@@ -11,6 +11,7 @@ import com.yurii.foody.authorization.role.ChooseRoleViewModel
 import com.yurii.foody.authorization.signup.SignUpViewModel
 import com.yurii.foody.screens.admin.main.AdminPanelViewModel
 import com.yurii.foody.screens.admin.products.ProductsEditorViewModel
+import com.yurii.foody.screens.admin.products.editor.ProductEditorViewModel
 
 object Injector {
 
@@ -35,5 +36,7 @@ object Injector {
 
     fun provideAdminPanelViewModel(context: Context) = AdminPanelViewModel.Factory(repository = provideAuthorizationRepository(context))
 
-    fun provideProductEditorViewModel(context: Context) = ProductsEditorViewModel.Factory(repository = provideProductRepository())
+    fun provideProductsEditorViewModel() = ProductsEditorViewModel.Factory(repository = provideProductRepository())
+
+    fun provideProductEditorViewModel() = ProductEditorViewModel.Factory(categoryRepository = CategoryRepository.create(Service))
 }

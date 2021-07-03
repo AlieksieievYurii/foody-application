@@ -83,3 +83,10 @@ data class ProductImage(
     @Json(name = "is_external") val isExternal: Boolean,
     @Json(name = "product") val productId: Int
 )
+
+data class Category(
+    val id: Int,
+    val name: String,
+    @Json(name = "icon_url") val iconUrl: String,
+    @Json(name = "is_icon_external") val isIconExternal: Boolean
+)

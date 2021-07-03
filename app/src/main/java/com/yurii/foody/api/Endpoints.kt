@@ -58,3 +58,7 @@ interface ApiProductImage {
         @Query("is_default") isDefault: Boolean,
     ): Pagination<ProductImage>
 }
+
+interface ApiCategories {
+    suspend fun getCategories(): List<Category>
+}

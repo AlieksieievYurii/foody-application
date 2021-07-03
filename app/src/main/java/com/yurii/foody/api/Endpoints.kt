@@ -63,6 +63,9 @@ interface ApiProductImage {
         @Query("product_ids") productIds: String,
         @Query("is_default") isDefault: Boolean,
     ): Pagination<ProductImage>
+
+    @POST("/products/images/")
+    suspend fun createProductImage(@Body productImage: ProductImage): ProductImage
 }
 
 interface ApiCategories {

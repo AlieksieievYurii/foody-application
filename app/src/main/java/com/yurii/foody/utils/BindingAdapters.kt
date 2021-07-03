@@ -27,6 +27,7 @@ fun errorField(textView: TextView, fieldValidation: FieldValidation) {
         FieldValidation.WrongEmailFormat -> R.string.label_wrong_email
         FieldValidation.WrongPhoneFormat -> R.string.label_wrong_phone_format
         FieldValidation.DoesNotFitRequirements -> TODO()
+        FieldValidation.NoPhoto -> R.string.error_no_photo
     })
 }
 

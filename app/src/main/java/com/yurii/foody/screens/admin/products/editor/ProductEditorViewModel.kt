@@ -1,11 +1,9 @@
 package com.yurii.foody.screens.admin.products.editor
 
+import android.net.Uri
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
-import com.yurii.foody.api.Category
-import com.yurii.foody.api.Product
-import com.yurii.foody.api.ProductAvailability
-import com.yurii.foody.api.ProductCategory
+import com.yurii.foody.api.*
 import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.CategoryRepository
 import com.yurii.foody.utils.Empty
@@ -78,8 +76,37 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
             createProductAvailability(product)
             if (isCategorySelected())
                 createProductCategory(product)
+            loadDefaultProductImage(product)
         }
     }
+
+    private suspend fun loadDefaultProductImage(product: Product): ProductImage {
+        return when (val photo = _mainPhoto.value!!) {
+            is UploadPhotoDialog.Result.External -> loadExternalPhotoAsDefault(product, photo)
+            is UploadPhotoDialog.Result.Internal -> loadInternalPhotoAsDefault(product, photo)
+        }
+    }
+
+    private suspend fun loadInternalPhotoAsDefault(product: Product, photo: UploadPhotoDialog.Result.Internal): ProductImage {
+        val loadedPhotoUrl = loadPhotoToServer(photo.uri)
+        return ProductImage(-1, "", false, false, -1)
+    }
+
+    private fun loadPhotoToServer(uri: Uri): String {
+        //TODO
+        return ""
+    }
+
+    private suspend fun loadExternalPhotoAsDefault(product: Product, photo: UploadPhotoDialog.Result.External) =
+        productsRepository.createProductImage(
+            productImage = ProductImage(
+                id = -1, // No needed
+                imageUrl = photo.url,
+                isDefault = true,
+                isExternal = true,
+                productId = product.id
+            )
+        )
 
     private suspend fun createProductCategory(product: Product) = productsRepository.createProductCategory(
         productCategory = ProductCategory(

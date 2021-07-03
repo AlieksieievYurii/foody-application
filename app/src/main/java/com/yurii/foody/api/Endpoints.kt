@@ -45,6 +45,9 @@ interface ApiProductAvailability {
         @Query("page") page: Int? = null,
         @Query("size") size: Int
     ): Pagination<ProductAvailability>
+
+    @POST("/products/availabilities/")
+    suspend fun createProductAvailability(@Body productAvailability: ProductAvailability)
 }
 
 interface ApiProductRating {

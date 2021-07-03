@@ -14,6 +14,8 @@ class NumberSelection(context: Context, attrs: AttributeSet) : FrameLayout(conte
         R.layout.fragment_number_selection, this, true
     )
 
+    var onChangeListener: ((n: Int) -> Unit)? = null
+
     var number: Int = DEFAULT_VALUE
         set(value) {
             field = value
@@ -24,13 +26,15 @@ class NumberSelection(context: Context, attrs: AttributeSet) : FrameLayout(conte
         binding.number.text = number.toString()
         binding.increase.setOnClickListener {
             binding.number.text = (++number).toString()
+            onChangeListener?.invoke(number)
         }
         binding.decrease.setOnClickListener {
-            if (number > MINIMUM_VALUE)
+            if (number > MINIMUM_VALUE) {
                 binding.number.text = (--number).toString()
+                onChangeListener?.invoke(number)
+            }
         }
     }
-
 
     companion object {
         private const val MINIMUM_VALUE = 0

@@ -60,5 +60,6 @@ interface ApiProductImage {
 }
 
 interface ApiCategories {
+    @GET("/products/categories/")
     suspend fun getCategories(): List<Category>
 }

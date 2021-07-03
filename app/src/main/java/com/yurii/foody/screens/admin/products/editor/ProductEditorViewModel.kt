@@ -38,7 +38,10 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository)
     val description = ObservableField(String.Empty)
     val price = ObservableField(String.Empty)
     val cookingTime = ObservableField(String.Empty)
-    private var category: CategoryItem? = null
+    var category: CategoryItem? = null
+    var availability: Int = 0
+    var isAvailable = ObservableField(false)
+    var isActive = ObservableField(false)
 
     init {
         viewModelScope.launch {
@@ -49,9 +52,12 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository)
     }
 
     fun save() {
-        if (areFieldsValidated()) {
+        if (areFieldsValidated())
+            createProduct()
+    }
 
-        }
+    private fun createProduct() {
+
     }
 
     private fun areFieldsValidated(): Boolean {
@@ -101,10 +107,6 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository)
 
     fun resetCookingTimeFieldValidation() {
         _cookingTimeFieldValidation.value = FieldValidation.NoErrors
-    }
-
-    fun setCategory(categoryItem: CategoryItem?) {
-        category = categoryItem
     }
 
     class Factory(private val categoryRepository: CategoryRepository) : ViewModelProvider.Factory {

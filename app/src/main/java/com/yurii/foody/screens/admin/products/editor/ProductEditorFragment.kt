@@ -22,6 +22,7 @@ data class CategoryItem(val id: Int, val name: String) {
     override fun toString(): String {
         return name
     }
+
     companion object {
         val NoCategory = CategoryItem(-1, "---")
     }
@@ -44,6 +45,10 @@ class ProductEditorFragment : Fragment() {
         binding.additionalImages.adapter = imagesListAdapter
         binding.defaultImage.setOnClickListener {
             uploadImageDialog.show { viewModel.addMainPhoto(it) }
+        }
+
+        binding.availability.onChangeListener = {
+            viewModel.availability = it
         }
 
         viewModel.mainPhoto.observeOnLifecycle(viewLifecycleOwner) { image ->
@@ -96,7 +101,7 @@ class ProductEditorFragment : Fragment() {
         binding.category.adapter = arrayAdapter
         binding.category.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                viewModel.setCategory(arrayAdapter.getItem(p2))
+                viewModel.category = arrayAdapter.getItem(p2)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {

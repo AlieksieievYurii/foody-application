@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import coil.load
 import com.yurii.foody.R
 import com.yurii.foody.databinding.DialogPhotoUploadBinding
+import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.loadImage
 import java.lang.IllegalStateException
 
@@ -45,6 +46,7 @@ class UploadPhotoDialog(private val context: Context, private val registry: Acti
                         Mode.EXTERNAL
                     }
                     R.id.internal -> {
+                        context.hideKeyboard(binding.root)
                         showInternalUploadOption()
                         Mode.INTERNAL
                     }

@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.yurii.foody.api.Category
 import com.yurii.foody.api.Product
 import com.yurii.foody.api.ProductAvailability
+import com.yurii.foody.api.ProductCategory
 import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.CategoryRepository
 import com.yurii.foody.utils.Empty
@@ -72,11 +73,22 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
     }
 
     private fun createNewProduct() {
-        viewModelScope.launch(coroutineExceptionHandler) {
+        viewModelScope.launch {
             val product = createProduct()
             createProductAvailability(product)
+            if (isCategorySelected())
+                createProductCategory(product)
         }
     }
+
+    private suspend fun createProductCategory(product: Product) = productsRepository.createProductCategory(
+        productCategory = ProductCategory(
+            product = product.id,
+            category = category!!.id
+        )
+    )
+
+    private fun isCategorySelected(): Boolean = category?.id != -1
 
     private suspend fun createProductAvailability(product: Product) = productsRepository.createProductAvailability(
         productAvailability = ProductAvailability(

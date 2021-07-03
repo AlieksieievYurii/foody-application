@@ -81,4 +81,6 @@
     <string name="label_active">Active</string>
     <string name="label_delete_image">Delete Image</string>
     <string name="message_delete_image_confirmation">Are you sure to delete image?</string>
+    <string name="label_save">Save</string>
+    <string name="error_no_photo">No photo</string>
 </resources>

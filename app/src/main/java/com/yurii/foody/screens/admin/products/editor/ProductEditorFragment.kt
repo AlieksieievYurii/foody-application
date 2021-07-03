@@ -22,10 +22,11 @@ class ProductEditorFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_create_product, container, false)
-
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.additionalImages.adapter = imagesListAdapter
         binding.defaultImage.setOnClickListener {
-            uploadImageDialog.show { viewModel.mainPhoto.value = it }
+            uploadImageDialog.show { viewModel.addMainPhoto(it) }
         }
 
         viewModel.mainPhoto.observeOnLifecycle(viewLifecycleOwner) { image ->
@@ -48,16 +49,10 @@ class ProductEditorFragment : Fragment() {
         uploadImageDialog.show {
             when (it) {
                 is UploadPhotoDialog.Result.External -> viewModel.addAdditionalImage(
-                    AdditionalImageData.create(
-                        it.url,
-                        getString(R.string.label_external)
-                    )
+                    AdditionalImageData.create(it.url, getString(R.string.label_external))
                 )
                 is UploadPhotoDialog.Result.Internal -> viewModel.addAdditionalImage(
-                    AdditionalImageData.create(
-                        it.uri.toString(),
-                        getString(R.string.label_internal)
-                    )
+                    AdditionalImageData.create(it.uri.toString(), getString(R.string.label_internal))
                 )
             }
         }

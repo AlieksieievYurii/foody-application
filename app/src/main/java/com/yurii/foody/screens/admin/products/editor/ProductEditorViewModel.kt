@@ -3,15 +3,19 @@ package com.yurii.foody.screens.admin.products.editor
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.api.Category
+import com.yurii.foody.api.Product
+import com.yurii.foody.api.ProductAvailability
 import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.CategoryRepository
 import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.ProductsRepository
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class ProductEditorViewModel(private val categoryRepository: CategoryRepository, private val productsRepository: ProductsRepository) : ViewModel() {
     private val _mainPhoto: MutableStateFlow<UploadPhotoDialog.Result?> = MutableStateFlow(null)
@@ -44,6 +48,16 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
     var isAvailable = ObservableField(false)
     var isActive = ObservableField(false)
 
+
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        when (exception) {
+            is HttpException -> {
+            }
+            else -> {
+            }
+        }
+    }
+
     init {
         viewModelScope.launch {
             categoryRepository.getCategories().collectLatest {
@@ -58,14 +72,31 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
     }
 
     private fun createNewProduct() {
-        viewModelScope.launch {
-            createProduct()
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val product = createProduct()
+            createProductAvailability(product)
         }
     }
 
-    private suspend fun createProduct() {
+    private suspend fun createProductAvailability(product: Product) = productsRepository.createProductAvailability(
+        productAvailability = ProductAvailability(
+            id = -1, // No needed for creating
+            available = availability,
+            isAvailable = isAvailable.get()!!,
+            isActive = isActive.get()!!,
+            productId = product.id
+        )
+    )
 
-    }
+    private suspend fun createProduct() = productsRepository.createProduct(
+        product = Product(
+            id = -1, // No needed
+            name = productName.get()!!,
+            description = description.get()!!,
+            price = price.get()!!.toFloat(),
+            cookingTime = cookingTime.get()!!.toInt()
+        )
+    )
 
     private fun areFieldsValidated(): Boolean {
         var isValidated = true
@@ -116,7 +147,8 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
         _cookingTimeFieldValidation.value = FieldValidation.NoErrors
     }
 
-    class Factory(private val categoryRepository: CategoryRepository, private val productsRepository: ProductsRepository) : ViewModelProvider.Factory {
+    class Factory(private val categoryRepository: CategoryRepository, private val productsRepository: ProductsRepository) :
+        ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ProductEditorViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")

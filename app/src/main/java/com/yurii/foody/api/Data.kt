@@ -91,4 +91,8 @@ data class Category(
     @Json(name = "is_icon_external") val isIconExternal: Boolean
 )
 
+@JsonClass(generateAdapter = true)
 data class ProductCategory(val product: Int, val category: Int)
+
+@JsonClass(generateAdapter = true)
+data class LoadedImage(val url: String)

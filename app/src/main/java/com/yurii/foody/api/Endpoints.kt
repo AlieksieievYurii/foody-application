@@ -1,5 +1,6 @@
 package com.yurii.foody.api
 
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -66,6 +67,9 @@ interface ApiProductImage {
 
     @POST("/products/images/")
     suspend fun createProductImage(@Body productImage: ProductImage): ProductImage
+
+    @POST("/products/images/upload/")
+    suspend fun uploadImage(@Body image: RequestBody): LoadedImage
 }
 
 interface ApiCategories {

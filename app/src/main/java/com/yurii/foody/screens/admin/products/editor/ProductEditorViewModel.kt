@@ -14,7 +14,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import retrofit2.HttpException
+import timber.log.Timber
+import java.io.File
 
 class ProductEditorViewModel(private val categoryRepository: CategoryRepository, private val productsRepository: ProductsRepository) : ViewModel() {
     private val _mainPhoto: MutableStateFlow<UploadPhotoDialog.Result?> = MutableStateFlow(null)
@@ -88,14 +92,16 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
     }
 
     private suspend fun loadInternalPhotoAsDefault(product: Product, photo: UploadPhotoDialog.Result.Internal): ProductImage {
-        val loadedPhotoUrl = loadPhotoToServer(photo.uri)
-        return ProductImage(-1, "", false, false, -1)
+        val loadedPhotoUrl = productsRepository.uploadImage(photo.bytes)
+        return productsRepository.createProductImage(ProductImage(
+            id = -1,
+            imageUrl = loadedPhotoUrl.url,
+            isDefault = true,
+            isExternal = false,
+            productId = product.id
+        ))
     }
 
-    private fun loadPhotoToServer(uri: Uri): String {
-        //TODO
-        return ""
-    }
 
     private suspend fun loadExternalPhotoAsDefault(product: Product, photo: UploadPhotoDialog.Result.External) =
         productsRepository.createProductImage(

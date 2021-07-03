@@ -38,5 +38,8 @@ object Injector {
 
     fun provideProductsEditorViewModel() = ProductsEditorViewModel.Factory(repository = provideProductRepository())
 
-    fun provideProductEditorViewModel() = ProductEditorViewModel.Factory(categoryRepository = CategoryRepository.create(Service))
+    fun provideProductEditorViewModel() = ProductEditorViewModel.Factory(
+        categoryRepository = CategoryRepository.create(Service),
+        productsRepository = provideProductRepository()
+    )
 }

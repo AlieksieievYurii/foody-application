@@ -7,12 +7,13 @@ import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.CategoryRepository
 import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
+import com.yurii.foody.utils.ProductsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class ProductEditorViewModel(private val categoryRepository: CategoryRepository) : ViewModel() {
+class ProductEditorViewModel(private val categoryRepository: CategoryRepository, private val productsRepository: ProductsRepository) : ViewModel() {
     private val _mainPhoto: MutableStateFlow<UploadPhotoDialog.Result?> = MutableStateFlow(null)
     val mainPhoto: StateFlow<UploadPhotoDialog.Result?> = _mainPhoto
 
@@ -53,10 +54,16 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository)
 
     fun save() {
         if (areFieldsValidated())
-            createProduct()
+            createNewProduct()
     }
 
-    private fun createProduct() {
+    private fun createNewProduct() {
+        viewModelScope.launch {
+            createProduct()
+        }
+    }
+
+    private suspend fun createProduct() {
 
     }
 
@@ -109,11 +116,11 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository)
         _cookingTimeFieldValidation.value = FieldValidation.NoErrors
     }
 
-    class Factory(private val categoryRepository: CategoryRepository) : ViewModelProvider.Factory {
+    class Factory(private val categoryRepository: CategoryRepository, private val productsRepository: ProductsRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ProductEditorViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return ProductEditorViewModel(categoryRepository) as T
+                return ProductEditorViewModel(categoryRepository, productsRepository) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

@@ -1,19 +1,18 @@
 package com.yurii.foody.screens.admin.products.editor
 
-import android.util.Log
 import androidx.databinding.ObservableField
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
+import com.yurii.foody.api.Category
 import com.yurii.foody.ui.UploadPhotoDialog
+import com.yurii.foody.utils.CategoryRepository
 import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import timber.log.Timber
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-class ProductEditorViewModel : ViewModel() {
+class ProductEditorViewModel(private val categoryRepository: CategoryRepository) : ViewModel() {
     private val _mainPhoto: MutableStateFlow<UploadPhotoDialog.Result?> = MutableStateFlow(null)
     val mainPhoto: StateFlow<UploadPhotoDialog.Result?> = _mainPhoto
 
@@ -32,10 +31,22 @@ class ProductEditorViewModel : ViewModel() {
     private val _cookingTimeFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val cookingTimeFieldValidation: LiveData<FieldValidation> = _cookingTimeFieldValidation
 
+    private val _categories: MutableStateFlow<List<Category>> = MutableStateFlow(emptyList())
+    val categories: StateFlow<List<Category>> = _categories
+
     val productName = ObservableField(String.Empty)
     val description = ObservableField(String.Empty)
     val price = ObservableField(String.Empty)
     val cookingTime = ObservableField(String.Empty)
+    private var category: CategoryItem? = null
+
+    init {
+        viewModelScope.launch {
+            categoryRepository.getCategories().collectLatest {
+                _categories.value = it
+            }
+        }
+    }
 
     fun save() {
         if (areFieldsValidated()) {
@@ -92,11 +103,15 @@ class ProductEditorViewModel : ViewModel() {
         _cookingTimeFieldValidation.value = FieldValidation.NoErrors
     }
 
-    class Factory : ViewModelProvider.Factory {
+    fun setCategory(categoryItem: CategoryItem?) {
+        category = categoryItem
+    }
+
+    class Factory(private val categoryRepository: CategoryRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ProductEditorViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return ProductEditorViewModel() as T
+                return ProductEditorViewModel(categoryRepository) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

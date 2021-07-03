@@ -9,7 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
-import coil.load
 import com.yurii.foody.R
 import com.yurii.foody.databinding.DialogPhotoUploadBinding
 import com.yurii.foody.utils.hideKeyboard
@@ -124,7 +123,9 @@ class UploadPhotoDialog(private val context: Context, private val registry: Acti
 
         private fun onInternalImageIsSelected(callback: (result: Result) -> Unit) {
             if (imageUri != null) {
-                callback.invoke(Result.Internal(imageUri!!))
+                with(context.contentResolver.openInputStream(imageUri!!)) {
+                    callback.invoke(Result.Internal(imageUri!!, this!!.readBytes()))
+                }
                 dialog.dismiss()
             } else
                 showError(Error.SELECT_IMAGE)
@@ -146,7 +147,22 @@ class UploadPhotoDialog(private val context: Context, private val registry: Acti
     private enum class Error { SELECT_IMAGE, ENTER_IMAGE_URL }
     sealed class Result {
         data class External(val url: String) : Result()
-        data class Internal(val uri: Uri) : Result()
+        data class Internal(val uri: Uri, val bytes: ByteArray) : Result() {
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (javaClass != other?.javaClass) return false
+
+                other as Internal
+
+                if (uri != other.uri) return false
+
+                return true
+            }
+
+            override fun hashCode(): Int {
+                return uri.hashCode()
+            }
+        }
     }
 
     private var currentDialog: Dialog? = null

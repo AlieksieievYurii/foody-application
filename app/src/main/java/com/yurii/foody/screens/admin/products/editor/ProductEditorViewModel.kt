@@ -1,6 +1,5 @@
 package com.yurii.foody.screens.admin.products.editor
 
-import android.net.Uri
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.api.*
@@ -10,15 +9,13 @@ import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.ProductsRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import retrofit2.HttpException
-import timber.log.Timber
-import java.io.File
 
 class ProductEditorViewModel(private val categoryRepository: CategoryRepository, private val productsRepository: ProductsRepository) : ViewModel() {
     private val _mainPhoto: MutableStateFlow<UploadPhotoDialog.Result?> = MutableStateFlow(null)
@@ -77,10 +74,14 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
     private fun createNewProduct() {
         viewModelScope.launch {
             val product = createProduct()
-            createProductAvailability(product)
-            if (isCategorySelected())
-                createProductCategory(product)
-            loadDefaultProductImage(product)
+            awaitAll(
+                async { createProductAvailability(product) },
+                async {
+                    if (isCategorySelected())
+                        createProductCategory(product)
+                },
+                async { loadDefaultProductImage(product) }
+            )
         }
     }
 
@@ -93,13 +94,15 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
 
     private suspend fun loadInternalPhotoAsDefault(product: Product, photo: UploadPhotoDialog.Result.Internal): ProductImage {
         val loadedPhotoUrl = productsRepository.uploadImage(photo.bytes)
-        return productsRepository.createProductImage(ProductImage(
-            id = -1,
-            imageUrl = loadedPhotoUrl.url,
-            isDefault = true,
-            isExternal = false,
-            productId = product.id
-        ))
+        return productsRepository.createProductImage(
+            ProductImage(
+                id = -1,
+                imageUrl = loadedPhotoUrl.url,
+                isDefault = true,
+                isExternal = false,
+                productId = product.id
+            )
+        )
     }
 
 

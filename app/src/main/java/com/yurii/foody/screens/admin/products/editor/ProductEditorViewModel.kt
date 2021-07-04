@@ -36,6 +36,9 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
     private val _categories: MutableStateFlow<List<Category>> = MutableStateFlow(emptyList())
     val categories: StateFlow<List<Category>> = _categories
 
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     val productName = ObservableField(String.Empty)
     val description = ObservableField(String.Empty)
     val price = ObservableField(String.Empty)
@@ -70,6 +73,7 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
 
     private fun createNewProduct() {
         viewModelScope.launch {
+            _isLoading.value = true
             val product = createProduct()
             awaitAll(
                 async { createProductAvailability(product) },
@@ -80,6 +84,7 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
                 async { loadDefaultProductImage(product) },
                 async { loadAdditionalPhotos(product) }
             )
+            _isLoading.value = false
         }
     }
 

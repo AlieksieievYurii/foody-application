@@ -9,12 +9,17 @@ import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.ProductsRepository
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import retrofit2.HttpException
+import kotlinx.coroutines.flow.receiveAsFlow
 
 class ProductEditorViewModel(private val categoryRepository: CategoryRepository, private val productsRepository: ProductsRepository) : ViewModel() {
+    sealed class Event {
+        data class ShowError(val exception: Throwable) : Event()
+    }
+
     private val _mainPhoto: MutableStateFlow<UploadPhotoDialog.Result?> = MutableStateFlow(null)
     val mainPhoto: StateFlow<UploadPhotoDialog.Result?> = _mainPhoto
 
@@ -48,13 +53,14 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
     var isAvailable = ObservableField(false)
     var isActive = ObservableField(false)
 
+    private val eventChannel = Channel<Event>(Channel.BUFFERED)
+    val eventFlow = eventChannel.receiveAsFlow()
+
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-        when (exception) {
-            is HttpException -> {
-            }
-            else -> {
-            }
+        _isLoading.value = false
+        viewModelScope.launch {
+            eventChannel.send(Event.ShowError(exception))
         }
     }
 
@@ -72,7 +78,7 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
     }
 
     private fun createNewProduct() {
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineExceptionHandler) {
             _isLoading.value = true
             val product = createProduct()
             awaitAll(

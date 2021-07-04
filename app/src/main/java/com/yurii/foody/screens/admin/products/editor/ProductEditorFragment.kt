@@ -14,6 +14,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
 import com.yurii.foody.api.Category
 import com.yurii.foody.databinding.FragmentEditCreateProductBinding
+import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.Injector
@@ -37,6 +38,7 @@ class ProductEditorFragment : Fragment() {
     private val viewModel: ProductEditorViewModel by viewModels { Injector.provideProductEditorViewModel() }
     private val uploadImageDialog: UploadPhotoDialog by lazy { UploadPhotoDialog(requireContext(), requireActivity().activityResultRegistry) }
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
+    private val errorDialog by lazy { ErrorDialog(requireContext()) }
     private lateinit var binding: FragmentEditCreateProductBinding
     private val imagesListAdapter = ImagesListAdapter(this::onAddNewAdditionalImage, this::onDeleteAdditionalImage)
 
@@ -68,7 +70,16 @@ class ProductEditorFragment : Fragment() {
 
         observerCategories()
         observeLoadingState()
+        observeEvents()
         return binding.root
+    }
+
+    private fun observeEvents() {
+        viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {event ->
+            when(event) {
+                is ProductEditorViewModel.Event.ShowError -> errorDialog.show(event.exception.message ?: "No error message")
+            }
+        }
     }
 
     private fun observeLoadingState() {

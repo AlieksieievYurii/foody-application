@@ -26,7 +26,7 @@ interface AuthDataStorageInterface {
 }
 
 class AuthDataStorage private constructor(private val dataStore: DataStore<Preferences>) : AuthDataStorageInterface {
-    data class Data(val token: String, val email: String, val userId: Int)
+    data class Data(val token: String, val email: String, val userId: Long)
 
     override val authData: Flow<Data?> = dataStore.data.map { preferences ->
         Data(
@@ -120,9 +120,9 @@ class AuthDataStorage private constructor(private val dataStore: DataStore<Prefe
     companion object {
         private val KEY_AUTH_TOKEN = stringPreferencesKey("key_auth_token")
         private val KEY_AUTH_EMAIL = stringPreferencesKey("key_auth_email")
-        private val KEY_AUTH_USER_ID = intPreferencesKey("key_auth_user_id")
+        private val KEY_AUTH_USER_ID = longPreferencesKey("key_auth_user_id")
 
-        private val KEY_USER_ID = intPreferencesKey("key_user_id")
+        private val KEY_USER_ID = longPreferencesKey("key_user_id")
         private val KEY_USER_FIRST_NAME = stringPreferencesKey("key_user_first_name")
         private val KEY_USER_LAST_NAME = stringPreferencesKey("key_user_last_name")
         private val KEY_USER_PHONE_NUMBER = stringPreferencesKey("key_user_phone_number")

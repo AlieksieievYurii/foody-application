@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.util.*
 
-const val ID_NO_NEEDED = -1
+const val ID_NO_NEEDED = -1L
 
 enum class UserRoleEnum(val role: String) {
     @Json(name = "client")
@@ -24,17 +24,17 @@ enum class UserRoleEnum(val role: String) {
 @JsonClass(generateAdapter = true)
 data class Pagination<T>(val count: Int, val next: String?, val previous: String?, val results: List<T>)
 
-data class UserRole(@Json(name = "user") val userId: Int, @Json(name = "is_confirmed") val isConfirmed: Boolean, val role: UserRoleEnum)
+data class UserRole(@Json(name = "user") val userId: Long, @Json(name = "is_confirmed") val isConfirmed: Boolean, val role: UserRoleEnum)
 
 @JsonClass(generateAdapter = true)
 data class AuthData(val username: String, val password: String)
 
 @JsonClass(generateAdapter = true)
-data class AuthResponseData(val token: String, @Json(name = "user_id") val userId: Int, val email: String)
+data class AuthResponseData(val token: String, @Json(name = "user_id") val userId: Long, val email: String)
 
 @JsonClass(generateAdapter = true)
 data class User(
-    @Json(name = "pk") val id: Int,
+    @Json(name = "pk") val id: Long,
     val email: String,
     @Json(name = "first_name") val firstName: String,
     @Json(name = "last_name") val lastName: String,
@@ -59,7 +59,7 @@ data class RegistrationForm(
 
 @JsonClass(generateAdapter = true)
 data class Product(
-    val id: Int,
+    val id: Long,
     val name: String,
     val description: String,
     val price: Float,
@@ -80,14 +80,14 @@ data class Product(
 
 @JsonClass(generateAdapter = true)
 data class ProductAvailability(
-    val id: Int,
+    val id: Long,
     val available: Int,
     @Json(name = "is_available") val isAvailable: Boolean,
     @Json(name = "is_active") val isActive: Boolean,
-    @Json(name = "product") val productId: Int
+    @Json(name = "product") val productId: Long
 ) {
     companion object {
-        fun create(available: Int, isAvailable: Boolean, isActive: Boolean, productId: Int): ProductAvailability {
+        fun create(available: Int, isAvailable: Boolean, isActive: Boolean, productId: Long): ProductAvailability {
             return ProductAvailability(
                 id = ID_NO_NEEDED,
                 available = available,
@@ -100,17 +100,17 @@ data class ProductAvailability(
 }
 
 @JsonClass(generateAdapter = true)
-data class ProductRating(@Json(name = "product") val productId: Int, val rating: Float)
+data class ProductRating(@Json(name = "product") val productId: Long, val rating: Float)
 
 data class ProductImage(
-    val id: Int,
+    val id: Long,
     @Json(name = "image_url") val imageUrl: String,
     @Json(name = "is_default") val isDefault: Boolean,
     @Json(name = "is_external") val isExternal: Boolean,
-    @Json(name = "product") val productId: Int
+    @Json(name = "product") val productId: Long
 ) {
     companion object {
-        fun create(imageUrl: String, isDefault: Boolean, isExternal: Boolean, productId: Int): ProductImage {
+        fun create(imageUrl: String, isDefault: Boolean, isExternal: Boolean, productId: Long): ProductImage {
             return ProductImage(
                 id = ID_NO_NEEDED,
                 imageUrl = imageUrl,
@@ -123,14 +123,14 @@ data class ProductImage(
 }
 
 data class Category(
-    val id: Int,
+    val id: Long,
     val name: String,
     @Json(name = "icon_url") val iconUrl: String,
     @Json(name = "is_icon_external") val isIconExternal: Boolean
 )
 
 @JsonClass(generateAdapter = true)
-data class ProductCategory(val product: Int, val category: Int)
+data class ProductCategory(val product: Long, val category: Long)
 
 @JsonClass(generateAdapter = true)
 data class LoadedImage(val url: String)

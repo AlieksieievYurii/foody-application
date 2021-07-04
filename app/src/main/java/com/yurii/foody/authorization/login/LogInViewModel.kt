@@ -77,7 +77,7 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
         }
     }
 
-    private suspend fun handleUser(userId: Int) {
+    private suspend fun handleUser(userId: Long) {
         repository.getUser(userId.toLong()).catch { exception ->
             handleResponseError(exception)
         }.collect { user ->
@@ -91,7 +91,7 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
         }
     }
 
-    private suspend fun handleUserRole(userId: Int) {
+    private suspend fun handleUserRole(userId: Long) {
         repository.getUsersRoles(userId).catch { exception ->
             handleResponseError(exception, isAuthenticated = true)
         }.collect { userRolePagination ->

@@ -23,7 +23,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 data class ProductData(
-    val id: Int,
+    val id: Long,
     val name: String,
     val price: Float,
     val available: Int,

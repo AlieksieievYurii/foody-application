@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
@@ -18,6 +19,7 @@ import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.Injector
+import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
 
 data class CategoryItem(val id: Int, val name: String) {
@@ -71,6 +73,10 @@ class ProductEditorFragment : Fragment() {
         observerCategories()
         observeLoadingState()
         observeEvents()
+
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
         return binding.root
     }
 
@@ -84,6 +90,7 @@ class ProductEditorFragment : Fragment() {
 
     private fun observeLoadingState() {
         viewModel.isLoading.observeOnLifecycle(viewLifecycleOwner) { isLoading ->
+            hideKeyboard()
             if (isLoading)
                 loadingDialog.show()
             else

@@ -52,6 +52,9 @@ interface ApiProductAvailability {
 
     @POST("/products/availabilities/")
     suspend fun createProductAvailability(@Body productAvailability: ProductAvailability)
+
+    @GET("/products/availabilities/{product}/")
+    suspend fun getProductAvailability(@Path("product") productId: Long): ProductAvailability
 }
 
 interface ApiProductRating {

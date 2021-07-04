@@ -4,6 +4,8 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.util.*
 
+const val ID_NO_NEEDED = -1
+
 enum class UserRoleEnum(val role: String) {
     @Json(name = "client")
     CLIENT("client"),
@@ -62,7 +64,19 @@ data class Product(
     val description: String,
     val price: Float,
     @Json(name = "cooking_time") val cookingTime: Int
-)
+) {
+    companion object {
+        fun create(name: String, description: String, price: Float, cookingTime: Int): Product {
+            return Product(
+                id = ID_NO_NEEDED,
+                name = name,
+                description = description,
+                price = price,
+                cookingTime = cookingTime
+            )
+        }
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class ProductAvailability(
@@ -71,7 +85,19 @@ data class ProductAvailability(
     @Json(name = "is_available") val isAvailable: Boolean,
     @Json(name = "is_active") val isActive: Boolean,
     @Json(name = "product") val productId: Int
-)
+) {
+    companion object {
+        fun create(available: Int, isAvailable: Boolean, isActive: Boolean, productId: Int): ProductAvailability {
+            return ProductAvailability(
+                id = ID_NO_NEEDED,
+                available = available,
+                isAvailable = isAvailable,
+                isActive = isActive,
+                productId = productId
+            )
+        }
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class ProductRating(@Json(name = "product") val productId: Int, val rating: Float)
@@ -82,7 +108,19 @@ data class ProductImage(
     @Json(name = "is_default") val isDefault: Boolean,
     @Json(name = "is_external") val isExternal: Boolean,
     @Json(name = "product") val productId: Int
-)
+) {
+    companion object {
+        fun create(imageUrl: String, isDefault: Boolean, isExternal: Boolean, productId: Int): ProductImage {
+            return ProductImage(
+                id = ID_NO_NEEDED,
+                imageUrl = imageUrl,
+                isDefault = isDefault,
+                isExternal = isExternal,
+                productId = productId
+            )
+        }
+    }
+}
 
 data class Category(
     val id: Int,

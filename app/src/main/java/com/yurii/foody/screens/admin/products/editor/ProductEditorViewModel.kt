@@ -103,8 +103,7 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
     private suspend fun loadInternalPhoto(product: Product, photo: UploadPhotoDialog.Result.Internal, isDefault: Boolean): ProductImage {
         val loadedPhotoUrl = productsRepository.uploadImage(photo.bytes)
         return productsRepository.createProductImage(
-            ProductImage(
-                id = -1,
+            ProductImage.create(
                 imageUrl = loadedPhotoUrl.url,
                 isDefault = isDefault,
                 isExternal = false,
@@ -116,8 +115,7 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
 
     private suspend fun loadExternalPhoto(product: Product, photo: UploadPhotoDialog.Result.External, isDefault: Boolean) =
         productsRepository.createProductImage(
-            productImage = ProductImage(
-                id = -1, // No needed
+            productImage = ProductImage.create(
                 imageUrl = photo.url,
                 isDefault = isDefault,
                 isExternal = true,
@@ -135,8 +133,7 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
     private fun isCategorySelected(): Boolean = category?.id != -1
 
     private suspend fun createProductAvailability(product: Product) = productsRepository.createProductAvailability(
-        productAvailability = ProductAvailability(
-            id = -1, // No needed for creating
+        productAvailability = ProductAvailability.create(
             available = availability,
             isAvailable = isAvailable.get()!!,
             isActive = isActive.get()!!,
@@ -145,8 +142,7 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
     )
 
     private suspend fun createProduct() = productsRepository.createProduct(
-        product = Product(
-            id = -1, // No needed
+        product = Product.create(
             name = productName.get()!!,
             description = description.get()!!,
             price = price.get()!!.toFloat(),

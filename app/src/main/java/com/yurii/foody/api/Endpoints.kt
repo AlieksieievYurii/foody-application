@@ -19,7 +19,7 @@ interface ApiUsers {
     suspend fun getUser(@Path("id") id: Long): User
 
     @GET("/users/roles")
-    suspend fun getUsersRoles(@Query("user") userId: Int? = null): Pagination<UserRole>
+    suspend fun getUsersRoles(@Query("user") userId: Long? = null): Pagination<UserRole>
 }
 
 interface ApiProducts {
@@ -37,6 +37,9 @@ interface ApiProducts {
 
     @DELETE("/products/delete_many/")
     suspend fun deleteProducts(@Query("ids") ids: String): Response<Unit>
+
+    @GET("/products/{id}/")
+    suspend fun getProduct(@Path("id") id: Long): Product
 }
 
 interface ApiProductAvailability {

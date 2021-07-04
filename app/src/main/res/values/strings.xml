@@ -83,4 +83,5 @@
     <string name="message_delete_image_confirmation">Are you sure to delete image?</string>
     <string name="label_save">Save</string>
     <string name="error_no_photo">No photo</string>
+    <string name="hint_items_are_removed">The items have been removed</string>
 </resources>

@@ -152,7 +152,7 @@ class ProductsEditorFragment : Fragment() {
                 ProductsEditorViewModel.Event.Refresh -> listAdapter.refresh()
                 is ProductsEditorViewModel.Event.ShowItemsRemovedSnackBar -> Snackbar.make(
                     binding.root,
-                    "The items have been removed",
+                    R.string.hint_items_are_removed,
                     Snackbar.LENGTH_LONG
                 ).show()
             }

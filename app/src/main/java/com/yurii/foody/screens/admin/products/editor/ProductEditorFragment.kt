@@ -46,9 +46,11 @@ class ProductEditorFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_create_product, container, false)
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.additionalImages.adapter = imagesListAdapter
+        binding.apply {
+            this.viewModel = viewModel
+            lifecycleOwner = viewLifecycleOwner
+            additionalImages.adapter = imagesListAdapter
+        }
         binding.defaultImage.setOnClickListener {
             uploadImageDialog.show { viewModel.addMainPhoto(it) }
         }
@@ -57,6 +59,19 @@ class ProductEditorFragment : Fragment() {
             viewModel.availability = it
         }
 
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        observeAdditionalImages()
+        observeMainPhoto()
+        observeCategories()
+        observeLoadingState()
+        observeEvents()
+        return binding.root
+    }
+
+    private fun observeMainPhoto() {
         viewModel.mainPhoto.observeOnLifecycle(viewLifecycleOwner) { image ->
             image?.run {
                 when (this) {
@@ -65,24 +80,17 @@ class ProductEditorFragment : Fragment() {
                 }
             }
         }
+    }
 
+    private fun observeAdditionalImages() {
         viewModel.additionalImagesFlow.observeOnLifecycle(viewLifecycleOwner) {
             imagesListAdapter.submitList(it)
         }
-
-        observerCategories()
-        observeLoadingState()
-        observeEvents()
-
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
-        return binding.root
     }
 
     private fun observeEvents() {
-        viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {event ->
-            when(event) {
+        viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) { event ->
+            when (event) {
                 is ProductEditorViewModel.Event.ShowError -> errorDialog.show(event.exception.message ?: "No error message")
             }
         }
@@ -121,7 +129,7 @@ class ProductEditorFragment : Fragment() {
         }
     }
 
-    private fun observerCategories() {
+    private fun observeCategories() {
         val arrayAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, mutableListOf<CategoryItem>())
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.category.adapter = arrayAdapter

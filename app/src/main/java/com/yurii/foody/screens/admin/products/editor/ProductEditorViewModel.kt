@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 class ProductEditorViewModel(private val categoryRepository: CategoryRepository, private val productsRepository: ProductsRepository) : ViewModel() {
     sealed class Event {
         data class ShowError(val exception: Throwable) : Event()
+        object CloseEditor : Event()
     }
 
     private val _mainPhoto: MutableStateFlow<UploadPhotoDialog.Result?> = MutableStateFlow(null)
@@ -91,6 +92,7 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
                 async { loadAdditionalPhotos(product) }
             )
             _isLoading.value = false
+            eventChannel.send(Event.CloseEditor)
         }
     }
 

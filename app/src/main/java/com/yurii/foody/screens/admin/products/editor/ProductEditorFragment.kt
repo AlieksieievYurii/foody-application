@@ -46,11 +46,11 @@ class ProductEditorFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_create_product, container, false)
-        binding.apply {
-            this.viewModel = viewModel
-            lifecycleOwner = viewLifecycleOwner
-            additionalImages.adapter = imagesListAdapter
-        }
+
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.additionalImages.adapter = imagesListAdapter
+
         binding.defaultImage.setOnClickListener {
             uploadImageDialog.show { viewModel.addMainPhoto(it) }
         }
@@ -60,7 +60,7 @@ class ProductEditorFragment : Fragment() {
         }
 
         binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
+            closeFragment()
         }
 
         observeAdditionalImages()
@@ -92,8 +92,13 @@ class ProductEditorFragment : Fragment() {
         viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) { event ->
             when (event) {
                 is ProductEditorViewModel.Event.ShowError -> errorDialog.show(event.exception.message ?: "No error message")
+                ProductEditorViewModel.Event.CloseEditor -> closeFragment()
             }
         }
+    }
+
+    private fun closeFragment() {
+        findNavController().navigateUp()
     }
 
     private fun observeLoadingState() {

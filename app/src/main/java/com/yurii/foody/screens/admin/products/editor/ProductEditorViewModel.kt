@@ -8,13 +8,10 @@ import com.yurii.foody.utils.CategoryRepository
 import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.ProductsRepository
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class ProductEditorViewModel(private val categoryRepository: CategoryRepository, private val productsRepository: ProductsRepository) : ViewModel() {
@@ -80,25 +77,36 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
                     if (isCategorySelected())
                         createProductCategory(product)
                 },
-                async { loadDefaultProductImage(product) }
+                async { loadDefaultProductImage(product) },
+                async { loadAdditionalPhotos(product) }
             )
         }
     }
 
-    private suspend fun loadDefaultProductImage(product: Product): ProductImage {
-        return when (val photo = _mainPhoto.value!!) {
-            is UploadPhotoDialog.Result.External -> loadExternalPhotoAsDefault(product, photo)
-            is UploadPhotoDialog.Result.Internal -> loadInternalPhotoAsDefault(product, photo)
+    private suspend fun loadAdditionalPhotos(product: Product) {
+        additionalImagesFlow.value.forEach {
+            loadPhoto(product, it.data, isDefault = false)
         }
     }
 
-    private suspend fun loadInternalPhotoAsDefault(product: Product, photo: UploadPhotoDialog.Result.Internal): ProductImage {
+    private suspend fun loadDefaultProductImage(product: Product): ProductImage {
+        return loadPhoto(product, _mainPhoto.value!!, isDefault = true)
+    }
+
+    private suspend fun loadPhoto(product: Product, photo: UploadPhotoDialog.Result, isDefault: Boolean = false): ProductImage {
+        return when (photo) {
+            is UploadPhotoDialog.Result.External -> loadExternalPhoto(product, photo, isDefault)
+            is UploadPhotoDialog.Result.Internal -> loadInternalPhoto(product, photo, isDefault)
+        }
+    }
+
+    private suspend fun loadInternalPhoto(product: Product, photo: UploadPhotoDialog.Result.Internal, isDefault: Boolean): ProductImage {
         val loadedPhotoUrl = productsRepository.uploadImage(photo.bytes)
         return productsRepository.createProductImage(
             ProductImage(
                 id = -1,
                 imageUrl = loadedPhotoUrl.url,
-                isDefault = true,
+                isDefault = isDefault,
                 isExternal = false,
                 productId = product.id
             )
@@ -106,12 +114,12 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
     }
 
 
-    private suspend fun loadExternalPhotoAsDefault(product: Product, photo: UploadPhotoDialog.Result.External) =
+    private suspend fun loadExternalPhoto(product: Product, photo: UploadPhotoDialog.Result.External, isDefault: Boolean) =
         productsRepository.createProductImage(
             productImage = ProductImage(
                 id = -1, // No needed
                 imageUrl = photo.url,
-                isDefault = true,
+                isDefault = isDefault,
                 isExternal = true,
                 productId = product.id
             )

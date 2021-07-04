@@ -71,12 +71,8 @@ class ProductEditorFragment : Fragment() {
     private fun onAddNewAdditionalImage() {
         uploadImageDialog.show {
             when (it) {
-                is UploadPhotoDialog.Result.External -> viewModel.addAdditionalImage(
-                    AdditionalImageData.create(it.url, getString(R.string.label_external))
-                )
-                is UploadPhotoDialog.Result.Internal -> viewModel.addAdditionalImage(
-                    AdditionalImageData.create(it.uri.toString(), getString(R.string.label_internal))
-                )
+                is UploadPhotoDialog.Result.External -> viewModel.addAdditionalImage(AdditionalImageData.create(it))
+                is UploadPhotoDialog.Result.Internal -> viewModel.addAdditionalImage(AdditionalImageData.create(it))
             }
         }
     }

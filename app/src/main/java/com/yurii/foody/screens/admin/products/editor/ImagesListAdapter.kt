@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.yurii.foody.R
 import com.yurii.foody.databinding.ItemProductImageBinding
+import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.loadImage
 import java.lang.IllegalStateException
 
@@ -57,8 +58,17 @@ class ImagesListAdapter(private val onAddNewImage: () -> Unit, private val onIte
 
         fun bind(image: AdditionalImageData, onItemDelete: (image: AdditionalImageData) -> Unit) {
             binding.apply {
-                thumbnail.loadImage(image.uriOrUrl)
-                imageType.text = image.type
+                when(image.data) {
+                    is UploadPhotoDialog.Result.External -> {
+                        thumbnail.loadImage(image.data.url)
+                        imageType.text = binding.root.context.getText(R.string.label_external)
+                    }
+                    is UploadPhotoDialog.Result.Internal -> {
+                        thumbnail.loadImage(image.data.uri.toString())
+                        imageType.text = binding.root.context.getText(R.string.label_internal)
+                    }
+                }
+
                 delete.setOnClickListener { onItemDelete(image) }
             }
         }

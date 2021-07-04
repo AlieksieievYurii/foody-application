@@ -97,6 +97,7 @@ interface ProductViewHolderCallback {
 class ProductAdapter(private val selectableMode: MutableStateFlow<Boolean>, private val scope: CoroutineScope) :
     PagingDataAdapter<ProductData, ProductAdapter.ProductViewHolder>(COMPARATOR), ProductViewHolderCallback {
     private val selectedProducts: MutableSet<ProductData> = mutableSetOf()
+    var onClickItem: ((ProductData) -> Unit)? = null
     init {
         scope.launch {
             selectableMode.collectLatest {
@@ -131,6 +132,8 @@ class ProductAdapter(private val selectableMode: MutableStateFlow<Boolean>, priv
                 selectedProducts.remove(product)
             else
                 selectedProducts.add(product)
+        else
+            onClickItem?.invoke(product)
     }
 
     override fun isSelected(product: ProductData): Boolean = selectedProducts.contains(product)

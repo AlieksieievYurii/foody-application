@@ -32,6 +32,10 @@ class ProductsEditorFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_product_editor, container, false)
 
+        listAdapter.onClickItem = {productData ->
+            navigateToEditor(productData)
+        }
+
         binding.listFragment.setAdapter(listAdapter)
 
         binding.listFragment.setOnRefreshListener { listAdapter.refresh() }
@@ -53,6 +57,10 @@ class ProductsEditorFragment : Fragment() {
         observeSelectableMode()
 
         return binding.root
+    }
+
+    private fun navigateToEditor(productData: ProductData) {
+        //Navigate to editor
     }
 
     private fun askUserToAcceptDeleting(callback: () -> Unit) {

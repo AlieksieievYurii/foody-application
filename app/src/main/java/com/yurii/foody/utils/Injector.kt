@@ -38,9 +38,9 @@ object Injector {
 
     fun provideProductsEditorViewModel() = ProductsEditorViewModel.Factory(repository = provideProductRepository())
 
-    fun provideProductEditorViewModel(productIdToEdit: Int) = ProductEditorViewModel.Factory(
+    fun provideProductEditorViewModel(productIdToEdit: Long) = ProductEditorViewModel.Factory(
         categoryRepository = CategoryRepository.create(Service),
         productsRepository = provideProductRepository(),
-        productIdToEdit = if (productIdToEdit == -1) null else productIdToEdit
+        productIdToEdit = if (productIdToEdit == -1L) null else productIdToEdit
     )
 }

@@ -175,5 +175,20 @@
     <fragment
         android:id="@+id/productsEditorFragment"
         android:name="com.yurii.foody.screens.admin.products.ProductsEditorFragment"
-        android:label="ProductsEditorFragment" />
+        android:label="ProductsEditorFragment"
+        tools:layout="@layout/fragment_product_editor">
+        <action
+            android:id="@+id/action_productsEditorFragment_to_productEditorFragment"
+            app:destination="@id/productEditorFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/productEditorFragment"
+        android:name="com.yurii.foody.screens.admin.products.editor.ProductEditorFragment"
+        android:label="ProductEditorFragment"
+        tools:layout="@layout/fragment_edit_create_product">
+        <argument
+            android:name="productIdToEdit"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
 </navigation>

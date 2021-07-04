@@ -19,15 +19,11 @@ import timber.log.Timber
 class ProductEditorViewModel(
     private val categoryRepository: CategoryRepository,
     private val productsRepository: ProductsRepository,
-    private val productIdToEdit: Int? = null
+    private val productIdToEdit: Long? = null
 ) : ViewModel() {
     sealed class Event {
         data class ShowError(val exception: Throwable) : Event()
         object CloseEditor : Event()
-    }
-
-    init {
-        Timber.i(productIdToEdit.toString())
     }
 
     private val _mainPhoto: MutableStateFlow<UploadPhotoDialog.Result?> = MutableStateFlow(null)
@@ -80,6 +76,19 @@ class ProductEditorViewModel(
                 _categories.value = it
             }
         }
+
+        if (productIdToEdit != null)
+            loadProductToEdit()
+    }
+
+    private fun loadProductToEdit() {
+        viewModelScope.launch {
+            loadProduct()
+        }
+    }
+
+    private suspend fun loadProduct() {
+        productsRepository.getProduct(productIdToEdit!!)
     }
 
     fun save() {
@@ -224,7 +233,7 @@ class ProductEditorViewModel(
     class Factory(
         private val categoryRepository: CategoryRepository,
         private val productsRepository: ProductsRepository,
-        private val productIdToEdit: Int?
+        private val productIdToEdit: Long?
     ) :
         ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {

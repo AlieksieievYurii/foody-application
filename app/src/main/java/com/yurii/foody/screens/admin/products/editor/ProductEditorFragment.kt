@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
@@ -37,7 +38,8 @@ fun Category.toCategoryItem(): CategoryItem {
 }
 
 class ProductEditorFragment : Fragment() {
-    private val viewModel: ProductEditorViewModel by viewModels { Injector.provideProductEditorViewModel() }
+    private val args: ProductEditorFragmentArgs by navArgs()
+    private val viewModel: ProductEditorViewModel by viewModels { Injector.provideProductEditorViewModel(args.productIdToEdit) }
     private val uploadImageDialog: UploadPhotoDialog by lazy { UploadPhotoDialog(requireContext(), requireActivity().activityResultRegistry) }
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     private val errorDialog by lazy { ErrorDialog(requireContext()) }

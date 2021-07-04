@@ -32,7 +32,7 @@ class ProductsEditorFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_product_editor, container, false)
 
-        listAdapter.onClickItem = {productData ->
+        listAdapter.onClickItem = { productData ->
             navigateToEditor(productData)
         }
 
@@ -49,7 +49,7 @@ class ProductsEditorFragment : Fragment() {
         }
 
         binding.add.setOnClickListener {
-            findNavController().navigate(ProductsEditorFragmentDirections.actionProductsEditorFragmentToProductEditorFragment() )
+            findNavController().navigate(ProductsEditorFragmentDirections.actionProductsEditorFragmentToProductEditorFragment())
         }
 
         observeEvents()
@@ -60,7 +60,9 @@ class ProductsEditorFragment : Fragment() {
     }
 
     private fun navigateToEditor(productData: ProductData) {
-        //Navigate to editor
+        findNavController().navigate(
+            ProductsEditorFragmentDirections.actionProductsEditorFragmentToProductEditorFragment(productIdToEdit = productData.id)
+        )
     }
 
     private fun askUserToAcceptDeleting(callback: () -> Unit) {

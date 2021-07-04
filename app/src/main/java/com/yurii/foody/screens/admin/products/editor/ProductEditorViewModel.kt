@@ -14,11 +14,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
+import timber.log.Timber
 
-class ProductEditorViewModel(private val categoryRepository: CategoryRepository, private val productsRepository: ProductsRepository) : ViewModel() {
+class ProductEditorViewModel(
+    private val categoryRepository: CategoryRepository,
+    private val productsRepository: ProductsRepository,
+    private val productIdToEdit: Int? = null
+) : ViewModel() {
     sealed class Event {
         data class ShowError(val exception: Throwable) : Event()
         object CloseEditor : Event()
+    }
+
+    init {
+        Timber.i(productIdToEdit.toString())
     }
 
     private val _mainPhoto: MutableStateFlow<UploadPhotoDialog.Result?> = MutableStateFlow(null)
@@ -212,12 +221,16 @@ class ProductEditorViewModel(private val categoryRepository: CategoryRepository,
         _cookingTimeFieldValidation.value = FieldValidation.NoErrors
     }
 
-    class Factory(private val categoryRepository: CategoryRepository, private val productsRepository: ProductsRepository) :
+    class Factory(
+        private val categoryRepository: CategoryRepository,
+        private val productsRepository: ProductsRepository,
+        private val productIdToEdit: Int?
+    ) :
         ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ProductEditorViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return ProductEditorViewModel(categoryRepository, productsRepository) as T
+                return ProductEditorViewModel(categoryRepository, productsRepository, productIdToEdit) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

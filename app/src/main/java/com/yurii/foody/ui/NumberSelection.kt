@@ -4,9 +4,29 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.InverseBindingAdapter
+import androidx.databinding.InverseBindingListener
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentNumberSelectionBinding
+
+@BindingAdapter("valueAttrChanged")
+fun setListener(numberSelection: NumberSelection, listener: InverseBindingListener) {
+    numberSelection.onChangeListener = {
+        listener.onChange()
+    }
+}
+
+@BindingAdapter("value")
+fun setValue(numberSelection: NumberSelection, value: Int) {
+    if (numberSelection.number != value)
+        numberSelection.number = value
+}
+@InverseBindingAdapter(attribute = "value")
+fun getValue(numberSelection: NumberSelection): Int {
+    return numberSelection.number
+}
 
 class NumberSelection(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     private val binding: FragmentNumberSelectionBinding = DataBindingUtil.inflate(
@@ -23,6 +43,10 @@ class NumberSelection(context: Context, attrs: AttributeSet) : FrameLayout(conte
         }
 
     init {
+        context.theme.obtainStyledAttributes(attrs, R.styleable.NumberSelection, 0, 0).apply {
+            number = getInteger(R.styleable.NumberSelection_value, DEFAULT_VALUE)
+        }
+
         binding.number.text = number.toString()
         binding.increase.setOnClickListener {
             binding.number.text = (++number).toString()

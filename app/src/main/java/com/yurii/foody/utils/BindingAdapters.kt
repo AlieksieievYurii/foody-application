@@ -19,16 +19,18 @@ fun editTextListener(editText: TextInputEditText, callback: CallBack) =
 @BindingAdapter("errorField")
 fun errorField(textView: TextView, fieldValidation: FieldValidation) {
     textView.isVisible = fieldValidation != FieldValidation.NoErrors
-    textView.setText(when(fieldValidation) {
-        FieldValidation.EmptyField -> R.string.label_must_not_empty
-        FieldValidation.WrongCredentials -> R.string.label_wrong_credentials
-        FieldValidation.NoErrors -> return
-        FieldValidation.EmailIsAlreadyUsed -> R.string.label_email_is_already_used
-        FieldValidation.WrongEmailFormat -> R.string.label_wrong_email
-        FieldValidation.WrongPhoneFormat -> R.string.label_wrong_phone_format
-        FieldValidation.DoesNotFitRequirements -> TODO()
-        FieldValidation.NoPhoto -> R.string.error_no_photo
-    })
+    textView.setText(
+        when (fieldValidation) {
+            FieldValidation.EmptyField -> R.string.label_must_not_empty
+            FieldValidation.WrongCredentials -> R.string.label_wrong_credentials
+            FieldValidation.NoErrors -> return
+            FieldValidation.EmailIsAlreadyUsed -> R.string.label_email_is_already_used
+            FieldValidation.WrongEmailFormat -> R.string.label_wrong_email
+            FieldValidation.WrongPhoneFormat -> R.string.label_wrong_phone_format
+            FieldValidation.DoesNotFitRequirements -> TODO()
+            FieldValidation.NoPhoto -> R.string.error_no_photo
+        }
+    )
 }
 
 @BindingAdapter("imageUrl")

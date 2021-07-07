@@ -1,5 +1,8 @@
 package com.yurii.foody.screens.admin.products.editor
 
+import android.app.Application
+import android.net.Uri
+import androidx.core.net.toUri
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.api.*
@@ -14,23 +17,23 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
-import timber.log.Timber
 
 class ProductEditorViewModel(
+    application: Application,
     private val categoryRepository: CategoryRepository,
     private val productsRepository: ProductsRepository,
     private val productIdToEdit: Long? = null
-) : ViewModel() {
+) : AndroidViewModel(application) {
     sealed class Event {
         data class ShowError(val exception: Throwable) : Event()
         object CloseEditor : Event()
     }
 
-    private val _mainPhoto: MutableStateFlow<UploadPhotoDialog.Result?> = MutableStateFlow(null)
-    val mainPhoto: StateFlow<UploadPhotoDialog.Result?> = _mainPhoto
+    private val _mainPhoto: MutableStateFlow<ProductPhoto?> = MutableStateFlow(null)
+    val mainPhoto: StateFlow<ProductPhoto?> = _mainPhoto
 
-    private val _additionalImagesFlow: MutableStateFlow<MutableList<AdditionalImageData>> = MutableStateFlow(mutableListOf())
-    val additionalImagesFlow: StateFlow<MutableList<AdditionalImageData>> = _additionalImagesFlow
+    private val _additionalImagesFlow: MutableStateFlow<MutableList<ProductPhoto>> = MutableStateFlow(mutableListOf())
+    val additionalImagesFlow: StateFlow<MutableList<ProductPhoto>> = _additionalImagesFlow
 
     private val _defaultPhotoFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val defaultPhotoFieldValidation: LiveData<FieldValidation> = _defaultPhotoFieldValidation
@@ -55,7 +58,7 @@ class ProductEditorViewModel(
     val price = ObservableField(String.Empty)
     val cookingTime = ObservableField(String.Empty)
     var category: CategoryItem? = null
-    var availability: Int = 0
+    var availability = ObservableField(0)
     var isAvailable = ObservableField(false)
     var isActive = ObservableField(false)
 
@@ -83,12 +86,39 @@ class ProductEditorViewModel(
 
     private fun loadProductToEdit() {
         viewModelScope.launch {
+            _isLoading.value = true
             loadProduct()
+            loadAvailability()
+            loadMainImage()
+            _isLoading.value = false
+        }
+    }
+
+    private suspend fun loadMainImage() {
+
+
+    }
+
+    private suspend fun loadAdditionalImages() {
+
+        //_additionalImagesFlow.value = productsRepository.getAdditionalProductImages(productIdToEdit!!).
+    }
+
+    private suspend fun loadAvailability() {
+        productsRepository.getProductAvailability(productIdToEdit!!).also { productAvailability ->
+            availability.set(productAvailability.available)
+            isAvailable.set(productAvailability.isAvailable)
+            isActive.set(productAvailability.isActive)
         }
     }
 
     private suspend fun loadProduct() {
-        productsRepository.getProduct(productIdToEdit!!)
+        productsRepository.getProduct(productIdToEdit!!).also { product ->
+            productName.set(product.name)
+            description.set(product.description)
+            price.set(product.price.toString())
+            cookingTime.set(product.cookingTime.toString())
+        }
     }
 
     fun save() {
@@ -116,7 +146,7 @@ class ProductEditorViewModel(
 
     private suspend fun loadAdditionalPhotos(product: Product) {
         additionalImagesFlow.value.forEach {
-            loadPhoto(product, it.data, isDefault = false)
+            loadPhoto(product, it, isDefault = false)
         }
     }
 
@@ -124,15 +154,20 @@ class ProductEditorViewModel(
         return loadPhoto(product, _mainPhoto.value!!, isDefault = true)
     }
 
-    private suspend fun loadPhoto(product: Product, photo: UploadPhotoDialog.Result, isDefault: Boolean = false): ProductImage {
-        return when (photo) {
-            is UploadPhotoDialog.Result.External -> loadExternalPhoto(product, photo, isDefault)
-            is UploadPhotoDialog.Result.Internal -> loadInternalPhoto(product, photo, isDefault)
+    private suspend fun loadPhoto(product: Product, photo: ProductPhoto, isDefault: Boolean = false): ProductImage {
+        return when (photo.type) {
+            UploadPhotoDialog.Mode.EXTERNAL -> loadExternalPhoto(product, photo.urlOrUri, isDefault)
+            UploadPhotoDialog.Mode.INTERNAL -> loadInternalPhoto(product, photo.urlOrUri.toUri(), isDefault)
         }
     }
 
-    private suspend fun loadInternalPhoto(product: Product, photo: UploadPhotoDialog.Result.Internal, isDefault: Boolean): ProductImage {
-        val loadedPhotoUrl = productsRepository.uploadImage(photo.bytes)
+    private suspend fun loadInternalPhoto(product: Product, uri: Uri, isDefault: Boolean): ProductImage {
+        val loadedPhotoUrl = withContext(Dispatchers.IO) {
+            with(getApplication<Application>().contentResolver.openInputStream(uri)) {
+                productsRepository.uploadImage(this!!.readBytes())
+            }
+        }
+
         return productsRepository.createProductImage(
             ProductImage.create(
                 imageUrl = loadedPhotoUrl.url,
@@ -144,10 +179,10 @@ class ProductEditorViewModel(
     }
 
 
-    private suspend fun loadExternalPhoto(product: Product, photo: UploadPhotoDialog.Result.External, isDefault: Boolean) =
+    private suspend fun loadExternalPhoto(product: Product, url: String, isDefault: Boolean) =
         productsRepository.createProductImage(
             productImage = ProductImage.create(
-                imageUrl = photo.url,
+                imageUrl = url,
                 isDefault = isDefault,
                 isExternal = true,
                 productId = product.id
@@ -161,11 +196,11 @@ class ProductEditorViewModel(
         )
     )
 
-    private fun isCategorySelected(): Boolean = category?.id != -1
+    private fun isCategorySelected(): Boolean = category?.id != -1L
 
     private suspend fun createProductAvailability(product: Product) = productsRepository.createProductAvailability(
         productAvailability = ProductAvailability.create(
-            available = availability,
+            available = availability.get()!!,
             isAvailable = isAvailable.get()!!,
             isActive = isActive.get()!!,
             productId = product.id
@@ -199,22 +234,22 @@ class ProductEditorViewModel(
         return isValidated
     }
 
-    fun addMainPhoto(photo: UploadPhotoDialog.Result) {
+    fun addMainPhoto(photo: ProductPhoto) {
         _mainPhoto.value = photo
         _defaultPhotoFieldValidation.value = FieldValidation.NoErrors
     }
 
-    fun addAdditionalImage(imageData: AdditionalImageData) {
-        _additionalImagesFlow.value = mutableListOf<AdditionalImageData>().apply {
+    fun addAdditionalImage(photo: ProductPhoto) {
+        _additionalImagesFlow.value = mutableListOf<ProductPhoto>().apply {
             addAll(_additionalImagesFlow.value)
-            add(imageData)
+            add(photo)
         }
     }
 
-    fun removeAdditionalImage(imageData: AdditionalImageData) {
-        _additionalImagesFlow.value = mutableListOf<AdditionalImageData>().apply {
+    fun removeAdditionalImage(photo: ProductPhoto) {
+        _additionalImagesFlow.value = mutableListOf<ProductPhoto>().apply {
             addAll(_additionalImagesFlow.value)
-            remove(imageData)
+            remove(photo)
         }
     }
 
@@ -231,6 +266,7 @@ class ProductEditorViewModel(
     }
 
     class Factory(
+        private val application: Application,
         private val categoryRepository: CategoryRepository,
         private val productsRepository: ProductsRepository,
         private val productIdToEdit: Long?
@@ -239,7 +275,7 @@ class ProductEditorViewModel(
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ProductEditorViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return ProductEditorViewModel(categoryRepository, productsRepository, productIdToEdit) as T
+                return ProductEditorViewModel(application, categoryRepository, productsRepository, productIdToEdit) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

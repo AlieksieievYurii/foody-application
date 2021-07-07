@@ -14,17 +14,17 @@ import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.loadImage
 import java.lang.IllegalStateException
 
-class ImagesListAdapter(private val onAddNewImage: () -> Unit, private val onItemDelete: (image: AdditionalImageData) -> Unit) :
-    ListAdapter<AdditionalImageData, RecyclerView.ViewHolder>(COMPARATOR) {
+class ImagesListAdapter(private val onAddNewImage: () -> Unit, private val onItemDelete: (image: ProductPhoto) -> Unit) :
+    ListAdapter<ProductPhoto, RecyclerView.ViewHolder>(COMPARATOR) {
     companion object {
         private const val ITEM_TYPE_IMAGE = 0
         private const val ITEM_TYPE_BUTTON_ADD = 1
 
-        private val COMPARATOR = object : DiffUtil.ItemCallback<AdditionalImageData>() {
-            override fun areItemsTheSame(oldItem: AdditionalImageData, newItem: AdditionalImageData): Boolean =
+        private val COMPARATOR = object : DiffUtil.ItemCallback<ProductPhoto>() {
+            override fun areItemsTheSame(oldItem: ProductPhoto, newItem: ProductPhoto): Boolean =
                 oldItem.id == newItem.id
 
-            override fun areContentsTheSame(oldItem: AdditionalImageData, newItem: AdditionalImageData): Boolean =
+            override fun areContentsTheSame(oldItem: ProductPhoto, newItem: ProductPhoto): Boolean =
                 oldItem == newItem
         }
     }
@@ -56,46 +56,41 @@ class ImagesListAdapter(private val onAddNewImage: () -> Unit, private val onIte
 
     class ImageHolder private constructor(private val binding: ItemProductImageBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(image: AdditionalImageData, onItemDelete: (image: AdditionalImageData) -> Unit) {
+        fun bind(image: ProductPhoto, onItemDelete: (image: ProductPhoto) -> Unit) {
             binding.apply {
-                when(image.data) {
-                    is UploadPhotoDialog.Result.External -> {
-                        thumbnail.loadImage(image.data.url)
-                        imageType.text = binding.root.context.getText(R.string.label_external)
-                    }
-                    is UploadPhotoDialog.Result.Internal -> {
-                        thumbnail.loadImage(image.data.uri.toString())
-                        imageType.text = binding.root.context.getText(R.string.label_internal)
-                    }
-                }
+                thumbnail.loadImage(image.urlOrUri)
+                imageType.text = if (image.type == UploadPhotoDialog.Mode.EXTERNAL)
+                    binding.root.context.getText(R.string.label_external)
+                else
+                    binding.root.context.getText(R.string.label_internal)
 
                 delete.setOnClickListener { onItemDelete(image) }
             }
         }
 
-        companion object {
-            fun create(viewGroup: ViewGroup): ImageHolder {
-                val binding = DataBindingUtil.inflate<ItemProductImageBinding>(
-                    LayoutInflater.from(viewGroup.context),
-                    R.layout.item_product_image,
-                    viewGroup,
-                    false
-                )
-                return ImageHolder(binding)
-            }
+    companion object {
+        fun create(viewGroup: ViewGroup): ImageHolder {
+            val binding = DataBindingUtil.inflate<ItemProductImageBinding>(
+                LayoutInflater.from(viewGroup.context),
+                R.layout.item_product_image,
+                viewGroup,
+                false
+            )
+            return ImageHolder(binding)
         }
     }
+}
 
-    class ButtonHolder private constructor(private val view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(onClick: () -> Unit) {
-            view.findViewById<Button>(R.id.add).setOnClickListener { onClick() }
-        }
+class ButtonHolder private constructor(private val view: View) : RecyclerView.ViewHolder(view) {
+    fun bind(onClick: () -> Unit) {
+        view.findViewById<Button>(R.id.add).setOnClickListener { onClick() }
+    }
 
-        companion object {
-            fun create(viewGroup: ViewGroup, ): ButtonHolder {
-                val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_button_add, viewGroup, false)
-                return ButtonHolder(view)
-            }
+    companion object {
+        fun create(viewGroup: ViewGroup): ButtonHolder {
+            val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_button_add, viewGroup, false)
+            return ButtonHolder(view)
         }
     }
+}
 }

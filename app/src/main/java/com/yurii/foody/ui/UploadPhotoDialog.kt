@@ -123,9 +123,7 @@ class UploadPhotoDialog(private val context: Context, private val registry: Acti
 
         private fun onInternalImageIsSelected(callback: (result: Result) -> Unit) {
             if (imageUri != null) {
-                with(context.contentResolver.openInputStream(imageUri!!)) {
-                    callback.invoke(Result.Internal(imageUri!!, this!!.readBytes()))
-                }
+                callback.invoke(Result.Internal(imageUri!!))
                 dialog.dismiss()
             } else
                 showError(Error.SELECT_IMAGE)
@@ -143,26 +141,11 @@ class UploadPhotoDialog(private val context: Context, private val registry: Acti
         }
     }
 
-    private enum class Mode { EXTERNAL, INTERNAL }
+    enum class Mode { EXTERNAL, INTERNAL }
     private enum class Error { SELECT_IMAGE, ENTER_IMAGE_URL }
     sealed class Result {
         data class External(val url: String) : Result()
-        data class Internal(val uri: Uri, val bytes: ByteArray) : Result() {
-            override fun equals(other: Any?): Boolean {
-                if (this === other) return true
-                if (javaClass != other?.javaClass) return false
-
-                other as Internal
-
-                if (uri != other.uri) return false
-
-                return true
-            }
-
-            override fun hashCode(): Int {
-                return uri.hashCode()
-            }
-        }
+        data class Internal(val uri: Uri) : Result()
     }
 
     private var currentDialog: Dialog? = null

@@ -23,7 +23,7 @@ import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
 
-data class CategoryItem(val id: Int, val name: String) {
+data class CategoryItem(val id: Long, val name: String) {
     override fun toString(): String {
         return name
     }
@@ -39,7 +39,12 @@ fun Category.toCategoryItem(): CategoryItem {
 
 class ProductEditorFragment : Fragment() {
     private val args: ProductEditorFragmentArgs by navArgs()
-    private val viewModel: ProductEditorViewModel by viewModels { Injector.provideProductEditorViewModel(args.productIdToEdit) }
+    private val viewModel: ProductEditorViewModel by viewModels {
+        Injector.provideProductEditorViewModel(
+            requireActivity().application,
+            args.productIdToEdit
+        )
+    }
     private val uploadImageDialog: UploadPhotoDialog by lazy { UploadPhotoDialog(requireContext(), requireActivity().activityResultRegistry) }
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     private val errorDialog by lazy { ErrorDialog(requireContext()) }
@@ -54,11 +59,7 @@ class ProductEditorFragment : Fragment() {
         binding.additionalImages.adapter = imagesListAdapter
 
         binding.defaultImage.setOnClickListener {
-            uploadImageDialog.show { viewModel.addMainPhoto(it) }
-        }
-
-        binding.availability.onChangeListener = {
-            viewModel.availability = it
+            uploadImageDialog.show { viewModel.addMainPhoto(ProductPhoto.create(it)) }
         }
 
         binding.toolbar.setNavigationOnClickListener {
@@ -76,10 +77,7 @@ class ProductEditorFragment : Fragment() {
     private fun observeMainPhoto() {
         viewModel.mainPhoto.observeOnLifecycle(viewLifecycleOwner) { image ->
             image?.run {
-                when (this) {
-                    is UploadPhotoDialog.Result.Internal -> binding.defaultImage.load(this.uri)
-                    is UploadPhotoDialog.Result.External -> binding.defaultImage.load(this.url)
-                }
+                binding.defaultImage.load(this.urlOrUri)
             }
         }
     }
@@ -115,10 +113,7 @@ class ProductEditorFragment : Fragment() {
 
     private fun onAddNewAdditionalImage() {
         uploadImageDialog.show {
-            when (it) {
-                is UploadPhotoDialog.Result.External -> viewModel.addAdditionalImage(AdditionalImageData.create(it))
-                is UploadPhotoDialog.Result.Internal -> viewModel.addAdditionalImage(AdditionalImageData.create(it))
-            }
+            viewModel.addAdditionalImage(ProductPhoto.create(it))
         }
     }
 
@@ -130,7 +125,7 @@ class ProductEditorFragment : Fragment() {
             .show()
     }
 
-    private fun onDeleteAdditionalImage(image: AdditionalImageData) {
+    private fun onDeleteAdditionalImage(image: ProductPhoto) {
         askUserToConfirmDeletionImage {
             viewModel.removeAdditionalImage(image)
         }

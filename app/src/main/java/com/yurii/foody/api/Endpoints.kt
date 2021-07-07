@@ -40,6 +40,9 @@ interface ApiProducts {
 
     @GET("/products/{id}/")
     suspend fun getProduct(@Path("id") id: Long): Product
+
+    @PUT("/products/{id}/")
+    suspend fun updateProduct(@Path("id") id: Long, @Body product: Product): Product
 }
 
 interface ApiProductAvailability {

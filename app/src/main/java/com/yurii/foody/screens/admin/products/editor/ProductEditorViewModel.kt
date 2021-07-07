@@ -3,6 +3,7 @@ package com.yurii.foody.screens.admin.products.editor
 import android.app.Application
 import android.net.Uri
 import androidx.core.net.toUri
+import androidx.databinding.Observable
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.api.*
@@ -15,6 +16,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import timber.log.Timber
 
 class ProductEditorViewModel(
     application: Application,
@@ -25,6 +27,8 @@ class ProductEditorViewModel(
         data class ShowError(val exception: Throwable) : Event()
         object CloseEditor : Event()
     }
+
+    private val isEditMode = productIdToEdit != null
 
     private val _mainPhoto: MutableStateFlow<ProductPhoto?> = MutableStateFlow(null)
     val mainPhoto: StateFlow<ProductPhoto?> = _mainPhoto
@@ -73,7 +77,18 @@ class ProductEditorViewModel(
         }
     }
 
+    private val onPropertyChanged = object : Observable.OnPropertyChangedCallback() {
+        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+
+        }
+
+    }
+
     init {
+        productName.addOnPropertyChangedCallback(onPropertyChanged)
+        description.addOnPropertyChangedCallback(onPropertyChanged)
+        isAvailable.addOnPropertyChangedCallback(onPropertyChanged)
+        //TODO
         viewModelScope.launch {
             _categories.value = productsRepository.getCategories()
         }
@@ -125,7 +140,37 @@ class ProductEditorViewModel(
 
     fun save() {
         if (areFieldsValidated())
-            createNewProduct()
+            if (isEditMode)
+                saveChanges()
+            else
+                createNewProduct()
+    }
+
+    private fun saveChanges() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            updateProductInformation()
+            updateProductAvailability()
+            _isLoading.value = false
+            eventChannel.send(Event.CloseEditor)
+        }
+
+    }
+
+    private suspend fun updateProductAvailability() {
+
+    }
+
+    private suspend fun updateProductInformation() {
+        productsRepository.updateProduct(
+            Product(
+                id = productIdToEdit!!,
+                name = productName.get()!!,
+                description = description.get()!!,
+                price = price.get()!!.toFloat(),
+                cookingTime = cookingTime.get()!!.toInt()
+            )
+        )
     }
 
     private fun createNewProduct() {

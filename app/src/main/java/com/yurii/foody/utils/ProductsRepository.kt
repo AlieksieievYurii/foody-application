@@ -30,6 +30,8 @@ class ProductsRepository(private val service: Service) {
 
     suspend fun createProductImage(productImage: ProductImage) = service.productImage.createProductImage(productImage)
 
+    suspend fun updateProduct(product: Product) = service.productsService.updateProduct(id = product.id, product = product)
+
     suspend fun getMainProductImage(productId: Long): ProductImage =
         service.productImage.getProductsImages(
             productIds = productId.toString(),

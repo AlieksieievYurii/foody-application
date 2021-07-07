@@ -158,7 +158,14 @@ class ProductEditorViewModel(
     }
 
     private suspend fun updateProductAvailability() {
-
+        productsRepository.updateProductAvailability(
+            ProductAvailability.create(
+                available = availability.get()!!,
+                isAvailable = isAvailable.get()!!,
+                isActive = isActive.get()!!,
+                productId = productIdToEdit!!
+            )
+        )
     }
 
     private suspend fun updateProductInformation() {

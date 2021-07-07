@@ -58,6 +58,9 @@ interface ApiProductAvailability {
 
     @GET("/products/availabilities/{product}/")
     suspend fun getProductAvailability(@Path("product") productId: Long): ProductAvailability
+
+    @PUT("/products/availabilities/{product}/")
+    suspend fun updateProductAvailability(@Path("product") productId: Long, @Body productAvailability: ProductAvailability): ProductAvailability
 }
 
 interface ApiProductRating {

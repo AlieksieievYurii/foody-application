@@ -41,6 +41,9 @@ class ProductEditorViewModel(
     private val _productNameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val productNameFieldValidation: LiveData<FieldValidation> = _productNameFieldValidation
 
+    private val _productDescriptionFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val productDescriptionFieldValidation: LiveData<FieldValidation> = _productDescriptionFieldValidation
+
     private val _priceFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val priceFieldValidation: LiveData<FieldValidation> = _priceFieldValidation
 
@@ -219,21 +222,24 @@ class ProductEditorViewModel(
     )
 
     private fun areFieldsValidated(): Boolean {
-        var isValidated = true
+        var isValid = true
 
         if (productName.get().isNullOrEmpty())
-            _productNameFieldValidation.value = FieldValidation.EmptyField.also { isValidated = false }
+            _productNameFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
         if (price.get().isNullOrEmpty())
-            _priceFieldValidation.value = FieldValidation.EmptyField.also { isValidated = false }
+            _priceFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
         if (cookingTime.get().isNullOrEmpty())
-            _cookingTimeFieldValidation.value = FieldValidation.EmptyField.also { isValidated = false }
+            _cookingTimeFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
         if (_mainPhoto.value == null)
-            _defaultPhotoFieldValidation.value = FieldValidation.NoPhoto.also { isValidated = false }
+            _defaultPhotoFieldValidation.value = FieldValidation.NoPhoto.also { isValid = false }
 
-        return isValidated
+        if (description.get().isNullOrEmpty())
+            _productDescriptionFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
+
+        return isValid
     }
 
     fun addMainPhoto(photo: ProductPhoto) {
@@ -257,6 +263,10 @@ class ProductEditorViewModel(
 
     fun resetProductNameFieldValidation() {
         _productNameFieldValidation.value = FieldValidation.NoErrors
+    }
+
+    fun resetProductDescriptionFieldValidation() {
+        _productDescriptionFieldValidation.value = FieldValidation.NoErrors
     }
 
     fun resetPriceFieldValidation() {

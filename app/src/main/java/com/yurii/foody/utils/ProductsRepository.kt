@@ -36,6 +36,8 @@ class ProductsRepository(private val service: Service) {
             page = 1, size = 1, isDefault = true
         ).results.first()
 
+    suspend fun getCategories() = service.categories.getCategories()
+
     suspend fun getAdditionalProductImages(productId: Long) = getAdditionalProductImages(productId, page = 1)
 
     private suspend fun getAdditionalProductImages(productId: Long, page: Int): List<ProductImage> {

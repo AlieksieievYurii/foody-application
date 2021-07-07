@@ -7,7 +7,6 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.api.*
 import com.yurii.foody.ui.UploadPhotoDialog
-import com.yurii.foody.utils.CategoryRepository
 import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.ProductsRepository
@@ -15,12 +14,10 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 
 class ProductEditorViewModel(
     application: Application,
-    private val categoryRepository: CategoryRepository,
     private val productsRepository: ProductsRepository,
     private val productIdToEdit: Long? = null
 ) : AndroidViewModel(application) {
@@ -78,9 +75,7 @@ class ProductEditorViewModel(
 
     init {
         viewModelScope.launch {
-            categoryRepository.getCategories().collectLatest {
-                _categories.value = it
-            }
+            _categories.value = productsRepository.getCategories()
         }
 
         if (productIdToEdit != null)
@@ -90,10 +85,12 @@ class ProductEditorViewModel(
     private fun loadProductToEdit() {
         viewModelScope.launch {
             _isLoading.value = true
-            loadProduct()
-            loadAvailability()
-            loadMainImage()
-            loadAdditionalImages()
+            awaitAll(
+                async { loadProduct() },
+                async { loadAvailability() },
+                async { loadMainImage() },
+                async { loadAdditionalImages() }
+            )
             _isLoading.value = false
         }
     }
@@ -279,7 +276,6 @@ class ProductEditorViewModel(
 
     class Factory(
         private val application: Application,
-        private val categoryRepository: CategoryRepository,
         private val productsRepository: ProductsRepository,
         private val productIdToEdit: Long?
     ) :
@@ -287,7 +283,7 @@ class ProductEditorViewModel(
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ProductEditorViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return ProductEditorViewModel(application, categoryRepository, productsRepository, productIdToEdit) as T
+                return ProductEditorViewModel(application, productsRepository, productIdToEdit) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

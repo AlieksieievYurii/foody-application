@@ -41,7 +41,6 @@ object Injector {
 
     fun provideProductEditorViewModel(application: Application, productIdToEdit: Long) = ProductEditorViewModel.Factory(
         application = application,
-        categoryRepository = CategoryRepository.create(Service),
         productsRepository = provideProductRepository(),
         productIdToEdit = if (productIdToEdit == -1L) null else productIdToEdit
     )

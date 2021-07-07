@@ -1,5 +1,6 @@
 package com.yurii.foody.utils
 
+import android.app.Application
 import android.content.Context
 import com.yurii.foody.api.Service
 import com.yurii.foody.authorization.AuthorizationRepository
@@ -38,7 +39,8 @@ object Injector {
 
     fun provideProductsEditorViewModel() = ProductsEditorViewModel.Factory(repository = provideProductRepository())
 
-    fun provideProductEditorViewModel(productIdToEdit: Long) = ProductEditorViewModel.Factory(
+    fun provideProductEditorViewModel(application: Application, productIdToEdit: Long) = ProductEditorViewModel.Factory(
+        application = application,
         categoryRepository = CategoryRepository.create(Service),
         productsRepository = provideProductRepository(),
         productIdToEdit = if (productIdToEdit == -1L) null else productIdToEdit

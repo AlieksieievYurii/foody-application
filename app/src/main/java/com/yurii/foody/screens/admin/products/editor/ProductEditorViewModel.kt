@@ -90,18 +90,20 @@ class ProductEditorViewModel(
             loadProduct()
             loadAvailability()
             loadMainImage()
+            loadAdditionalImages()
             _isLoading.value = false
         }
     }
 
     private suspend fun loadMainImage() {
-
-
+        _mainPhoto.value = ProductPhoto.create(productsRepository.getMainProductImage(productIdToEdit!!))
     }
 
     private suspend fun loadAdditionalImages() {
-
-        //_additionalImagesFlow.value = productsRepository.getAdditionalProductImages(productIdToEdit!!).
+        _additionalImagesFlow.value =
+            productsRepository.getAdditionalProductImages(productIdToEdit!!)
+                .toAdditionalImageData()
+                .toMutableList()
     }
 
     private suspend fun loadAvailability() {

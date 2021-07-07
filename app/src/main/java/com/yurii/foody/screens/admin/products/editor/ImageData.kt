@@ -1,5 +1,6 @@
 package com.yurii.foody.screens.admin.products.editor
 
+import com.yurii.foody.api.ProductImage
 import com.yurii.foody.ui.UploadPhotoDialog
 
 data class ProductPhoto(val id: Long, val type: UploadPhotoDialog.Mode, val urlOrUri: String) {
@@ -12,6 +13,14 @@ data class ProductPhoto(val id: Long, val type: UploadPhotoDialog.Mode, val urlO
 
         }
 
+        fun create(productImage: ProductImage): ProductPhoto {
+            return ProductPhoto(
+                id = productImage.id,
+                type = if (productImage.isExternal) UploadPhotoDialog.Mode.EXTERNAL else UploadPhotoDialog.Mode.INTERNAL,
+                urlOrUri = productImage.imageUrl
+            )
+        }
+
         fun create(type: UploadPhotoDialog.Mode, urlOrUri: String): ProductPhoto {
             val id = System.currentTimeMillis() / 1000
             return ProductPhoto(id, type, urlOrUri)
@@ -19,8 +28,8 @@ data class ProductPhoto(val id: Long, val type: UploadPhotoDialog.Mode, val urlO
     }
 }
 
-//fun List<ProductImage>.toAdditionalImageData(): List<AdditionalImageData> {
-//    return this.map {
-//        AdditionalImageData()
-//    }
-//}
+fun List<ProductImage>.toAdditionalImageData(): List<ProductPhoto> {
+    return this.map {
+        ProductPhoto.create(it)
+    }
+}

@@ -1,6 +1,5 @@
 package com.yurii.foody.utils
 
-import android.net.Uri
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.yurii.foody.api.*
@@ -8,7 +7,6 @@ import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.screens.admin.products.ProductPagingSource
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import java.io.File
 
 class ProductsRepository(private val service: Service) {
 
@@ -31,6 +29,26 @@ class ProductsRepository(private val service: Service) {
     suspend fun deleteProducts(items: List<Long>) = Service.asFlow { service.productsService.deleteProducts(items.joinToString(",")) }
 
     suspend fun createProductImage(productImage: ProductImage) = service.productImage.createProductImage(productImage)
+
+    suspend fun getMainProductImage(productId: Long): ProductImage =
+        service.productImage.getProductsImages(
+            productIds = productId.toString(),
+            page = 1, size = 1, isDefault = true
+        ).results.first()
+
+    suspend fun getAdditionalProductImages(productId: Long) = getAdditionalProductImages(productId, page = 1)
+
+    private suspend fun getAdditionalProductImages(productId: Long, page: Int): List<ProductImage> {
+        val res = service.productImage.getProductsImages(
+            productIds = productId.toString(),
+            page = page, size = 1, isDefault = false
+        )
+
+        return if (res.next != null)
+            res.results + getAdditionalProductImages(productId, page + 1)
+        else
+            res.results
+    }
 
     suspend fun uploadImage(bytes: ByteArray): LoadedImage {
         val requestBody = RequestBody.create(MediaType.parse("image/*"), bytes)

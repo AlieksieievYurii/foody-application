@@ -156,6 +156,7 @@
                     android:id="@+id/category"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    app:value="@={viewModel.category}"
                     app:layout_constraintEnd_toStartOf="@+id/guideline15"
                     app:layout_constraintStart_toStartOf="@+id/guideline14"
                     app:layout_constraintTop_toBottomOf="@+id/textView3" />

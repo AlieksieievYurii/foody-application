@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -135,15 +134,6 @@ class ProductEditorFragment : Fragment() {
         val arrayAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, mutableListOf<CategoryItem>())
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.category.adapter = arrayAdapter
-        binding.category.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                viewModel.category = arrayAdapter.getItem(p2)
-            }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                //Nothing
-            }
-        }
 
         viewModel.categories.observeOnLifecycle(viewLifecycleOwner) { categories ->
             arrayAdapter.clear()

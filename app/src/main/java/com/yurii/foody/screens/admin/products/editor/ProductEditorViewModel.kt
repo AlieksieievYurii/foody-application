@@ -16,7 +16,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import timber.log.Timber
+import retrofit2.HttpException
 
 class ProductEditorViewModel(
     application: Application,
@@ -61,7 +61,7 @@ class ProductEditorViewModel(
     val description = ObservableField(String.Empty)
     val price = ObservableField(String.Empty)
     val cookingTime = ObservableField(String.Empty)
-    var category: CategoryItem? = null
+    val category = ObservableField(CategoryItem.NoCategory)
     var availability = ObservableField(0)
     var isAvailable = ObservableField(false)
     var isActive = ObservableField(false)
@@ -89,12 +89,17 @@ class ProductEditorViewModel(
         description.addOnPropertyChangedCallback(onPropertyChanged)
         isAvailable.addOnPropertyChangedCallback(onPropertyChanged)
         //TODO
-        viewModelScope.launch {
-            _categories.value = productsRepository.getCategories()
-        }
 
         if (productIdToEdit != null)
             loadProductToEdit()
+        else
+            loadDataForCreatingProduct()
+    }
+
+    private fun loadDataForCreatingProduct() {
+        viewModelScope.launch {
+            _categories.value = productsRepository.getCategories()
+        }
     }
 
     private fun loadProductToEdit() {
@@ -103,10 +108,21 @@ class ProductEditorViewModel(
             awaitAll(
                 async { loadProduct() },
                 async { loadAvailability() },
+                async { loadCategory() },
                 async { loadMainImage() },
                 async { loadAdditionalImages() }
             )
             _isLoading.value = false
+        }
+    }
+
+    private suspend fun loadCategory() {
+        _categories.value = productsRepository.getCategories()
+        try {
+            val categoryId = productsRepository.getProductCategory(productIdToEdit!!).category
+            category.set(_categories.value.find { it.id == categoryId }?.toCategoryItem() ?: CategoryItem.NoCategory)
+        } catch (exception: HttpException) {
+            category.set(CategoryItem.NoCategory)
         }
     }
 
@@ -246,11 +262,11 @@ class ProductEditorViewModel(
     private suspend fun createProductCategory(product: Product) = productsRepository.createProductCategory(
         productCategory = ProductCategory(
             product = product.id,
-            category = category!!.id
+            category = category.get()!!.id
         )
     )
 
-    private fun isCategorySelected(): Boolean = category?.id != -1L
+    private fun isCategorySelected(): Boolean = category.get() != CategoryItem.NoCategory
 
     private suspend fun createProductAvailability(product: Product) = productsRepository.createProductAvailability(
         productAvailability = ProductAvailability.create(

@@ -95,4 +95,10 @@ interface ApiProductCategory {
 
     @GET("/products/productCategory/{product}/")
     suspend fun getProductCategory(@Path("product") productId: Long): ProductCategory
+
+    @PUT("/products/productCategory/{product}/")
+    suspend fun updateProductCategory(@Path("product") productId: Long, @Body productCategory: ProductCategory): ProductCategory
+
+    @DELETE("/products/productCategory/{product}/")
+    suspend fun removeProductCategory(@Path("product") productId: Long): Response<Unit>
 }

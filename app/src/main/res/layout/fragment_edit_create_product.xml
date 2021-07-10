@@ -73,12 +73,11 @@
                         android:layout_height="150dp"
                         android:layout_centerInParent="true"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_categories"
+                        android:src="@drawable/label_upload_photo"
                         app:riv_corner_radius="9dp"
                         app:riv_mutate_background="true"
                         app:riv_oval="false"
-                        app:riv_tile_mode="clamp"
-                        tools:src="@tools:sample/avatars" />
+                        app:riv_tile_mode="clamp" />
                 </androidx.cardview.widget.CardView>
 
                 <TextView

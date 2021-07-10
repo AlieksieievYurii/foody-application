@@ -26,7 +26,6 @@ class ProductEditorViewModel(
         data class ShowError(val exception: Throwable) : Event()
         object CloseEditor : Event()
     }
-
     val isEditMode = productIdToEdit != null
 
     private val _mainPhoto: MutableStateFlow<ProductPhoto?> = MutableStateFlow(null)
@@ -79,6 +78,9 @@ class ProductEditorViewModel(
         }
     }
 
+    private val viewModelJob = Job()
+    private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
+
     init {
         if (isEditMode)
             loadProductToEdit()
@@ -87,13 +89,13 @@ class ProductEditorViewModel(
     }
 
     private fun loadDataForCreatingProduct() {
-        viewModelScope.launch(coroutineExceptionHandler) {
+        netWorkScope.launch {
             _categories.value = productsRepository.getCategories()
         }
     }
 
     private fun loadProductToEdit() {
-        viewModelScope.launch(coroutineExceptionHandler) {
+        netWorkScope.launch {
             _isLoading.value = true
             awaitAll(
                 async { loadProduct() },
@@ -158,7 +160,7 @@ class ProductEditorViewModel(
     }
 
     private fun saveChanges() {
-        viewModelScope.launch {
+        netWorkScope.launch {
             _isLoading.value = true
             updateProductInformation()
             updateProductAvailability()
@@ -245,7 +247,7 @@ class ProductEditorViewModel(
     }
 
     private fun createNewProduct() {
-        viewModelScope.launch(coroutineExceptionHandler) {
+        netWorkScope.launch {
             _isLoading.value = true
             val product = createProduct()
             awaitAll(
@@ -388,6 +390,11 @@ class ProductEditorViewModel(
 
     fun resetCookingTimeFieldValidation() {
         _cookingTimeFieldValidation.value = FieldValidation.NoErrors
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
     }
 
     class Factory(

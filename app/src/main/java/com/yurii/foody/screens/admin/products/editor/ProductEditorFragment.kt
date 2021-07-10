@@ -13,7 +13,6 @@ import androidx.navigation.fragment.navArgs
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
-import com.yurii.foody.api.Category
 import com.yurii.foody.databinding.FragmentEditCreateProductBinding
 import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.LoadingDialog
@@ -21,20 +20,6 @@ import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
-
-data class CategoryItem(val id: Long, val name: String) {
-    override fun toString(): String {
-        return name
-    }
-
-    companion object {
-        val NoCategory = CategoryItem(-1, "---")
-    }
-}
-
-fun Category.toCategoryItem(): CategoryItem {
-    return CategoryItem(id = this.id, name = this.name)
-}
 
 class ProductEditorFragment : Fragment() {
     private val args: ProductEditorFragmentArgs by navArgs()
@@ -57,6 +42,8 @@ class ProductEditorFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.additionalImages.adapter = imagesListAdapter
 
+        binding.action.text = getString(if (viewModel.isEditMode) R.string.label_save else R.string.label_create)
+
         binding.defaultImage.setOnClickListener {
             uploadImageDialog.show { viewModel.addMainPhoto(ProductPhoto.create(it)) }
         }
@@ -71,7 +58,6 @@ class ProductEditorFragment : Fragment() {
         observeLoadingState()
         observeEvents()
 
-        binding.action.text = getString(if (viewModel.isEditMode) R.string.label_save else R.string.label_create)
         return binding.root
     }
 

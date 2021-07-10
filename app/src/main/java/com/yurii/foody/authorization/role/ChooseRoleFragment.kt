@@ -54,7 +54,7 @@ class ChooseRoleFragment : Fragment() {
     }
 
     private fun navigateToMainAdministratorScreen() {
-        findNavController().navigate(ChooseRoleFragmentDirections.actionChooseRoleFragmentToFragmentTest(UserRoleEnum.ADMINISTRATOR))
+        findNavController().navigate(ChooseRoleFragmentDirections.actionChooseRoleFragmentToAdminPanelFragment())
     }
 
     private fun navigateToAuthenticationScreen() {

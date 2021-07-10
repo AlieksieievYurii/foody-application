@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/empty_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            tools:visibility="gone"
+            android:textAlignment="center"
+            android:text="@string/list_is_empty"
+            style="@style/TextAppearance.Gray.Body1"
+            app:drawableTopCompat="@drawable/ic_empty_illustration" />
+
+        <TextView
+            android:id="@+id/error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            tools:visibility="gone"
+            android:textAlignment="center"
+            tools:text="Error"
+            style="@style/TextAppearance.Gray.Body1"
+            app:drawableTopCompat="@drawable/ic_server_error_amico" />
+
+        <Button
+            android:id="@+id/retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/error"
+            android:visibility="gone"
+            android:text="@string/label_retry"
+            style="@style/Button.Rounded.NavyText.Display2"
+            android:layout_centerInParent="true"/>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refresh"
+            android:layout_width="match_parent"
+            android:enabled="false"
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                app:layoutManager="LinearLayoutManager" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </RelativeLayout>
+</layout>

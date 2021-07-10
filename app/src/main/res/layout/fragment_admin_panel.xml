@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.yurii.foody.screens.admin.main.AdminPanelViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/test"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/yellow">
+
+        <ImageButton
+            android:id="@+id/open_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/label_open_left_menu"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_outline_account_circle_24" />
+
+
+        <Button
+            android:id="@+id/requests"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@drawable/button_circle_background"
+            android:drawableTop="@drawable/ic_request"
+            android:onClick="@{() -> viewModel.onClickRequests()}"
+            android:text="@string/label_requests"
+            android:textColor="@color/black"
+            app:backgroundTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.176"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.411" />
+
+        <Button
+            android:id="@+id/categories"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@drawable/button_circle_background"
+            android:drawableTop="@drawable/ic_categories"
+            android:onClick="@{() -> viewModel.onClickCategoriesEditor()}"
+            android:text="@string/label_categories"
+            android:textColor="@color/black"
+            app:backgroundTint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/requests"
+            app:layout_constraintTop_toTopOf="@+id/requests" />
+
+        <Button
+            android:id="@+id/products"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@drawable/button_circle_background"
+            android:drawableTop="@drawable/ic_food"
+            android:onClick="@{() -> viewModel.onClickProductEditor()}"
+            android:text="@string/label_products"
+            android:textColor="@color/black"
+            app:backgroundTint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/requests" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

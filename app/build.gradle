@@ -45,6 +45,8 @@ dependencies {
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
     implementation "com.jakewharton.timber:timber:$timber_version"
+    implementation "androidx.activity:activity-ktx:$activity_ktx_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_ktx_verson"
 
     // Navigation Component
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -68,6 +70,16 @@ dependencies {
 
     //DataStore Preferences
     implementation "androidx.datastore:datastore-preferences:$datastore_preferences_version"
+
+    // Paging with refresh layout
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swiperefreshlayout_version"
+
+    //Rounded Images
+    implementation "com.makeramen:roundedimageview:$rounedimage_version"
+
+    //Coil(Image Loader)
+    implementation "io.coil-kt:coil:$coil_version"
 
     //Testing
     testImplementation "junit:junit:$junit_version"

@@ -5,6 +5,7 @@ sealed class FieldValidation {
     object EmptyField : FieldValidation()
     object WrongCredentials : FieldValidation()
     object EmailIsAlreadyUsed : FieldValidation()
+    object NoPhoto : FieldValidation()
     object WrongEmailFormat: FieldValidation()
     object WrongPhoneFormat: FieldValidation()
     object DoesNotFitRequirements: FieldValidation()

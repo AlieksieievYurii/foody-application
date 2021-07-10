@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="product"
+            type="com.yurii.foody.screens.admin.products.ProductData" />
+
+        <import type="android.view.View"/>
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="9dp"
+        app:cardElevation="2dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:text="@{String.format(@string/label_price, product.price)}"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/thumbnail"
+                app:layout_constraintTop_toBottomOf="@+id/availability"
+                tools:text="Price: 10 zl" />
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/thumbnail"
+                imageUrl="@{product.thumbnailUrl}"
+                android:layout_width="130dp"
+                android:layout_height="80dp"
+                android:layout_margin="5dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:riv_corner_radius="9dp"
+                app:riv_mutate_background="true"
+                app:riv_oval="false"
+                app:riv_tile_mode="clamp" />
+
+            <TextView
+                android:id="@+id/name"
+                style="@style/TextAppearance.Black.Body2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{product.name}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/thumbnail"
+                app:layout_constraintTop_toTopOf="@+id/thumbnail"
+                tools:text="@tools:sample/lorem/random" />
+
+            <TextView
+                android:id="@+id/availability"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{String.format(@string/label_available, product.available)}"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/thumbnail"
+                app:layout_constraintTop_toBottomOf="@+id/name"
+                tools:text="Available: 10" />
+
+            <RatingBar
+                android:id="@+id/rating"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="4dp"
+                android:numStars="5"
+                android:rating="@{product.rating}"
+                app:layout_constraintBottom_toBottomOf="@+id/thumbnail"
+                app:layout_constraintStart_toEndOf="@+id/thumbnail"
+                app:layout_constraintTop_toBottomOf="@+id/price" />
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@{product.isAvailable ? @drawable/background_status_available : @drawable/background_status_unavailable }"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:text="@{product.isAvailable ? @string/label_is_available : @string/label_is_unavailable }"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/thumbnail"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Available" />
+
+            <TextView
+                android:id="@+id/disabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_disabled"
+                android:textColor="@color/white"
+                android:visibility="@{ product.isActive ? View.GONE : View.VISIBLE }"
+                app:layout_constraintBottom_toTopOf="@+id/status"
+                app:layout_constraintEnd_toEndOf="@+id/status"
+                app:layout_constraintTop_toBottomOf="@+id/name" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

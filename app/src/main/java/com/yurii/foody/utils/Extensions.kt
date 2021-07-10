@@ -8,10 +8,14 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import androidx.databinding.ObservableField
 import androidx.fragment.app.Fragment
+import androidx.paging.PagingSource
+import coil.load
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.textfield.TextInputEditText
+import com.yurii.foody.R
 import com.yurii.foody.api.AuthResponseData
 import com.yurii.foody.api.UserRoleEnum
 
@@ -99,3 +103,11 @@ fun UserRoleEnum.isInsideScope(userRoleEnum: UserRoleEnum): Boolean {
 }
 
 fun String.notMatches(regex: String) = Regex(regex).find(this) == null
+
+class EmptyListException : Exception()
+
+fun ImageView.loadImage(urlOrUri: String) {
+    this.load(urlOrUri) {
+        error(R.drawable.image_error_placeholder)
+    }
+}

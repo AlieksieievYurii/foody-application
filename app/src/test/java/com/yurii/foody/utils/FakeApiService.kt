@@ -39,7 +39,7 @@ class FakeApiService(
             if (doesGetUserThrowServerErrorUnauthorized)
                 throw HttpException(Response.error<Nothing>(HttpURLConnection.HTTP_UNAUTHORIZED, ResponseBody.create(MediaType.parse("application/json"), "")))
 
-            return users.find { it.id.toLong() == id } ?: throw ResponseException.ServerError(
+            return users.find { it.id == id } ?: throw ResponseException.ServerError(
                 code = HTTP_NOT_FOUND,
                 responseMessage = "User with ID $id not found", null
             )

@@ -13,16 +13,18 @@ interface AuthorizationRepositoryInterface {
     suspend fun register(user: RegistrationForm): Flow<RegistrationForm>
     fun setToken(token: String)
     suspend fun getUser(id: Long): Flow<User>
-    suspend fun getUsersRoles(userId: Int? = null): Flow<Pagination<UserRole>>
+    suspend fun getUsersRoles(userId: Long? = null): Flow<Pagination<UserRole>>
 
     suspend fun setSelectedUserRole(userRole: UserRoleEnum?)
     suspend fun setUserRole(userRoleEnum: UserRoleEnum)
     suspend fun setUserRoleStatus(isConfirmed: Boolean)
+    suspend fun saveUser(user: User?)
 
     suspend fun getSelectedUserRole(): UserRoleEnum?
     suspend fun getUserRole(): UserRoleEnum?
     suspend fun getAuthenticationData(): AuthDataStorage.Data?
     suspend fun isUserRoleConfirmed(): Boolean
+    suspend fun getSavedUser(): User?
 }
 
 class AuthorizationRepository @VisibleForTesting constructor(
@@ -45,13 +47,16 @@ class AuthorizationRepository @VisibleForTesting constructor(
 
     override suspend fun getUser(id: Long) = Service.asFlow { api.usersService.getUser(id) }
 
-    override suspend fun getUsersRoles(userId: Int?) = Service.asFlow { api.usersService.getUsersRoles(userId) }
+    override suspend fun getSavedUser(): User? = authDataStorage.currentUser.first()
+
+    override suspend fun getUsersRoles(userId: Long?) = Service.asFlow { api.usersService.getUsersRoles(userId) }
 
     override suspend fun setSelectedUserRole(userRole: UserRoleEnum?) = authDataStorage.saveSelectedUserRole(userRole)
 
     override suspend fun setUserRole(userRoleEnum: UserRoleEnum) = authDataStorage.saveUserRole(userRoleEnum)
 
     override suspend fun setUserRoleStatus(isConfirmed: Boolean) = authDataStorage.setUserRoleStatus(isConfirmed)
+    override suspend fun saveUser(user: User?) = authDataStorage.saveUser(user)
 
     override suspend fun getSelectedUserRole() = authDataStorage.selectedRole.first()
 

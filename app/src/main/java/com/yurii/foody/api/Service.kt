@@ -5,7 +5,9 @@ import com.beust.klaxon.Parser
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.yurii.foody.Application
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import okhttp3.*
 import retrofit2.HttpException
 import retrofit2.Retrofit
@@ -21,6 +23,12 @@ interface ApiServiceInterface {
     fun createAuthenticatedService(token: String)
     val authService: ApiTokenAuth
     val usersService: ApiUsers
+    val productsService: ApiProducts
+    val productAvailability: ApiProductAvailability
+    val productsRatings: ApiProductRating
+    val productImage: ApiProductImage
+    val categories: ApiCategories
+    val productCategory: ApiProductCategory
 }
 
 object Service : ApiServiceInterface {
@@ -56,6 +64,12 @@ object Service : ApiServiceInterface {
 
     override val authService: ApiTokenAuth by lazy { service.create(ApiTokenAuth::class.java) }
     override val usersService: ApiUsers by lazy { authenticatedService().create(ApiUsers::class.java) }
+    override val productsService: ApiProducts by lazy { authenticatedService().create(ApiProducts::class.java) }
+    override val productAvailability: ApiProductAvailability by lazy { authenticatedService().create(ApiProductAvailability::class.java) }
+    override val productsRatings: ApiProductRating by lazy { authenticatedService().create(ApiProductRating::class.java) }
+    override val productImage: ApiProductImage by lazy { authenticatedService().create(ApiProductImage::class.java) }
+    override val categories: ApiCategories by lazy { authenticatedService().create(ApiCategories::class.java) }
+    override val productCategory: ApiProductCategory by lazy { authenticatedService().create(ApiProductCategory::class.java) }
 
     fun <T : Any> asFlow(call: suspend () -> T) = flow {
         try {
@@ -67,7 +81,7 @@ object Service : ApiServiceInterface {
                 else -> throw ResponseException.UnknownError(exception.message ?: "No error message", exception)
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 }
 
 sealed class ResponseException : Exception() {

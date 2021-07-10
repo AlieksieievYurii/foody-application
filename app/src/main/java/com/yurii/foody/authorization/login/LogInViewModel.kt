@@ -77,10 +77,11 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
         }
     }
 
-    private suspend fun handleUser(userId: Int) {
-        repository.getUser(userId.toLong()).catch { exception ->
+    private suspend fun handleUser(userId: Long) {
+        repository.getUser(userId).catch { exception ->
             handleResponseError(exception)
         }.collect { user ->
+            repository.saveUser(user)
             if (user.isEmailConfirmed)
                 handleUserRole(user.id)
             else {
@@ -90,7 +91,7 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
         }
     }
 
-    private suspend fun handleUserRole(userId: Int) {
+    private suspend fun handleUserRole(userId: Long) {
         repository.getUsersRoles(userId).catch { exception ->
             handleResponseError(exception, isAuthenticated = true)
         }.collect { userRolePagination ->

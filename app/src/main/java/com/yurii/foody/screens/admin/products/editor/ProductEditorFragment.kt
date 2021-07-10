@@ -70,6 +70,8 @@ class ProductEditorFragment : Fragment() {
         observeCategories()
         observeLoadingState()
         observeEvents()
+
+        binding.action.text = getString(if (viewModel.isEditMode) R.string.label_save else R.string.label_create)
         return binding.root
     }
 

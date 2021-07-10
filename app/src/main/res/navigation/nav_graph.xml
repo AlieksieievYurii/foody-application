@@ -160,7 +160,11 @@
         tools:layout="@layout/fragment_navigation_admin_panel">
         <action
             android:id="@+id/action_adminPanelFragment_to_productsEditorFragment"
-            app:destination="@id/productsEditorFragment" />
+            app:destination="@id/productsEditorFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out"
+            app:popEnterAnim="@anim/slide_in_2"
+            app:popExitAnim="@anim/slide_out_2" />
         <action
             android:id="@+id/action_adminPanelFragment_to_authenticationFragment"
             app:destination="@id/authenticationFragment"
@@ -179,7 +183,11 @@
         tools:layout="@layout/fragment_product_editor">
         <action
             android:id="@+id/action_productsEditorFragment_to_productEditorFragment"
-            app:destination="@id/productEditorFragment" />
+            app:destination="@id/productEditorFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out"
+            app:popEnterAnim="@anim/slide_in_2"
+            app:popExitAnim="@anim/slide_out_2" />
     </fragment>
     <fragment
         android:id="@+id/productEditorFragment"

@@ -70,6 +70,7 @@ class ProductEditorViewModel(
 
     private var originalCategory: CategoryItem = CategoryItem.NoCategory
     private var originalMainPhoto: ProductPhoto? = null
+    private var originalAdditionalPhotos: List<ProductPhoto>? = null
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         _isLoading.value = false
@@ -86,7 +87,7 @@ class ProductEditorViewModel(
     }
 
     private fun loadDataForCreatingProduct() {
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineExceptionHandler) {
             _categories.value = productsRepository.getCategories()
         }
     }
@@ -127,7 +128,7 @@ class ProductEditorViewModel(
     private suspend fun loadAdditionalImages() {
         _additionalImagesFlow.value =
             productsRepository.getAdditionalProductImages(productIdToEdit!!)
-                .toAdditionalImageData()
+                .toAdditionalImageData().also { originalAdditionalPhotos = it }
                 .toMutableList()
     }
 
@@ -164,11 +165,31 @@ class ProductEditorViewModel(
             updateProductAvailability()
             updateCategory()
             updateMainPhoto()
-            //updateAdditionalPhotos()
+            updateAdditionalPhotos()
             _isLoading.value = false
             eventChannel.send(Event.CloseEditor)
         }
 
+    }
+
+    private suspend fun updateAdditionalPhotos() {
+        val setOfOriginPhotos = originalAdditionalPhotos!!.toSet()
+        val setOfCurrentPhotos = _additionalImagesFlow.value.toSet()
+        val newPhotos = setOfCurrentPhotos - setOfOriginPhotos
+        val deleted = originalAdditionalPhotos!!.toSet() - _additionalImagesFlow.value.toSet()
+
+        deleteOldPhotos(deleted.toList())
+        addNewPhotos(newPhotos.toList())
+    }
+
+    private suspend fun addNewPhotos(newPhotos: List<ProductPhoto>) {
+        for (newPhoto in newPhotos)
+            loadPhoto(productIdToEdit!!, newPhoto, isDefault = false)
+    }
+
+    private suspend fun deleteOldPhotos(oldPhotos: List<ProductPhoto>) {
+        for (oldPhoto in oldPhotos)
+            productsRepository.deleteProductImage(oldPhoto.id)
     }
 
     private suspend fun updateMainPhoto() {

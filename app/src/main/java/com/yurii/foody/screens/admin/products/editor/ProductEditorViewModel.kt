@@ -3,7 +3,6 @@ package com.yurii.foody.screens.admin.products.editor
 import android.app.Application
 import android.net.Uri
 import androidx.core.net.toUri
-import androidx.databinding.Observable
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.api.*
@@ -28,7 +27,7 @@ class ProductEditorViewModel(
         object CloseEditor : Event()
     }
 
-    private val isEditMode = productIdToEdit != null
+    val isEditMode = productIdToEdit != null
 
     private val _mainPhoto: MutableStateFlow<ProductPhoto?> = MutableStateFlow(null)
     val mainPhoto: StateFlow<ProductPhoto?> = _mainPhoto
@@ -69,6 +68,8 @@ class ProductEditorViewModel(
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
+    private var originalCategory: CategoryItem = CategoryItem.NoCategory
+    private var originalMainPhoto: ProductPhoto? = null
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         _isLoading.value = false
@@ -77,19 +78,7 @@ class ProductEditorViewModel(
         }
     }
 
-    private val onPropertyChanged = object : Observable.OnPropertyChangedCallback() {
-        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-
-        }
-
-    }
-
     init {
-        productName.addOnPropertyChangedCallback(onPropertyChanged)
-        description.addOnPropertyChangedCallback(onPropertyChanged)
-        isAvailable.addOnPropertyChangedCallback(onPropertyChanged)
-        //TODO
-
         if (productIdToEdit != null)
             loadProductToEdit()
         else
@@ -103,7 +92,7 @@ class ProductEditorViewModel(
     }
 
     private fun loadProductToEdit() {
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineExceptionHandler) {
             _isLoading.value = true
             awaitAll(
                 async { loadProduct() },
@@ -120,7 +109,10 @@ class ProductEditorViewModel(
         _categories.value = productsRepository.getCategories()
         try {
             val categoryId = productsRepository.getProductCategory(productIdToEdit!!).category
-            category.set(_categories.value.find { it.id == categoryId }?.toCategoryItem() ?: CategoryItem.NoCategory)
+            (_categories.value.find { it.id == categoryId }?.toCategoryItem() ?: CategoryItem.NoCategory).run {
+                category.set(this)
+                originalCategory = this
+            }
         } catch (exception: HttpException) {
             category.set(CategoryItem.NoCategory)
         }
@@ -142,6 +134,7 @@ class ProductEditorViewModel(
             availability.set(productAvailability.available)
             isAvailable.set(productAvailability.isAvailable)
             isActive.set(productAvailability.isActive)
+
         }
     }
 
@@ -167,10 +160,36 @@ class ProductEditorViewModel(
             _isLoading.value = true
             updateProductInformation()
             updateProductAvailability()
+            updateCategory()
+            //updateMainPhoto()
+            //updateAdditionalPhotos()
             _isLoading.value = false
             eventChannel.send(Event.CloseEditor)
         }
 
+    }
+
+    private suspend fun updateCategory() {
+        if (category.get()!! == CategoryItem.NoCategory && originalCategory != CategoryItem.NoCategory)
+            productsRepository.removeProductCategory(productIdToEdit!!)
+        else
+            updateExistedProductCategory()
+
+    }
+
+    private suspend fun updateExistedProductCategory() {
+        val selectedCategory = category.get()!!
+        if (selectedCategory == CategoryItem.NoCategory)
+            return
+
+        val productCategory = ProductCategory(
+            product = productIdToEdit!!,
+            category = selectedCategory.id
+        )
+        if (originalCategory == CategoryItem.NoCategory)
+            productsRepository.createProductCategory(productCategory)
+        else
+            productsRepository.updateProductCategory(productIdToEdit, productCategory)
     }
 
     private suspend fun updateProductAvailability() {

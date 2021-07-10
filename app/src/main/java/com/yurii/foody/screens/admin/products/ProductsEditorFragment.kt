@@ -23,6 +23,11 @@ import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
 
 class ProductsEditorFragment : Fragment() {
+
+    companion object {
+        const val REFRESH_PRODUCTS = "refresh_products"
+    }
+
     private val viewModel: ProductsEditorViewModel by viewModels { Injector.provideProductsEditorViewModel() }
     private lateinit var binding: FragmentProductEditorBinding
     private val listAdapter: ProductAdapter by lazy { ProductAdapter(viewModel.selectableMode, lifecycleScope) }
@@ -55,8 +60,13 @@ class ProductsEditorFragment : Fragment() {
         observeEvents()
         initOptionMenu()
         observeSelectableMode()
-
         return binding.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val refresh = findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(REFRESH_PRODUCTS)
+        if (refresh == true)
+            listAdapter.refresh()
     }
 
     private fun navigateToEditor(productData: ProductData) {

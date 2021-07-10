@@ -14,6 +14,7 @@ import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentEditCreateProductBinding
+import com.yurii.foody.screens.admin.products.ProductsEditorFragment
 import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.ui.UploadPhotoDialog
@@ -79,12 +80,16 @@ class ProductEditorFragment : Fragment() {
         viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) { event ->
             when (event) {
                 is ProductEditorViewModel.Event.ShowError -> errorDialog.show(event.exception.message ?: "No error message")
-                ProductEditorViewModel.Event.CloseEditor -> closeFragment()
+                ProductEditorViewModel.Event.CloseEditor -> {
+                    findNavController().previousBackStackEntry?.savedStateHandle?.set(ProductsEditorFragment.REFRESH_PRODUCTS, true)
+                    closeFragment()
+                }
             }
         }
     }
 
     private fun closeFragment() {
+
         findNavController().navigateUp()
     }
 

@@ -1,9 +1,11 @@
 package com.yurii.foody.utils
 
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.View
+import android.widget.*
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseBindingAdapter
+import androidx.databinding.InverseBindingListener
 import coil.load
 import com.google.android.material.textfield.TextInputEditText
 import com.yurii.foody.R
@@ -38,4 +40,29 @@ fun loadImage(imageView: ImageView, url: String) {
     imageView.load(url) {
         error(R.drawable.image_error_placeholder)
     }
+}
+
+@BindingAdapter("valueAttrChanged")
+fun setListener(spinner: Spinner, listener: InverseBindingListener) {
+    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+            listener.onChange()
+        }
+
+        override fun onNothingSelected(p0: AdapterView<*>?) {
+            //Nothing
+        }
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+@BindingAdapter("value")
+fun setValue(spinner: Spinner, obj: Any) {
+    val position = (spinner.adapter as ArrayAdapter<Any>).getPosition(obj)
+    spinner.setSelection(position)
+}
+
+@InverseBindingAdapter(attribute = "value")
+fun getValue(spinner: Spinner): Any {
+    return spinner.selectedItem
 }

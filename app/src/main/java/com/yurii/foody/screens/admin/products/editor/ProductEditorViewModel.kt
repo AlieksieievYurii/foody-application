@@ -119,7 +119,9 @@ class ProductEditorViewModel(
     }
 
     private suspend fun loadMainImage() {
-        _mainPhoto.value = ProductPhoto.create(productsRepository.getMainProductImage(productIdToEdit!!))
+        _mainPhoto.value = ProductPhoto.create(productsRepository.getMainProductImage(productIdToEdit!!)).also {
+            originalMainPhoto = it
+        }
     }
 
     private suspend fun loadAdditionalImages() {
@@ -161,12 +163,19 @@ class ProductEditorViewModel(
             updateProductInformation()
             updateProductAvailability()
             updateCategory()
-            //updateMainPhoto()
+            updateMainPhoto()
             //updateAdditionalPhotos()
             _isLoading.value = false
             eventChannel.send(Event.CloseEditor)
         }
 
+    }
+
+    private suspend fun updateMainPhoto() {
+        if (originalMainPhoto != _mainPhoto.value) {
+            productsRepository.deleteProductImage(originalMainPhoto!!.id)
+            loadPhoto(productIdToEdit!!, _mainPhoto.value!!, isDefault = true)
+        }
     }
 
     private suspend fun updateCategory() {
@@ -235,22 +244,22 @@ class ProductEditorViewModel(
 
     private suspend fun loadAdditionalPhotos(product: Product) {
         additionalImagesFlow.value.forEach {
-            loadPhoto(product, it, isDefault = false)
+            loadPhoto(product.id, it, isDefault = false)
         }
     }
 
     private suspend fun loadDefaultProductImage(product: Product): ProductImage {
-        return loadPhoto(product, _mainPhoto.value!!, isDefault = true)
+        return loadPhoto(product.id, _mainPhoto.value!!, isDefault = true)
     }
 
-    private suspend fun loadPhoto(product: Product, photo: ProductPhoto, isDefault: Boolean = false): ProductImage {
+    private suspend fun loadPhoto(productId: Long, photo: ProductPhoto, isDefault: Boolean = false): ProductImage {
         return when (photo.type) {
-            UploadPhotoDialog.Mode.EXTERNAL -> loadExternalPhoto(product, photo.urlOrUri, isDefault)
-            UploadPhotoDialog.Mode.INTERNAL -> loadInternalPhoto(product, photo.urlOrUri.toUri(), isDefault)
+            UploadPhotoDialog.Mode.EXTERNAL -> loadExternalPhoto(productId, photo.urlOrUri, isDefault)
+            UploadPhotoDialog.Mode.INTERNAL -> loadInternalPhoto(productId, photo.urlOrUri.toUri(), isDefault)
         }
     }
 
-    private suspend fun loadInternalPhoto(product: Product, uri: Uri, isDefault: Boolean): ProductImage {
+    private suspend fun loadInternalPhoto(productId: Long, uri: Uri, isDefault: Boolean): ProductImage {
         val loadedPhotoUrl = withContext(Dispatchers.IO) {
             with(getApplication<Application>().contentResolver.openInputStream(uri)) {
                 productsRepository.uploadImage(this!!.readBytes())
@@ -262,19 +271,19 @@ class ProductEditorViewModel(
                 imageUrl = loadedPhotoUrl.url,
                 isDefault = isDefault,
                 isExternal = false,
-                productId = product.id
+                productId = productId
             )
         )
     }
 
 
-    private suspend fun loadExternalPhoto(product: Product, url: String, isDefault: Boolean) =
+    private suspend fun loadExternalPhoto(productId: Long, url: String, isDefault: Boolean) =
         productsRepository.createProductImage(
             productImage = ProductImage.create(
                 imageUrl = url,
                 isDefault = isDefault,
                 isExternal = true,
-                productId = product.id
+                productId = productId
             )
         )
 

@@ -42,7 +42,7 @@ class LoadingViewModel(private val repository: AuthorizationRepositoryInterface)
     private suspend fun checkAuthorization(authData: AuthDataStorage.Data) {
         repository.setToken(authData.token)
         withContext(Dispatchers.IO) {
-            repository.getUser(authData.userId.toLong()).catch { exception -> handleResponseError(exception) }.collect { user ->
+            repository.getUser(authData.userId).catch { exception -> handleResponseError(exception) }.collect { user ->
                 repository.saveUser(user)
                 checkEmailConfirmation(user)
             }

@@ -78,7 +78,7 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
     }
 
     private suspend fun handleUser(userId: Long) {
-        repository.getUser(userId.toLong()).catch { exception ->
+        repository.getUser(userId).catch { exception ->
             handleResponseError(exception)
         }.collect { user ->
             repository.saveUser(user)

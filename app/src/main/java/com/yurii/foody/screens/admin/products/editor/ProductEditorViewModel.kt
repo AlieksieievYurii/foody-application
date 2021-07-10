@@ -80,7 +80,7 @@ class ProductEditorViewModel(
     }
 
     init {
-        if (productIdToEdit != null)
+        if (isEditMode)
             loadProductToEdit()
         else
             loadDataForCreatingProduct()
@@ -126,10 +126,9 @@ class ProductEditorViewModel(
     }
 
     private suspend fun loadAdditionalImages() {
-        _additionalImagesFlow.value =
-            productsRepository.getAdditionalProductImages(productIdToEdit!!)
-                .toAdditionalImageData().also { originalAdditionalPhotos = it }
-                .toMutableList()
+        _additionalImagesFlow.value = productsRepository.getAdditionalProductImages(productIdToEdit!!)
+            .toAdditionalImageData().also { originalAdditionalPhotos = it }
+            .toMutableList()
     }
 
     private suspend fun loadAvailability() {
@@ -255,21 +254,21 @@ class ProductEditorViewModel(
                     if (isCategorySelected())
                         createProductCategory(product)
                 },
-                async { loadDefaultProductImage(product) },
-                async { loadAdditionalPhotos(product) }
+                async { createDefaultProductImage(product) },
+                async { createAdditionalPhotos(product) }
             )
             _isLoading.value = false
             eventChannel.send(Event.CloseEditor)
         }
     }
 
-    private suspend fun loadAdditionalPhotos(product: Product) {
+    private suspend fun createAdditionalPhotos(product: Product) {
         additionalImagesFlow.value.forEach {
             loadPhoto(product.id, it, isDefault = false)
         }
     }
 
-    private suspend fun loadDefaultProductImage(product: Product): ProductImage {
+    private suspend fun createDefaultProductImage(product: Product): ProductImage {
         return loadPhoto(product.id, _mainPhoto.value!!, isDefault = true)
     }
 

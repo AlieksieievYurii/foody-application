@@ -52,6 +52,8 @@ class ProductsRepository(private val service: Service) {
 
     suspend fun getAdditionalProductImages(productId: Long) = getAdditionalProductImages(productId, page = 1)
 
+    suspend fun deleteProductImage(productImageId: Long) = service.productImage.deleteProductImage(productImageId)
+
     private suspend fun getAdditionalProductImages(productId: Long, page: Int): List<ProductImage> {
         val res = service.productImage.getProductsImages(
             productIds = productId.toString(),

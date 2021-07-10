@@ -82,6 +82,9 @@ interface ApiProductImage {
 
     @POST("/products/images/upload/")
     suspend fun uploadImage(@Body image: RequestBody): LoadedImage
+
+    @DELETE("/products/images/{id}/")
+    suspend fun deleteProductImage(@Path("id") productImageId: Long): Response<Unit>
 }
 
 interface ApiCategories {

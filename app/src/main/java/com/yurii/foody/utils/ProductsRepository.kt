@@ -26,7 +26,7 @@ class ProductsRepository(private val service: Service) {
 
     suspend fun createProductCategory(productCategory: ProductCategory) = service.productCategory.createProductCategory(productCategory)
 
-    suspend fun deleteProducts(items: List<Long>) = Service.asFlow { service.productsService.deleteProducts(items.joinToString(",")) }
+    suspend fun deleteProducts(items: List<Long>) = service.productsService.deleteProducts(items.joinToString(","))
 
     suspend fun createProductImage(productImage: ProductImage) = service.productImage.createProductImage(productImage)
 

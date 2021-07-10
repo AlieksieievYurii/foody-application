@@ -56,11 +56,8 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
     fun deleteItems(items: List<ProductData>) {
         viewModelScope.launch {
             _loading.value = true
-            repository.deleteProducts(items.map { it.id }).catch {exception ->
-                Timber.i("${exception}")
-            }.collectLatest {
-                _eventChannel.send(Event.Refresh)
-            }
+            repository.deleteProducts(items.map { it.id })
+            _eventChannel.send(Event.Refresh)
         }
     }
 

@@ -35,6 +35,8 @@ class ProductsRepository(private val service: Service) {
     suspend fun updateProductAvailability(productAvailability: ProductAvailability) =
         service.productAvailability.updateProductAvailability(productAvailability.productId, productAvailability)
 
+    suspend fun getProductCategory(productId: Long) = service.productCategory.getProductCategory(productId)
+
     suspend fun getMainProductImage(productId: Long): ProductImage =
         service.productImage.getProductsImages(
             productIds = productId.toString(),

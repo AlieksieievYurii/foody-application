@@ -127,7 +127,17 @@ data class Category(
     val name: String,
     @Json(name = "icon_url") val iconUrl: String,
     @Json(name = "is_icon_external") val isIconExternal: Boolean
-)
+) {
+    companion object {
+        fun create(name: String, iconUrl: String, isIconExternal: Boolean) =
+            Category(
+                id = ID_NO_NEEDED,
+                name = name,
+                iconUrl = iconUrl,
+                isIconExternal = isIconExternal
+            )
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class ProductCategory(val product: Long, val category: Long)

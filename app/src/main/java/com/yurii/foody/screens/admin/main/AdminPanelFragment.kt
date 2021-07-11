@@ -94,7 +94,7 @@ class AdminPanelFragment : Fragment(), OnBackPressed {
     }
 
     private fun navigateToCategoriesEditor() {
-        Timber.i("Categories editor")
+        findNavController().navigate(AdminPanelFragmentDirections.actionAdminPanelFragmentToCategoriesEditorFragment())
     }
 
     private fun setHeaderText(text: String) {

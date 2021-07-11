@@ -42,7 +42,7 @@ class ProductEditorFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         binding.additionalImages.adapter = imagesListAdapter
-
+        binding.toolbar.title = getString(if (viewModel.isEditMode) R.string.label_edit_product else R.string.label_create_product)
         binding.action.text = getString(if (viewModel.isEditMode) R.string.label_save else R.string.label_create)
 
         binding.defaultImage.setOnClickListener {
@@ -79,7 +79,7 @@ class ProductEditorFragment : Fragment() {
     private fun observeEvents() {
         viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) { event ->
             when (event) {
-                is ProductEditorViewModel.Event.ShowError -> errorDialog.show(event.exception.message ?: "No error message")
+                is ProductEditorViewModel.Event.ShowError -> errorDialog.show(event.exception.message ?: getString(R.string.label_no_message))
                 ProductEditorViewModel.Event.CloseEditor -> {
                     findNavController().previousBackStackEntry?.savedStateHandle?.set(ProductsEditorFragment.REFRESH_PRODUCTS, true)
                     closeFragment()
@@ -89,7 +89,6 @@ class ProductEditorFragment : Fragment() {
     }
 
     private fun closeFragment() {
-
         findNavController().navigateUp()
     }
 

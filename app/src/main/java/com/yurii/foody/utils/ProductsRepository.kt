@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.yurii.foody.api.*
 import com.yurii.foody.authorization.AuthorizationRepository
+import com.yurii.foody.screens.admin.categories.CategoriesPagingSource
 import com.yurii.foody.screens.admin.products.ProductPagingSource
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -14,6 +15,10 @@ class ProductsRepository(private val service: Service) {
 
     fun getProductsPager(query: ProductPagingSource.Query? = null) =
         Pager(config = pagingConfig, pagingSourceFactory = { ProductPagingSource(service, query) }).flow
+
+    fun getCategoriesPager() = Pager(config = pagingConfig, pagingSourceFactory = { CategoriesPagingSource(service) }).flow
+
+    suspend fun deleteCategories(items: List<Long>) = service.categories.deleteCategories(items.joinToString(","))
 
     suspend fun createProduct(product: Product) = service.productsService.createProduct(product)
 
@@ -48,7 +53,15 @@ class ProductsRepository(private val service: Service) {
             page = 1, size = 1, isDefault = true
         ).results.first()
 
-    suspend fun getCategories() = service.categories.getCategories()
+    suspend fun getCategories() = getAllCategories(page = 1)
+
+    private suspend fun getAllCategories(page: Int): List<Category> {
+        val res = service.categories.getCategories(page, size = 100)
+        return if (res.next != null)
+            res.results + getAllCategories(page + 1)
+        else
+            res.results
+    }
 
     suspend fun getAdditionalProductImages(productId: Long) = getAdditionalProductImages(productId, page = 1)
 
@@ -70,6 +83,12 @@ class ProductsRepository(private val service: Service) {
         val requestBody = RequestBody.create(MediaType.parse("image/*"), bytes)
         return service.productImage.uploadImage(requestBody)
     }
+
+    suspend fun createCategory(category: Category) = service.categories.createCategory(category)
+
+    suspend fun getCategory(categoryIdToEdit: Long): Category = service.categories.getCategory(categoryIdToEdit)
+
+    suspend fun updateCategory(category: Category): Category = service.categories.updateCategory(category.id, category)
 
     companion object {
         private var INSTANCE: ProductsRepository? = null

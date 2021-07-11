@@ -89,7 +89,19 @@ interface ApiProductImage {
 
 interface ApiCategories {
     @GET("/products/categories/")
-    suspend fun getCategories(): List<Category>
+    suspend fun getCategories(@Query("page") page: Int? = null, @Query("size") size: Int): Pagination<Category>
+
+    @DELETE("/products/categories/delete_many/")
+    suspend fun deleteCategories(@Query("ids") ids: String): Response<Unit>
+
+    @POST("/products/categories/")
+    suspend fun createCategory(@Body category: Category): Category
+
+    @GET("/products/categories/{id}/")
+    suspend fun getCategory(@Path("id") categoryIdToEdit: Long): Category
+
+    @PUT("/products/categories/{id}/")
+    suspend fun updateCategory(@Path("id") categoryId: Long, @Body category: Category): Category
 }
 
 interface ApiProductCategory {

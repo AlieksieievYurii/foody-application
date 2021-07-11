@@ -1,14 +1,18 @@
-package com.yurii.foody.screens.admin.products
+package com.yurii.foody.screens.admin.categories
 
 import androidx.lifecycle.*
-import androidx.paging.*
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.yurii.foody.utils.EmptyListException
 import com.yurii.foody.utils.ProductsRepository
-import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
-class ProductsEditorViewModel(private val repository: ProductsRepository) : ViewModel() {
+
+class CategoriesEditorViewModel(private val productsRepository: ProductsRepository) : ViewModel() {
     sealed class ListState {
         object ShowEmptyList : ListState()
         object ShowLoading : ListState()
@@ -21,17 +25,13 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
         object ShowItemsRemovedSnackBar : Event()
     }
 
-    private val _products: MutableStateFlow<PagingData<ProductData>> = MutableStateFlow(PagingData.empty())
-    val products: StateFlow<PagingData<ProductData>> = _products
+    val selectableMode = MutableStateFlow(false)
+
+    private val _categories: MutableStateFlow<PagingData<CategoriesData>> = MutableStateFlow(PagingData.empty())
+    val categories: StateFlow<PagingData<CategoriesData>> = _categories
 
     private val _listState: MutableLiveData<ListState> = MutableLiveData()
     val listState: LiveData<ListState> = _listState
-
-    private var searchJob: Job? = null
-
-    private val query = ProductPagingSource.Query()
-
-    val selectableMode = MutableStateFlow(false)
 
     private val _loading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
@@ -40,39 +40,11 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
     val eventFlow: Flow<Event> = _eventChannel.receiveAsFlow()
 
     init {
-        searchProduct()
-    }
-
-    private fun searchProduct() {
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
-            repository.getProductsPager(query).cachedIn(viewModelScope).collectLatest {
-                _products.value = it
+        viewModelScope.launch {
+            productsRepository.getCategoriesPager().cachedIn(viewModelScope).collectLatest {
+                _categories.value = it
             }
         }
-    }
-
-    fun deleteItems(items: List<ProductData>) {
-        viewModelScope.launch {
-            _loading.value = true
-            repository.deleteProducts(items.map { it.id })
-            _eventChannel.send(Event.Refresh)
-        }
-    }
-
-    fun search(text: String? = null) {
-        query.search = text
-        searchProduct()
-    }
-
-    fun filterActive(enable: Boolean) {
-        query.isActive = if (enable) true else null
-        searchProduct()
-    }
-
-    fun filterAvailable(enable: Boolean) {
-        query.isAvailable = if (enable) true else null
-        searchProduct()
     }
 
     fun onLoadStateChange(state: CombinedLoadStates) {
@@ -100,11 +72,19 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
 
     }
 
+    fun deleteItems(items: List<CategoriesData>) {
+        viewModelScope.launch {
+            _loading.value = true
+            productsRepository.deleteCategories(items.map { it.id })
+            _eventChannel.send(Event.Refresh)
+        }
+    }
+
     class Factory(private val repository: ProductsRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(ProductsEditorViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(CategoriesEditorViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return ProductsEditorViewModel(repository) as T
+                return CategoriesEditorViewModel(repository) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

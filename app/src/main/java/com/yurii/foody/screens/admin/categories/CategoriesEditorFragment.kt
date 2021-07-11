@@ -35,7 +35,8 @@ class CategoriesEditorFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         listAdapter.onClickItem = {
-            //Navigate
+            findNavController().navigate(
+                CategoriesEditorFragmentDirections.actionCategoriesEditorFragmentToCategoryEditorFragment(categoryIdToEdit = it.id))
         }
 
         binding.listFragment.setAdapter(listAdapter)

@@ -39,6 +39,9 @@ class CategoryEditorViewModel(
         data class ShowError(val exception: Throwable) : Event()
         object CloseEditor : Event()
     }
+
+    val isEditMode = categoryIdToEdit != null
+
     private val _categoryPhoto: MutableStateFlow<CategoryPhoto?> = MutableStateFlow(null)
     val categoryPhoto: StateFlow<CategoryPhoto?> = _categoryPhoto
 

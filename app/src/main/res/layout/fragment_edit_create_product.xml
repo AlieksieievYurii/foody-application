@@ -27,7 +27,7 @@
                 android:background="@color/yellow"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:navigationIcon="@drawable/ic_arrow_white_24"
-                app:title="Add product"
+                tools:title="Add product"
                 app:titleTextColor="@color/white" />
 
         </com.google.android.material.appbar.AppBarLayout>

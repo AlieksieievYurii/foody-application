@@ -42,7 +42,7 @@ class ProductEditorFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         binding.additionalImages.adapter = imagesListAdapter
-
+        binding.toolbar.title = getString(if (viewModel.isEditMode) R.string.label_edit_product else R.string.label_create_product)
         binding.action.text = getString(if (viewModel.isEditMode) R.string.label_save else R.string.label_create)
 
         binding.defaultImage.setOnClickListener {

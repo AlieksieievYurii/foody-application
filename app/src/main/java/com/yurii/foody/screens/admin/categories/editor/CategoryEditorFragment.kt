@@ -38,6 +38,7 @@ class CategoryEditorFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        binding.toolbar.title =  getString(if (viewModel.isEditMode) R.string.label_edit_category else R.string.label_create_category)
         binding.action.text = getString(if (viewModel.isEditMode) R.string.label_save else R.string.label_create)
 
         binding.image.setOnClickListener {

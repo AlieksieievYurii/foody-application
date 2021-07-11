@@ -88,4 +88,8 @@
     <string name="label_delete">Delete</string>
     <string name="label_search">Search</string>
     <string name="label_no_message">The error does not have any information</string>
+    <string name="label_edit_category">Edit category</string>
+    <string name="label_create_category">Create category</string>
+    <string name="label_edit_product">Edit product</string>
+    <string name="label_create_product">Create product</string>
 </resources>

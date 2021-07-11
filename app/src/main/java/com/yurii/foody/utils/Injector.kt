@@ -10,6 +10,7 @@ import com.yurii.foody.authorization.loading.LoadingViewModel
 import com.yurii.foody.authorization.login.LogInViewModel
 import com.yurii.foody.authorization.role.ChooseRoleViewModel
 import com.yurii.foody.authorization.signup.SignUpViewModel
+import com.yurii.foody.screens.admin.categories.CategoriesEditorViewModel
 import com.yurii.foody.screens.admin.main.AdminPanelViewModel
 import com.yurii.foody.screens.admin.products.ProductsEditorViewModel
 import com.yurii.foody.screens.admin.products.editor.ProductEditorViewModel
@@ -44,4 +45,6 @@ object Injector {
         productsRepository = provideProductRepository(),
         productIdToEdit = if (productIdToEdit == -1L) null else productIdToEdit
     )
+
+    fun provideCategoriesEditorViewModel() = CategoriesEditorViewModel.Factory(repository = provideProductRepository())
 }

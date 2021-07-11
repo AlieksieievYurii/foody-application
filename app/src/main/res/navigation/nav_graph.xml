@@ -177,7 +177,11 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_adminPanelFragment_to_categoriesEditorFragment"
-            app:destination="@id/categoriesEditorFragment" />
+            app:destination="@id/categoriesEditorFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out"
+            app:popEnterAnim="@anim/slide_in_2"
+            app:popExitAnim="@anim/slide_out_2" />
     </fragment>
     <fragment
         android:id="@+id/productsEditorFragment"
@@ -209,16 +213,20 @@
         tools:layout="@layout/fragment_categories_edit">
         <action
             android:id="@+id/action_categoriesEditorFragment_to_categoryEditorFragment"
-            app:destination="@id/categoryEditorFragment" />
+            app:destination="@id/categoryEditorFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out"
+            app:popEnterAnim="@anim/slide_in_2"
+            app:popExitAnim="@anim/slide_out_2" />
     </fragment>
     <fragment
         android:id="@+id/categoryEditorFragment"
         android:name="com.yurii.foody.screens.admin.categories.editor.CategoryEditorFragment"
         android:label="CategoryEditorFragment"
-        tools:layout="@layout/fragment_edit_create_category" >
+        tools:layout="@layout/fragment_edit_create_category">
         <argument
             android:name="categoryIdToEdit"
-            app:argType="long"
-            android:defaultValue="-1L" />
+            android:defaultValue="-1L"
+            app:argType="long" />
     </fragment>
 </navigation>

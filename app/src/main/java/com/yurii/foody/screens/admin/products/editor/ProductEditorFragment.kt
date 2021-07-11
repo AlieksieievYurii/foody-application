@@ -79,7 +79,7 @@ class ProductEditorFragment : Fragment() {
     private fun observeEvents() {
         viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) { event ->
             when (event) {
-                is ProductEditorViewModel.Event.ShowError -> errorDialog.show(event.exception.message ?: "No error message")
+                is ProductEditorViewModel.Event.ShowError -> errorDialog.show(event.exception.message ?: getString(R.string.label_no_message))
                 ProductEditorViewModel.Event.CloseEditor -> {
                     findNavController().previousBackStackEntry?.savedStateHandle?.set(ProductsEditorFragment.REFRESH_PRODUCTS, true)
                     closeFragment()

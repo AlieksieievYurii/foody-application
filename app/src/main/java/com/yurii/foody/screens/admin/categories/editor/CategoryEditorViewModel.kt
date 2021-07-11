@@ -7,6 +7,7 @@ import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.ProductsRepository
+import com.yurii.foody.utils.value
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -39,11 +40,33 @@ class CategoryEditorViewModel(
 
     val categoryName = ObservableField(String.Empty)
 
-    fun resetProductNameFieldValidation() {}
+    fun resetProductNameFieldValidation() {
+        _categoryNameFieldValidation.value = FieldValidation.NoErrors
+    }
 
-    fun save() {}
+    fun save() {
+        if (isValidated())
+            createCategory()
+    }
+
+    private fun createCategory() {
+
+    }
+
+    private fun isValidated(): Boolean {
+        var areErrors = false
+
+        if (_categoryPhoto.value == null)
+            _categoryPhotoFieldValidation.value = FieldValidation.NoPhoto.apply { areErrors = true }
+
+        if (categoryName.value.isNullOrEmpty())
+            _categoryNameFieldValidation.value = FieldValidation.EmptyField.apply { areErrors = true }
+
+        return areErrors
+    }
 
     fun setPhoto(photo: CategoryPhoto) {
+        _categoryPhotoFieldValidation.value = FieldValidation.NoErrors
         _categoryPhoto.value = photo
     }
 

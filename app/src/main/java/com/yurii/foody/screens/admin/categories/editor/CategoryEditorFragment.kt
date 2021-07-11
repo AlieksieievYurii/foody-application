@@ -13,6 +13,7 @@ import coil.load
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentEditCreateCategoryBinding
 import com.yurii.foody.screens.admin.categories.CategoriesEditorFragment
+import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.Injector
@@ -22,6 +23,7 @@ class CategoryEditorFragment : Fragment() {
     private val args: CategoryEditorFragmentArgs by navArgs()
     private lateinit var binding: FragmentEditCreateCategoryBinding
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
+    private val errorDialog by lazy { ErrorDialog(requireContext()) }
     private val uploadImageDialog: UploadPhotoDialog by lazy { UploadPhotoDialog(requireContext(), requireActivity().activityResultRegistry) }
     private val viewModel: CategoryEditorViewModel by viewModels {
         Injector.provideCategoryEditorViewModel(
@@ -58,7 +60,7 @@ class CategoryEditorFragment : Fragment() {
                     findNavController().previousBackStackEntry?.savedStateHandle?.set(CategoriesEditorFragment.REFRESH_CATEGORIES, true)
                     closeFragment()
                 }
-                is CategoryEditorViewModel.Event.ShowError -> TODO()
+                is CategoryEditorViewModel.Event.ShowError -> errorDialog.show(it.exception.message ?: getString(R.string.label_no_message))
             }
         }
     }
@@ -82,5 +84,10 @@ class CategoryEditorFragment : Fragment() {
                 binding.image.load(it.urlOrUri)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        uploadImageDialog.dismiss()
     }
 }

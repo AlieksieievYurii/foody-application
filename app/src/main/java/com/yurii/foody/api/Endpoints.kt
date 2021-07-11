@@ -96,6 +96,9 @@ interface ApiCategories {
 
     @POST("/products/categories/")
     suspend fun createCategory(@Body category: Category): Category
+
+    @GET("/products/categories/{id}/")
+    suspend fun getCategory(@Path("id") categoryIdToEdit: Long): Category
 }
 
 interface ApiProductCategory {

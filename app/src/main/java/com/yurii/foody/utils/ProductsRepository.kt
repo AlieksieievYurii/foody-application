@@ -86,6 +86,8 @@ class ProductsRepository(private val service: Service) {
 
     suspend fun createCategory(category: Category) = service.categories.createCategory(category)
 
+    suspend fun getCategory(categoryIdToEdit: Long): Category = service.categories.getCategory(categoryIdToEdit)
+
     companion object {
         private var INSTANCE: ProductsRepository? = null
         fun create(api: Service): ProductsRepository {

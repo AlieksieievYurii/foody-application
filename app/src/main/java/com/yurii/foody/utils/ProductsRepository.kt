@@ -84,6 +84,8 @@ class ProductsRepository(private val service: Service) {
         return service.productImage.uploadImage(requestBody)
     }
 
+    suspend fun createCategory(category: Category) = service.categories.createCategory(category)
+
     companion object {
         private var INSTANCE: ProductsRepository? = null
         fun create(api: Service): ProductsRepository {

@@ -93,6 +93,9 @@ interface ApiCategories {
 
     @DELETE("/products/categories/delete_many/")
     suspend fun deleteCategories(@Query("ids") ids: String): Response<Unit>
+
+    @POST("/products/categories/")
+    suspend fun createCategory(@Body category: Category): Category
 }
 
 interface ApiProductCategory {

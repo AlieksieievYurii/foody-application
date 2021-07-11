@@ -85,4 +85,6 @@
     <string name="error_no_photo">No photo</string>
     <string name="hint_items_are_removed">The items have been removed</string>
     <string name="label_create">Create</string>
+    <string name="label_delete">Delete</string>
+    <string name="label_search">Search</string>
 </resources>

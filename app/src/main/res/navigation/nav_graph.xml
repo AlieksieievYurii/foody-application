@@ -215,5 +215,10 @@
         android:id="@+id/categoryEditorFragment"
         android:name="com.yurii.foody.screens.admin.categories.editor.CategoryEditorFragment"
         android:label="CategoryEditorFragment"
-        tools:layout="@layout/fragment_edit_create_category" />
+        tools:layout="@layout/fragment_edit_create_category" >
+        <argument
+            android:name="categoryIdToEdit"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
 </navigation>

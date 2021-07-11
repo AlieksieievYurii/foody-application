@@ -48,7 +48,15 @@ class ProductsRepository(private val service: Service) {
             page = 1, size = 1, isDefault = true
         ).results.first()
 
-    suspend fun getCategories() = service.categories.getCategories()
+    suspend fun getCategories() = getAllCategories(page = 1)
+
+    private suspend fun getAllCategories(page: Int): List<Category> {
+        val res = service.categories.getCategories(page, size = 100)
+        return if (res.next != null)
+            res.results + getAllCategories(page + 1)
+        else
+            res.results
+    }
 
     suspend fun getAdditionalProductImages(productId: Long) = getAdditionalProductImages(productId, page = 1)
 

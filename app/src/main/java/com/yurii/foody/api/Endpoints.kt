@@ -89,7 +89,7 @@ interface ApiProductImage {
 
 interface ApiCategories {
     @GET("/products/categories/")
-    suspend fun getCategories(): List<Category>
+    suspend fun getCategories(@Query("page") page: Int? = null, @Query("size") size: Int): Pagination<Category>
 }
 
 interface ApiProductCategory {

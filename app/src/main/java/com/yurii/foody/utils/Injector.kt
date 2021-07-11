@@ -15,6 +15,8 @@ import com.yurii.foody.screens.admin.categories.editor.CategoryEditorViewModel
 import com.yurii.foody.screens.admin.main.AdminPanelViewModel
 import com.yurii.foody.screens.admin.products.ProductsEditorViewModel
 import com.yurii.foody.screens.admin.products.editor.ProductEditorViewModel
+import com.yurii.foody.screens.admin.requests.RoleRequestsViewModel
+import com.yurii.foody.screens.admin.requests.UserRoleRepository
 
 object Injector {
 
@@ -53,4 +55,8 @@ object Injector {
         productsRepository = provideProductRepository(),
         categoryIdToEdit = if (categoryIdToEdit == -1L) null else categoryIdToEdit
     )
+
+    fun provideRoleRequestsViewModel() = RoleRequestsViewModel.Factory(userRoleRepository = provideUserRoleRepository())
+
+    private fun provideUserRoleRepository(): UserRoleRepository = UserRoleRepository.create(Service)
 }

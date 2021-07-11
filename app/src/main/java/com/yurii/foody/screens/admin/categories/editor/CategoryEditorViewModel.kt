@@ -10,13 +10,11 @@ import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.ProductsRepository
 import com.yurii.foody.utils.value
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 data class CategoryPhoto(val type: UploadPhotoDialog.Mode, val urlOrUri: String) {
     companion object {
@@ -63,13 +61,23 @@ class CategoryEditorViewModel(
 
     private var originalPhoto: CategoryPhoto? = null
 
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        _isLoading.value = false
+        viewModelScope.launch {
+            eventChannel.send(Event.ShowError(exception))
+        }
+    }
+
+    private val viewModelJob = Job()
+    private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
+
     init {
         if (isEditMode)
             loadCategoryToEdit()
     }
 
     private fun loadCategoryToEdit() {
-        viewModelScope.launch {
+        netWorkScope.launch {
             val category = productsRepository.getCategory(categoryIdToEdit!!)
             categoryName.set(category.name)
             _categoryPhoto.value = CategoryPhoto.create(category).also { originalPhoto = it }
@@ -89,7 +97,7 @@ class CategoryEditorViewModel(
     }
 
     private fun saveChanges() {
-        viewModelScope.launch {
+        netWorkScope.launch {
             _isLoading.value = true
             val iconUrl =
                 if (originalPhoto != _categoryPhoto.value && _categoryPhoto.value!!.type == UploadPhotoDialog.Mode.INTERNAL) getPhotoUrl()
@@ -109,7 +117,7 @@ class CategoryEditorViewModel(
     }
 
     private fun createCategory() {
-        viewModelScope.launch {
+        netWorkScope.launch {
             _isLoading.value = true
             productsRepository.createCategory(
                 Category.create(
@@ -151,6 +159,11 @@ class CategoryEditorViewModel(
     fun setPhoto(photo: CategoryPhoto) {
         _categoryPhotoFieldValidation.value = FieldValidation.NoErrors
         _categoryPhoto.value = photo
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
     }
 
     class Factory(

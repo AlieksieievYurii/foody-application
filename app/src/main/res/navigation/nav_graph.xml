@@ -175,6 +175,9 @@
             app:destination="@id/chooseRoleFragment"
             app:popUpTo="@id/adminPanelFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_adminPanelFragment_to_categoriesEditorFragment"
+            app:destination="@id/categoriesEditorFragment" />
     </fragment>
     <fragment
         android:id="@+id/productsEditorFragment"
@@ -199,4 +202,9 @@
             app:argType="long"
             android:defaultValue="-1L" />
     </fragment>
+    <fragment
+        android:id="@+id/categoriesEditorFragment"
+        android:name="com.yurii.foody.screens.admin.categories.CategoriesEditorFragment"
+        android:label="CategoriesEditorFragment"
+        tools:layout="@layout/fragment_categories_edit"/>
 </navigation>

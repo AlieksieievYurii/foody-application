@@ -16,7 +16,6 @@ import com.yurii.foody.databinding.FragmentNavigationAdminPanelBinding
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.OnBackPressed
 import com.yurii.foody.utils.observeOnLifecycle
-import timber.log.Timber
 
 class AdminPanelFragment : Fragment(), OnBackPressed {
     private lateinit var binding: FragmentNavigationAdminPanelBinding
@@ -90,7 +89,7 @@ class AdminPanelFragment : Fragment(), OnBackPressed {
     }
 
     private fun navigateToRequests() {
-        Timber.i("Requests editor")
+        findNavController().navigate(AdminPanelFragmentDirections.actionAdminPanelFragmentToRoleRequestsFragment())
     }
 
     private fun navigateToCategoriesEditor() {

@@ -10,6 +10,7 @@ import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.ProductsRepository
+import com.yurii.foody.utils.value
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -201,7 +202,7 @@ class ProductEditorViewModel(
     }
 
     private suspend fun updateCategory() {
-        if (category.get()!! == CategoryItem.NoCategory && originalCategory != CategoryItem.NoCategory)
+        if (category.value == CategoryItem.NoCategory && originalCategory != CategoryItem.NoCategory)
             productsRepository.removeProductCategory(productIdToEdit!!)
         else
             updateExistedProductCategory()
@@ -209,13 +210,12 @@ class ProductEditorViewModel(
     }
 
     private suspend fun updateExistedProductCategory() {
-        val selectedCategory = category.get()!!
-        if (selectedCategory == CategoryItem.NoCategory)
+        if (category.value == CategoryItem.NoCategory)
             return
 
         val productCategory = ProductCategory(
             product = productIdToEdit!!,
-            category = selectedCategory.id
+            category = category.value.id
         )
         if (originalCategory == CategoryItem.NoCategory)
             productsRepository.createProductCategory(productCategory)
@@ -226,9 +226,9 @@ class ProductEditorViewModel(
     private suspend fun updateProductAvailability() {
         productsRepository.updateProductAvailability(
             ProductAvailability.create(
-                available = availability.get()!!,
-                isAvailable = isAvailable.get()!!,
-                isActive = isActive.get()!!,
+                available = availability.value,
+                isAvailable = isAvailable.value,
+                isActive = isActive.value,
                 productId = productIdToEdit!!
             )
         )
@@ -238,10 +238,10 @@ class ProductEditorViewModel(
         productsRepository.updateProduct(
             Product(
                 id = productIdToEdit!!,
-                name = productName.get()!!,
-                description = description.get()!!,
-                price = price.get()!!.toFloat(),
-                cookingTime = cookingTime.get()!!.toInt()
+                name = productName.value,
+                description = description.value,
+                price = price.value.toFloat(),
+                cookingTime = cookingTime.value.toInt()
             )
         )
     }
@@ -312,46 +312,46 @@ class ProductEditorViewModel(
     private suspend fun createProductCategory(product: Product) = productsRepository.createProductCategory(
         productCategory = ProductCategory(
             product = product.id,
-            category = category.get()!!.id
+            category = category.value.id
         )
     )
 
-    private fun isCategorySelected(): Boolean = category.get() != CategoryItem.NoCategory
+    private fun isCategorySelected(): Boolean = category.value != CategoryItem.NoCategory
 
     private suspend fun createProductAvailability(product: Product) = productsRepository.createProductAvailability(
         productAvailability = ProductAvailability.create(
-            available = availability.get()!!,
-            isAvailable = isAvailable.get()!!,
-            isActive = isActive.get()!!,
+            available = availability.value,
+            isAvailable = isAvailable.value,
+            isActive = isActive.value,
             productId = product.id
         )
     )
 
     private suspend fun createProduct() = productsRepository.createProduct(
         product = Product.create(
-            name = productName.get()!!,
-            description = description.get()!!,
-            price = price.get()!!.toFloat(),
-            cookingTime = cookingTime.get()!!.toInt()
+            name = productName.value,
+            description = description.value,
+            price = price.value.toFloat(),
+            cookingTime = cookingTime.value.toInt()
         )
     )
 
     private fun areFieldsValidated(): Boolean {
         var isValid = true
 
-        if (productName.get().isNullOrEmpty())
+        if (productName.get().isNullOrBlank())
             _productNameFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
-        if (price.get().isNullOrEmpty())
+        if (price.get().isNullOrBlank())
             _priceFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
-        if (cookingTime.get().isNullOrEmpty())
+        if (cookingTime.get().isNullOrBlank())
             _cookingTimeFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
         if (_mainPhoto.value == null)
             _defaultPhotoFieldValidation.value = FieldValidation.NoPhoto.also { isValid = false }
 
-        if (description.get().isNullOrEmpty())
+        if (description.get().isNullOrBlank())
             _productDescriptionFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
         return isValid

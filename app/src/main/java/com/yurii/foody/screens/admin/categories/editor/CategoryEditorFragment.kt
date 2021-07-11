@@ -17,6 +17,7 @@ import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.Injector
+import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
 
 class CategoryEditorFragment : Fragment() {
@@ -71,6 +72,7 @@ class CategoryEditorFragment : Fragment() {
 
     private fun observeLoading() {
         viewModel.isLoading.observeOnLifecycle(viewLifecycleOwner) { isLoading ->
+            hideKeyboard()
             if (isLoading)
                 loadingDialog.show()
             else

@@ -106,7 +106,7 @@ class CategoryEditorViewModel(
             productsRepository.updateCategory(
                 Category(
                     id = categoryIdToEdit!!,
-                    name = categoryName.get()!!,
+                    name = categoryName.value,
                     iconUrl = iconUrl,
                     isIconExternal = _categoryPhoto.value!!.type == UploadPhotoDialog.Mode.EXTERNAL
                 )
@@ -121,7 +121,7 @@ class CategoryEditorViewModel(
             _isLoading.value = true
             productsRepository.createCategory(
                 Category.create(
-                    name = categoryName.get()!!,
+                    name = categoryName.value,
                     iconUrl = getPhotoUrl(),
                     isIconExternal = _categoryPhoto.value!!.type == UploadPhotoDialog.Mode.EXTERNAL
                 )
@@ -150,7 +150,7 @@ class CategoryEditorViewModel(
         if (_categoryPhoto.value == null)
             _categoryPhotoFieldValidation.value = FieldValidation.NoPhoto.apply { isValidated = false }
 
-        if (categoryName.value.isNullOrEmpty())
+        if (categoryName.value.isNullOrBlank())
             _categoryNameFieldValidation.value = FieldValidation.EmptyField.apply { isValidated = false }
 
         return isValidated

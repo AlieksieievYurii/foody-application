@@ -114,7 +114,7 @@ class UploadPhotoDialog(private val context: Context, private val registry: Acti
 
         private fun onExternalImageIsSelected(callback: (result: Result) -> Unit) {
             val imageUrl = binding.imageUrl.text.toString()
-            if (imageUrl.isNotEmpty()) {
+            if (imageUrl.isNotBlank()) {
                 callback.invoke(Result.External(imageUrl))
                 dialog.dismiss()
             } else

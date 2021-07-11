@@ -21,6 +21,10 @@ import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
 
 class CategoriesEditorFragment : Fragment() {
+    companion object {
+        const val REFRESH_CATEGORIES = "refresh_categories"
+    }
+
     private lateinit var binding: FragmentCategoriesEditBinding
     private val viewModel: CategoriesEditorViewModel by viewModels { Injector.provideCategoriesEditorViewModel() }
     private val listAdapter: CategoriesAdapter by lazy { CategoriesAdapter(viewModel.selectableMode, lifecycleScope) }
@@ -59,6 +63,13 @@ class CategoriesEditorFragment : Fragment() {
         observeEvents()
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val refresh = findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(REFRESH_CATEGORIES)
+        if (refresh == true)
+            listAdapter.refresh()
     }
 
     private fun observeCategoriesData() {

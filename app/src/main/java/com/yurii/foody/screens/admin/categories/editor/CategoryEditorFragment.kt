@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentEditCreateCategoryBinding
+import com.yurii.foody.screens.admin.categories.CategoriesEditorFragment
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.Injector
@@ -36,9 +38,31 @@ class CategoryEditorFragment : Fragment() {
         binding.image.setOnClickListener {
             uploadImageDialog.show { viewModel.setPhoto(CategoryPhoto.create(it)) }
         }
+
+        binding.toolbar.setNavigationOnClickListener {
+            closeFragment()
+        }
+
         observePhoto()
         observeLoading()
+        observeEvents()
         return binding.root
+    }
+
+    private fun observeEvents() {
+        viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {
+            when (it) {
+                CategoryEditorViewModel.Event.CloseEditor -> {
+                    findNavController().previousBackStackEntry?.savedStateHandle?.set(CategoriesEditorFragment.REFRESH_CATEGORIES, true)
+                    closeFragment()
+                }
+                is CategoryEditorViewModel.Event.ShowError -> TODO()
+            }
+        }
+    }
+
+    private fun closeFragment() {
+        findNavController().navigateUp()
     }
 
     private fun observeLoading() {

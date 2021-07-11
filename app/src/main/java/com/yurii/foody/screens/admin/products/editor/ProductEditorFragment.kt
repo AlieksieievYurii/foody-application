@@ -89,7 +89,6 @@ class ProductEditorFragment : Fragment() {
     }
 
     private fun closeFragment() {
-
         findNavController().navigateUp()
     }
 

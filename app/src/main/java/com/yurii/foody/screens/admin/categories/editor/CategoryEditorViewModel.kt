@@ -11,8 +11,10 @@ import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.ProductsRepository
 import com.yurii.foody.utils.value
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -33,7 +35,10 @@ class CategoryEditorViewModel(
     private val productsRepository: ProductsRepository,
     private val categoryIdToEdit: Long? = null
 ) : AndroidViewModel(application) {
-
+    sealed class Event {
+        data class ShowError(val exception: Throwable) : Event()
+        object CloseEditor : Event()
+    }
     private val _categoryPhoto: MutableStateFlow<CategoryPhoto?> = MutableStateFlow(null)
     val categoryPhoto: StateFlow<CategoryPhoto?> = _categoryPhoto
 
@@ -47,6 +52,9 @@ class CategoryEditorViewModel(
     val isLoading: StateFlow<Boolean> = _isLoading
 
     val categoryName = ObservableField(String.Empty)
+
+    private val eventChannel = Channel<Event>(Channel.BUFFERED)
+    val eventFlow = eventChannel.receiveAsFlow()
 
     fun resetProductNameFieldValidation() {
         _categoryNameFieldValidation.value = FieldValidation.NoErrors
@@ -69,6 +77,7 @@ class CategoryEditorViewModel(
             )
 
             _isLoading.value = false
+            eventChannel.send(Event.CloseEditor)
         }
 
     }

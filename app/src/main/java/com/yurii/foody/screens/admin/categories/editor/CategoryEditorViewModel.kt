@@ -20,13 +20,15 @@ import kotlinx.coroutines.withContext
 
 data class CategoryPhoto(val type: UploadPhotoDialog.Mode, val urlOrUri: String) {
     companion object {
-        fun create(image: UploadPhotoDialog.Result): CategoryPhoto {
-            return when (image) {
-                is UploadPhotoDialog.Result.External -> CategoryPhoto(UploadPhotoDialog.Mode.EXTERNAL, image.url)
-                is UploadPhotoDialog.Result.Internal -> CategoryPhoto(UploadPhotoDialog.Mode.INTERNAL, image.uri.toString())
-            }
-
+        fun create(image: UploadPhotoDialog.Result) = when (image) {
+            is UploadPhotoDialog.Result.External -> CategoryPhoto(UploadPhotoDialog.Mode.EXTERNAL, image.url)
+            is UploadPhotoDialog.Result.Internal -> CategoryPhoto(UploadPhotoDialog.Mode.INTERNAL, image.uri.toString())
         }
+
+        fun create(category: Category): CategoryPhoto = CategoryPhoto(
+            if (category.isIconExternal) UploadPhotoDialog.Mode.EXTERNAL else UploadPhotoDialog.Mode.INTERNAL,
+            urlOrUri = category.iconUrl
+        )
     }
 }
 
@@ -59,13 +61,51 @@ class CategoryEditorViewModel(
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
+    private var originalPhoto: CategoryPhoto? = null
+
+    init {
+        if (isEditMode)
+            loadCategoryToEdit()
+    }
+
+    private fun loadCategoryToEdit() {
+        viewModelScope.launch {
+            val category = productsRepository.getCategory(categoryIdToEdit!!)
+            categoryName.set(category.name)
+            _categoryPhoto.value = CategoryPhoto.create(category).also { originalPhoto = it }
+        }
+    }
+
     fun resetProductNameFieldValidation() {
         _categoryNameFieldValidation.value = FieldValidation.NoErrors
     }
 
     fun save() {
         if (isValidated())
-            createCategory()
+            if (isEditMode)
+                saveChanges()
+            else
+                createCategory()
+    }
+
+    private fun saveChanges() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val iconUrl =
+                if (originalPhoto != _categoryPhoto.value && _categoryPhoto.value!!.type == UploadPhotoDialog.Mode.INTERNAL) getPhotoUrl()
+                else _categoryPhoto.value!!.urlOrUri
+
+            productsRepository.updateCategory(
+                Category(
+                    id = categoryIdToEdit!!,
+                    name = categoryName.get()!!,
+                    iconUrl = iconUrl,
+                    isIconExternal = _categoryPhoto.value!!.type == UploadPhotoDialog.Mode.EXTERNAL
+                )
+            )
+            _isLoading.value = false
+            eventChannel.send(Event.CloseEditor)
+        }
     }
 
     private fun createCategory() {

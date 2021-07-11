@@ -88,6 +88,7 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
                 }
                 LoadState.Loading -> _listState.setValue(ListState.ShowLoading)
                 is LoadState.Error -> {
+                    _loading.value = false
                     val loadStateError = state.refresh as LoadState.Error
                     if (loadStateError.error is EmptyListException)
                         _listState.value = ListState.ShowEmptyList

@@ -1,15 +1,20 @@
 package com.yurii.foody.screens.admin.categories.editor
 
 import android.app.Application
+import androidx.core.net.toUri
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
+import com.yurii.foody.api.Category
 import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.ProductsRepository
 import com.yurii.foody.utils.value
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class CategoryPhoto(val type: UploadPhotoDialog.Mode, val urlOrUri: String) {
     companion object {
@@ -38,6 +43,9 @@ class CategoryEditorViewModel(
     private val _categoryNameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val categoryNameFieldValidation: LiveData<FieldValidation> = _categoryNameFieldValidation
 
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     val categoryName = ObservableField(String.Empty)
 
     fun resetProductNameFieldValidation() {
@@ -50,19 +58,42 @@ class CategoryEditorViewModel(
     }
 
     private fun createCategory() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            productsRepository.createCategory(
+                Category.create(
+                    name = categoryName.get()!!,
+                    iconUrl = getPhotoUrl(),
+                    isIconExternal = _categoryPhoto.value!!.type == UploadPhotoDialog.Mode.EXTERNAL
+                )
+            )
+
+            _isLoading.value = false
+        }
 
     }
 
+    private suspend fun getPhotoUrl(): String = when (_categoryPhoto.value!!.type) {
+        UploadPhotoDialog.Mode.EXTERNAL -> _categoryPhoto.value!!.urlOrUri
+        UploadPhotoDialog.Mode.INTERNAL -> uploadPhoto()
+    }
+
+    private suspend fun uploadPhoto() = withContext(Dispatchers.IO) {
+        with(getApplication<Application>().contentResolver.openInputStream(_categoryPhoto.value!!.urlOrUri.toUri())) {
+            productsRepository.uploadImage(this!!.readBytes()).url
+        }
+    }
+
     private fun isValidated(): Boolean {
-        var areErrors = false
+        var isValidated = true
 
         if (_categoryPhoto.value == null)
-            _categoryPhotoFieldValidation.value = FieldValidation.NoPhoto.apply { areErrors = true }
+            _categoryPhotoFieldValidation.value = FieldValidation.NoPhoto.apply { isValidated = false }
 
         if (categoryName.value.isNullOrEmpty())
-            _categoryNameFieldValidation.value = FieldValidation.EmptyField.apply { areErrors = true }
+            _categoryNameFieldValidation.value = FieldValidation.EmptyField.apply { isValidated = false }
 
-        return areErrors
+        return isValidated
     }
 
     fun setPhoto(photo: CategoryPhoto) {

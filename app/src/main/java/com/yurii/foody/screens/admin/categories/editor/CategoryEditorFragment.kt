@@ -11,6 +11,7 @@ import androidx.navigation.fragment.navArgs
 import coil.load
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentEditCreateCategoryBinding
+import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
@@ -18,6 +19,7 @@ import com.yurii.foody.utils.observeOnLifecycle
 class CategoryEditorFragment : Fragment() {
     private val args: CategoryEditorFragmentArgs by navArgs()
     private lateinit var binding: FragmentEditCreateCategoryBinding
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     private val uploadImageDialog: UploadPhotoDialog by lazy { UploadPhotoDialog(requireContext(), requireActivity().activityResultRegistry) }
     private val viewModel: CategoryEditorViewModel by viewModels {
         Injector.provideCategoryEditorViewModel(
@@ -35,7 +37,17 @@ class CategoryEditorFragment : Fragment() {
             uploadImageDialog.show { viewModel.setPhoto(CategoryPhoto.create(it)) }
         }
         observePhoto()
+        observeLoading()
         return binding.root
+    }
+
+    private fun observeLoading() {
+        viewModel.isLoading.observeOnLifecycle(viewLifecycleOwner) { isLoading ->
+            if (isLoading)
+                loadingDialog.show()
+            else
+                loadingDialog.close()
+        }
     }
 
     private fun observePhoto() {

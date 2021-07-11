@@ -10,7 +10,17 @@ import com.yurii.foody.utils.ProductsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-data class CategoryPhoto(val id: Long, val type: UploadPhotoDialog.Mode, val urlOrUri: String)
+data class CategoryPhoto(val type: UploadPhotoDialog.Mode, val urlOrUri: String) {
+    companion object {
+        fun create(image: UploadPhotoDialog.Result): CategoryPhoto {
+            return when (image) {
+                is UploadPhotoDialog.Result.External -> CategoryPhoto(UploadPhotoDialog.Mode.EXTERNAL, image.url)
+                is UploadPhotoDialog.Result.Internal -> CategoryPhoto(UploadPhotoDialog.Mode.INTERNAL, image.uri.toString())
+            }
+
+        }
+    }
+}
 
 class CategoryEditorViewModel(
     application: Application,
@@ -32,6 +42,10 @@ class CategoryEditorViewModel(
     fun resetProductNameFieldValidation() {}
 
     fun save() {}
+
+    fun setPhoto(photo: CategoryPhoto) {
+        _categoryPhoto.value = photo
+    }
 
     class Factory(
         private val application: Application,

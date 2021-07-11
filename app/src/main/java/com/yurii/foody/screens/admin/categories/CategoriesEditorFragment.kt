@@ -47,7 +47,7 @@ class CategoriesEditorFragment : Fragment() {
         }
 
         binding.add.setOnClickListener {
-            //Navigate to create new Category
+            findNavController().navigate(CategoriesEditorFragmentDirections.actionCategoriesEditorFragmentToCategoryEditorFragment())
         }
 
         initOptionMenu()

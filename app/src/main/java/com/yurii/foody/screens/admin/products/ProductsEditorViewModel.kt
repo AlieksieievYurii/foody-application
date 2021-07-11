@@ -7,7 +7,6 @@ import com.yurii.foody.utils.ProductsRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import timber.log.Timber
 
 class ProductsEditorViewModel(private val repository: ProductsRepository) : ViewModel() {
     sealed class ListState {

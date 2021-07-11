@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.yurii.foody.api.*
 import com.yurii.foody.authorization.AuthorizationRepository
+import com.yurii.foody.screens.admin.categories.CategoriesPagingSource
 import com.yurii.foody.screens.admin.products.ProductPagingSource
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -14,6 +15,10 @@ class ProductsRepository(private val service: Service) {
 
     fun getProductsPager(query: ProductPagingSource.Query? = null) =
         Pager(config = pagingConfig, pagingSourceFactory = { ProductPagingSource(service, query) }).flow
+
+    fun getCategoriesPager() = Pager(config = pagingConfig, pagingSourceFactory = { CategoriesPagingSource(service) }).flow
+
+    suspend fun deleteCategories(items: List<Long>) = service.categories.deleteCategories(items.joinToString(","))
 
     suspend fun createProduct(product: Product) = service.productsService.createProduct(product)
 

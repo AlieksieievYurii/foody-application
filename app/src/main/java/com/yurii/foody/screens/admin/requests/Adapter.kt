@@ -51,7 +51,8 @@ class UserRoleRequestPagingSource(private val api: Service) : PagingSource<Int, 
     }
 }
 
-class UserRoleAdapter : PagingDataAdapter<UserRoleRequest, UserRoleAdapter.UserRoleRequestViewHolder>(COMPARATOR) {
+class UserRoleAdapter(private val onClick: (UserRoleRequest) -> Unit) :
+    PagingDataAdapter<UserRoleRequest, UserRoleAdapter.UserRoleRequestViewHolder>(COMPARATOR) {
 
     companion object {
         private val COMPARATOR = object : DiffUtil.ItemCallback<UserRoleRequest>() {
@@ -64,7 +65,7 @@ class UserRoleAdapter : PagingDataAdapter<UserRoleRequest, UserRoleAdapter.UserR
     }
 
     override fun onBindViewHolder(holder: UserRoleRequestViewHolder, position: Int) {
-        getItem(position)?.run { holder.bind(this) }
+        getItem(position)?.run { holder.bind(this, onClick) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserRoleRequestViewHolder {
@@ -72,8 +73,11 @@ class UserRoleAdapter : PagingDataAdapter<UserRoleRequest, UserRoleAdapter.UserR
     }
 
     class UserRoleRequestViewHolder private constructor(private val binding: ItemUserRoleRequestBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(requestData: UserRoleRequest) {
+        fun bind(requestData: UserRoleRequest, onClick: (UserRoleRequest) -> Unit) {
             binding.request = requestData
+            binding.body.setOnClickListener {
+                onClick.invoke(requestData)
+            }
         }
 
         companion object {

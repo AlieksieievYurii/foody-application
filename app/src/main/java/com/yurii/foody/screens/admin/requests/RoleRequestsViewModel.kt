@@ -21,8 +21,10 @@ class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) 
     private val _userRolesRequests: MutableStateFlow<PagingData<UserRoleRequest>> = MutableStateFlow(PagingData.empty())
     val userRolesRequests: StateFlow<PagingData<UserRoleRequest>> = _userRolesRequests
 
-    private val _listState: MutableStateFlow<ListState> = MutableStateFlow(ListState.ShowLoading)
-    val listState: StateFlow<ListState> = _listState
+    private val _listState: MutableLiveData<ListState> = MutableLiveData(ListState.ShowLoading)
+    val listState: LiveData<ListState> = _listState
+
+    var isRefreshing = false
 
     init {
         loadUserRolesRequests()
@@ -39,9 +41,16 @@ class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) 
     fun onLoadStateChange(state: CombinedLoadStates) {
         viewModelScope.launch {
             when (state.refresh) {
-                is LoadState.NotLoading -> _listState.value = ListState.ShowResult
-                LoadState.Loading -> _listState.value = ListState.ShowLoading
+                is LoadState.NotLoading -> {
+                    _listState.value = ListState.ShowResult
+                    isRefreshing = false
+                }
+                LoadState.Loading -> {
+                    if (!isRefreshing)
+                        _listState.value = ListState.ShowLoading
+                }
                 is LoadState.Error -> {
+                    isRefreshing = false
                     val loadStateError = state.refresh as LoadState.Error
                     if (loadStateError.error is EmptyListException)
                         _listState.value = ListState.ShowEmptyList
@@ -53,7 +62,7 @@ class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) 
 
     }
 
-    fun acceptRoleRequest(it: UserRoleRequest) {
+    fun acceptRoleRequest(roleRequest: UserRoleRequest) {
 
     }
 

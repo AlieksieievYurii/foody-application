@@ -18,11 +18,13 @@ import com.yurii.foody.utils.observeOnLifecycle
 class RoleRequestsFragment : Fragment() {
     private val viewModel: RoleRequestsViewModel by viewModels { Injector.provideRoleRequestsViewModel() }
     private lateinit var binding: FragmentRoleRequestsBinding
-    private val listAdapter: UserRoleAdapter by lazy { UserRoleAdapter {
-        askUserToConfirmTheAction {
-            viewModel.acceptRoleRequest(it)
+    private val listAdapter: UserRoleAdapter by lazy {
+        UserRoleAdapter {
+            askUserToConfirmTheAction {
+                viewModel.acceptRoleRequest(it)
+            }
         }
-    } }
+    }
 
     private fun askUserToConfirmTheAction(onConfirm: () -> Unit) {
         MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.label_role_request)
@@ -36,11 +38,14 @@ class RoleRequestsFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_role_requests, container, false)
         binding.requests.setAdapter(listAdapter)
 
-        binding.requests.setOnRefreshListener { listAdapter.refresh() }
+        binding.requests.setOnRefreshListener {
+            viewModel.isRefreshing = true
+            listAdapter.refresh()
+        }
         binding.requests.setOnRetryListener { listAdapter.retry() }
 
         binding.toolbar.setNavigationOnClickListener {
-                findNavController().navigateUp()
+            findNavController().navigateUp()
         }
 
         observeLoadState()
@@ -56,12 +61,9 @@ class RoleRequestsFragment : Fragment() {
     }
 
     private fun observeListState() {
-        viewModel.listState.observeOnLifecycle(viewLifecycleOwner) {
+        viewModel.listState.observe(viewLifecycleOwner) {
             when (it) {
-                RoleRequestsViewModel.ListState.ShowLoading -> {
-                    if (binding.requests.state != ListFragment.State.Ready)
-                        binding.requests.state = ListFragment.State.Loading
-                }
+                RoleRequestsViewModel.ListState.ShowLoading -> binding.requests.state = ListFragment.State.Loading
                 RoleRequestsViewModel.ListState.ShowResult -> binding.requests.state = ListFragment.State.Ready
                 RoleRequestsViewModel.ListState.ShowEmptyList -> binding.requests.state = ListFragment.State.Empty
                 is RoleRequestsViewModel.ListState.ShowError -> binding.requests.state = ListFragment.State.Error(it.exception)

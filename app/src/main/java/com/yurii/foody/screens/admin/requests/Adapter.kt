@@ -14,6 +14,7 @@ import com.yurii.foody.api.User
 import com.yurii.foody.api.UserRole
 import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.databinding.ItemUserRoleRequestBinding
+import com.yurii.foody.utils.EmptyListException
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -41,6 +42,10 @@ class UserRoleRequestPagingSource(private val api: Service) : PagingSource<Int, 
         return try {
             val page = params.key ?: 1
             val unconfirmedRoles = api.usersService.getUsersRoles(isConfirmed = false, page = page, size = params.loadSize)
+
+            if (unconfirmedRoles.results.isEmpty())
+                return LoadResult.Error(EmptyListException())
+
             val usersId = unconfirmedRoles.results.joinToString(",") { it.userId.toString() }
             val users = api.usersService.getUsers(userIds = usersId, size = params.loadSize)
             val result = unconfirmedRoles.results.map { userRole ->

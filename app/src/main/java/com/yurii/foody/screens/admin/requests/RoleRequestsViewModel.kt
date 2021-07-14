@@ -7,19 +7,25 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.yurii.foody.ui.ListFragment
 import com.yurii.foody.utils.EmptyListException
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) : ViewModel() {
+    sealed class Event {
+        object RefreshList : Event()
+    }
+
     private val _userRolesRequests: MutableStateFlow<PagingData<UserRoleRequest>> = MutableStateFlow(PagingData.empty())
     val userRolesRequests: StateFlow<PagingData<UserRoleRequest>> = _userRolesRequests
 
     private val _listState: MutableLiveData<ListFragment.State> = MutableLiveData(ListFragment.State.Loading)
     val listState: LiveData<ListFragment.State> = _listState
 
-    var isRefreshing = false
+    private var isRefreshing = false
+
+    private val _eventChannel = Channel<Event>(Channel.BUFFERED)
+    val eventFlow: Flow<Event> = _eventChannel.receiveAsFlow()
 
     init {
         loadUserRolesRequests()
@@ -60,7 +66,16 @@ class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) 
     fun acceptRoleRequest(roleRequest: UserRoleRequest) {
         viewModelScope.launch {
             userRoleRepository.confirmUserRole(roleRequest)
+            refreshList()
         }
+    }
+
+    fun refreshList() {
+        viewModelScope.launch {
+            isRefreshing = true
+            _eventChannel.send(Event.RefreshList)
+        }
+
     }
 
     class Factory(private val userRoleRepository: UserRoleRepository) : ViewModelProvider.Factory {

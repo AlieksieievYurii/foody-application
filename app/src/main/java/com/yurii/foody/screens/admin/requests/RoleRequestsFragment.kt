@@ -37,10 +37,7 @@ class RoleRequestsFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_role_requests, container, false)
         binding.requests.setAdapter(listAdapter)
 
-        binding.requests.setOnRefreshListener {
-            viewModel.isRefreshing = true
-            listAdapter.refresh()
-        }
+        binding.requests.setOnRefreshListener { viewModel.refreshList() }
         binding.requests.setOnRetryListener { listAdapter.retry() }
 
         binding.toolbar.setNavigationOnClickListener {
@@ -51,7 +48,16 @@ class RoleRequestsFragment : Fragment() {
 
         observeLoadState()
         observeRequests()
+        observeEvents()
         return binding.root
+    }
+
+    private fun observeEvents() {
+        viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {
+            when (it) {
+                RoleRequestsViewModel.Event.RefreshList -> listAdapter.refresh()
+            }
+        }
     }
 
     private fun observeLoadState() {

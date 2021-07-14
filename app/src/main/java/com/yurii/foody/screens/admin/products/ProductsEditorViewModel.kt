@@ -2,6 +2,7 @@ package com.yurii.foody.screens.admin.products
 
 import androidx.lifecycle.*
 import androidx.paging.*
+import com.yurii.foody.ui.ListFragment
 import com.yurii.foody.utils.EmptyListException
 import com.yurii.foody.utils.ProductsRepository
 import kotlinx.coroutines.*
@@ -9,13 +10,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 
 class ProductsEditorViewModel(private val repository: ProductsRepository) : ViewModel() {
-    sealed class ListState {
-        object ShowEmptyList : ListState()
-        object ShowLoading : ListState()
-        object ShowResult : ListState()
-        data class ShowError(val exception: Throwable) : ListState()
-    }
-
     sealed class Event {
         object Refresh : Event()
         object ShowItemsRemovedSnackBar : Event()
@@ -24,8 +18,8 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
     private val _products: MutableStateFlow<PagingData<ProductData>> = MutableStateFlow(PagingData.empty())
     val products: StateFlow<PagingData<ProductData>> = _products
 
-    private val _listState: MutableLiveData<ListState> = MutableLiveData()
-    val listState: LiveData<ListState> = _listState
+    private val _listState: MutableLiveData<ListFragment.State> = MutableLiveData(ListFragment.State.Loading)
+    val listState: LiveData<ListFragment.State> = _listState
 
     private var searchJob: Job? = null
 
@@ -38,6 +32,8 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
 
     private val _eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow: Flow<Event> = _eventChannel.receiveAsFlow()
+
+    private var isRefreshing = false
 
     init {
         searchProduct()
@@ -52,11 +48,18 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
         }
     }
 
+    fun refreshList() {
+        viewModelScope.launch {
+            isRefreshing = true
+            _eventChannel.send(Event.Refresh)
+        }
+    }
+
     fun deleteItems(items: List<ProductData>) {
         viewModelScope.launch {
             _loading.value = true
             repository.deleteProducts(items.map { it.id })
-            _eventChannel.send(Event.Refresh)
+            refreshList()
         }
     }
 
@@ -79,21 +82,24 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
         viewModelScope.launch {
             when (state.refresh) {
                 is LoadState.NotLoading -> {
-                    _listState.value = ListState.ShowResult
+                    isRefreshing = false
+                    _listState.value = ListFragment.State.Ready
                     if (_loading.value) {
                         _loading.value = false
                         selectableMode.value = false
                         _eventChannel.send(Event.ShowItemsRemovedSnackBar)
                     }
                 }
-                LoadState.Loading -> _listState.setValue(ListState.ShowLoading)
+                LoadState.Loading ->
+                    if (!isRefreshing)
+                        _listState.value = ListFragment.State.Loading
                 is LoadState.Error -> {
                     _loading.value = false
                     val loadStateError = state.refresh as LoadState.Error
                     if (loadStateError.error is EmptyListException)
-                        _listState.value = ListState.ShowEmptyList
+                        _listState.value = ListFragment.State.Empty
                     else
-                        _listState.value = ListState.ShowError(loadStateError.error)
+                        _listState.value = ListFragment.State.Error(loadStateError.error)
                 }
             }
         }

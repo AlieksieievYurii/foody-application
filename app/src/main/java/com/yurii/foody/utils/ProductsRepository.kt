@@ -94,7 +94,7 @@ class ProductsRepository(private val service: Service) {
         private var INSTANCE: ProductsRepository? = null
         fun create(api: Service): ProductsRepository {
             if (INSTANCE == null)
-                synchronized(AuthorizationRepository::class.java) { INSTANCE = ProductsRepository(api) }
+                synchronized(ProductsRepository::class.java) { INSTANCE = ProductsRepository(api) }
 
             return INSTANCE!!
         }

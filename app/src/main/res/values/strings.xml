@@ -92,4 +92,9 @@
     <string name="label_create_category">Create category</string>
     <string name="label_edit_product">Edit product</string>
     <string name="label_create_product">Create product</string>
+    <string name="label_role">Role:</string>
+    <string name="label_confirmed">confirmed</string>
+    <string name="label_unconfirmed">unconfirmed</string>
+    <string name="label_role_request">Role request</string>
+    <string name="label_comfirm_role_request">Are you sure to accept the role request?</string>
 </resources>

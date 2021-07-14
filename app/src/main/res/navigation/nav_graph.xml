@@ -182,6 +182,13 @@
             app:exitAnim="@anim/slide_out"
             app:popEnterAnim="@anim/slide_in_2"
             app:popExitAnim="@anim/slide_out_2" />
+        <action
+            android:id="@+id/action_adminPanelFragment_to_roleRequestsFragment"
+            app:destination="@id/roleRequestsFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out"
+            app:popEnterAnim="@anim/slide_in_2"
+            app:popExitAnim="@anim/slide_out_2" />
     </fragment>
     <fragment
         android:id="@+id/productsEditorFragment"
@@ -229,4 +236,9 @@
             android:defaultValue="-1L"
             app:argType="long" />
     </fragment>
+    <fragment
+        android:id="@+id/roleRequestsFragment"
+        android:name="com.yurii.foody.screens.admin.requests.RoleRequestsFragment"
+        android:label="RoleRequestsFragment"
+        tools:layout="@layout/fragment_role_requests"/>
 </navigation>

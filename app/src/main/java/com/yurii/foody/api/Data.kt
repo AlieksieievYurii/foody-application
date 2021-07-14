@@ -24,7 +24,12 @@ enum class UserRoleEnum(val role: String) {
 @JsonClass(generateAdapter = true)
 data class Pagination<T>(val count: Int, val next: String?, val previous: String?, val results: List<T>)
 
-data class UserRole(@Json(name = "user") val userId: Long, @Json(name = "is_confirmed") val isConfirmed: Boolean, val role: UserRoleEnum)
+data class UserRole(
+    @Json(name = "pk") val id: Long,
+    @Json(name = "user") val userId: Long,
+    @Json(name = "is_confirmed") val isConfirmed: Boolean,
+    val role: UserRoleEnum
+)
 
 @JsonClass(generateAdapter = true)
 data class AuthData(val username: String, val password: String)

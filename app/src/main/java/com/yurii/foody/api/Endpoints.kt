@@ -18,8 +18,23 @@ interface ApiUsers {
     @GET("/users/{id}")
     suspend fun getUser(@Path("id") id: Long): User
 
+    @GET("/users/")
+    suspend fun getUsers(
+        @Query("users_ids") userIds: String? = null,
+        @Query("page") page: Int? = null,
+        @Query("size") size: Int? = null
+    ): Pagination<User>
+
     @GET("/users/roles")
-    suspend fun getUsersRoles(@Query("user") userId: Long? = null): Pagination<UserRole>
+    suspend fun getUsersRoles(
+        @Query("user") userId: Long? = null,
+        @Query("is_confirmed") isConfirmed: Boolean? = null,
+        @Query("page") page: Int? = null,
+        @Query("size") size: Int? = null
+    ): Pagination<UserRole>
+
+    @PUT("/users/role/{id}")
+    suspend fun updateUserRole(@Path("id") id: Long, @Body userRole: UserRole): UserRole
 }
 
 interface ApiProducts {

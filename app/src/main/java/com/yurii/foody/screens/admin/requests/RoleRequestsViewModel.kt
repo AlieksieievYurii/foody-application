@@ -7,12 +7,13 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.yurii.foody.ui.ListFragment
 import com.yurii.foody.utils.EmptyListException
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) : ViewModel() {
     sealed class Event {
+        data class ShowError(val exception: Throwable) : Event()
         object RefreshList : Event()
     }
 
@@ -27,12 +28,21 @@ class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) 
     private val _eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow: Flow<Event> = _eventChannel.receiveAsFlow()
 
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        viewModelScope.launch {
+            _eventChannel.send(Event.ShowError(exception))
+        }
+    }
+
+    private val viewModelJob = Job()
+    private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
+
     init {
         loadUserRolesRequests()
     }
 
     private fun loadUserRolesRequests() {
-        viewModelScope.launch {
+        netWorkScope.launch {
             userRoleRepository.getUnconfirmedUserRolesPager().cachedIn(viewModelScope).collectLatest {
                 _userRolesRequests.value = it
             }
@@ -64,7 +74,7 @@ class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) 
     }
 
     fun acceptRoleRequest(roleRequest: UserRoleRequest) {
-        viewModelScope.launch {
+        netWorkScope.launch {
             userRoleRepository.confirmUserRole(roleRequest)
             refreshList()
         }

@@ -17,7 +17,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentProductEditorBinding
-import com.yurii.foody.ui.ListFragment
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
@@ -43,8 +42,12 @@ class ProductsEditorFragment : Fragment() {
 
         binding.listFragment.setAdapter(listAdapter)
 
-        binding.listFragment.setOnRefreshListener { listAdapter.refresh() }
+        binding.listFragment.setOnRefreshListener {
+            viewModel.isRefreshing = true
+            listAdapter.refresh()
+        }
         binding.listFragment.setOnRetryListener { listAdapter.retry() }
+        binding.listFragment.observeListState(viewModel.listState)
 
         binding.toolbar.setNavigationOnClickListener {
             if (viewModel.selectableMode.value)
@@ -62,6 +65,7 @@ class ProductsEditorFragment : Fragment() {
         observeSelectableMode()
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val refresh = findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(REFRESH_PRODUCTS)
@@ -147,18 +151,6 @@ class ProductsEditorFragment : Fragment() {
     }
 
     private fun observeEvents() {
-        viewModel.listState.observe(viewLifecycleOwner) {
-            when (it) {
-                ProductsEditorViewModel.ListState.ShowLoading -> {
-                    if (binding.listFragment.state != ListFragment.State.Ready)
-                        binding.listFragment.state = ListFragment.State.Loading
-                }
-                ProductsEditorViewModel.ListState.ShowResult -> binding.listFragment.state = ListFragment.State.Ready
-                ProductsEditorViewModel.ListState.ShowEmptyList -> binding.listFragment.state = ListFragment.State.Empty
-                is ProductsEditorViewModel.ListState.ShowError -> binding.listFragment.state = ListFragment.State.Error(it.exception)
-            }
-        }
-
         viewModel.products.observeOnLifecycle(viewLifecycleOwner) {
             listAdapter.submitData(it)
         }

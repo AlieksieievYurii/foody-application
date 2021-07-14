@@ -15,7 +15,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentCategoriesEditBinding
-import com.yurii.foody.ui.ListFragment
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
@@ -36,13 +35,18 @@ class CategoriesEditorFragment : Fragment() {
 
         listAdapter.onClickItem = {
             findNavController().navigate(
-                CategoriesEditorFragmentDirections.actionCategoriesEditorFragmentToCategoryEditorFragment(categoryIdToEdit = it.id))
+                CategoriesEditorFragmentDirections.actionCategoriesEditorFragmentToCategoryEditorFragment(categoryIdToEdit = it.id)
+            )
         }
 
         binding.listFragment.setAdapter(listAdapter)
 
-        binding.listFragment.setOnRefreshListener { listAdapter.refresh() }
+        binding.listFragment.setOnRefreshListener {
+            viewModel.isRefreshing = true
+            listAdapter.refresh()
+        }
         binding.listFragment.setOnRetryListener { listAdapter.retry() }
+        binding.listFragment.observeListState(viewModel.listState)
 
         binding.toolbar.setNavigationOnClickListener {
             if (viewModel.selectableMode.value)
@@ -58,7 +62,6 @@ class CategoriesEditorFragment : Fragment() {
         initOptionMenu()
         observeCategoriesData()
         observeLoadState()
-        observeListState()
         observeSelectableMode()
         observeLoading()
         observeEvents()
@@ -100,20 +103,6 @@ class CategoriesEditorFragment : Fragment() {
                     R.string.hint_items_are_removed,
                     Snackbar.LENGTH_LONG
                 ).show()
-            }
-        }
-    }
-
-    private fun observeListState() {
-        viewModel.listState.observe(viewLifecycleOwner) {
-            when (it) {
-                CategoriesEditorViewModel.ListState.ShowLoading -> {
-                    if (binding.listFragment.state != ListFragment.State.Ready)
-                        binding.listFragment.state = ListFragment.State.Loading
-                }
-                CategoriesEditorViewModel.ListState.ShowResult -> binding.listFragment.state = ListFragment.State.Ready
-                CategoriesEditorViewModel.ListState.ShowEmptyList -> binding.listFragment.state = ListFragment.State.Empty
-                is CategoriesEditorViewModel.ListState.ShowError -> binding.listFragment.state = ListFragment.State.Error(it.exception)
             }
         }
     }

@@ -32,6 +32,9 @@ interface ApiUsers {
         @Query("page") page: Int? = null,
         @Query("size") size: Int? = null
     ): Pagination<UserRole>
+
+    @PUT("/users/role/{id}")
+    suspend fun updateUserRole(@Path("id") id: Long, @Body userRole: UserRole): UserRole
 }
 
 interface ApiProducts {

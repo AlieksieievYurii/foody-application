@@ -18,6 +18,7 @@ class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) 
         object ShowResult : ListState()
         data class ShowError(val exception: Throwable) : ListState()
     }
+
     private val _userRolesRequests: MutableStateFlow<PagingData<UserRoleRequest>> = MutableStateFlow(PagingData.empty())
     val userRolesRequests: StateFlow<PagingData<UserRoleRequest>> = _userRolesRequests
 
@@ -63,7 +64,9 @@ class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) 
     }
 
     fun acceptRoleRequest(roleRequest: UserRoleRequest) {
-
+        viewModelScope.launch {
+            userRoleRepository.confirmUserRole(roleRequest)
+        }
     }
 
     class Factory(private val userRoleRepository: UserRoleRepository) : ViewModelProvider.Factory {

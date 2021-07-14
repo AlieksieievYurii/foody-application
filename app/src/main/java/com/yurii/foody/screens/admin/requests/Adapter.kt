@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yurii.foody.R
 import com.yurii.foody.api.Service
 import com.yurii.foody.api.User
+import com.yurii.foody.api.UserRole
 import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.databinding.ItemUserRoleRequestBinding
 import retrofit2.HttpException
@@ -21,6 +22,13 @@ data class UserRoleRequest(
     val user: User,
     val role: UserRoleEnum
 ) {
+    fun toConfirmedUserRole(): UserRole = UserRole(
+        id = id,
+        userId = user.id,
+        isConfirmed = true,
+        role = role
+    )
+
     val fullName = "${user.firstName} ${user.lastName}"
 }
 

@@ -33,7 +33,7 @@ class CategoriesEditorViewModel(private val productsRepository: ProductsReposito
     private val _eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow: Flow<Event> = _eventChannel.receiveAsFlow()
 
-    var isRefreshing = false
+    private var isRefreshing = false
 
     init {
         viewModelScope.launch {
@@ -71,11 +71,18 @@ class CategoriesEditorViewModel(private val productsRepository: ProductsReposito
 
     }
 
+    fun refreshList() {
+        viewModelScope.launch {
+            isRefreshing = true
+            _eventChannel.send(Event.Refresh)
+        }
+    }
+
     fun deleteItems(items: List<CategoriesData>) {
         viewModelScope.launch {
             _loading.value = true
             productsRepository.deleteCategories(items.map { it.id })
-            _eventChannel.send(Event.Refresh)
+            refreshList()
         }
     }
 

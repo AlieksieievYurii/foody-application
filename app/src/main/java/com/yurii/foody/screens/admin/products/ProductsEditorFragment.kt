@@ -42,10 +42,7 @@ class ProductsEditorFragment : Fragment() {
 
         binding.listFragment.setAdapter(listAdapter)
 
-        binding.listFragment.setOnRefreshListener {
-            viewModel.isRefreshing = true
-            listAdapter.refresh()
-        }
+        binding.listFragment.setOnRefreshListener { viewModel.refreshList() }
         binding.listFragment.setOnRetryListener { listAdapter.retry() }
         binding.listFragment.observeListState(viewModel.listState)
 

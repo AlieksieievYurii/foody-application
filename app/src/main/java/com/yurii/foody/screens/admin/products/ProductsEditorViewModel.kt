@@ -33,7 +33,7 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
     private val _eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow: Flow<Event> = _eventChannel.receiveAsFlow()
 
-    var isRefreshing = false
+    private var isRefreshing = false
 
     init {
         searchProduct()
@@ -48,11 +48,18 @@ class ProductsEditorViewModel(private val repository: ProductsRepository) : View
         }
     }
 
+    fun refreshList() {
+        viewModelScope.launch {
+            isRefreshing = true
+            _eventChannel.send(Event.Refresh)
+        }
+    }
+
     fun deleteItems(items: List<ProductData>) {
         viewModelScope.launch {
             _loading.value = true
             repository.deleteProducts(items.map { it.id })
-            _eventChannel.send(Event.Refresh)
+            refreshList()
         }
     }
 

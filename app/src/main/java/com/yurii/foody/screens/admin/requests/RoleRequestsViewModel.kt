@@ -5,6 +5,7 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.yurii.foody.ui.ListFragment
 import com.yurii.foody.utils.EmptyListException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,18 +13,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) : ViewModel() {
-    sealed class ListState {
-        object ShowEmptyList : ListState()
-        object ShowLoading : ListState()
-        object ShowResult : ListState()
-        data class ShowError(val exception: Throwable) : ListState()
-    }
-
     private val _userRolesRequests: MutableStateFlow<PagingData<UserRoleRequest>> = MutableStateFlow(PagingData.empty())
     val userRolesRequests: StateFlow<PagingData<UserRoleRequest>> = _userRolesRequests
 
-    private val _listState: MutableLiveData<ListState> = MutableLiveData(ListState.ShowLoading)
-    val listState: LiveData<ListState> = _listState
+    private val _listState: MutableLiveData<ListFragment.State> = MutableLiveData(ListFragment.State.Loading)
+    val listState: LiveData<ListFragment.State> = _listState
 
     var isRefreshing = false
 
@@ -43,20 +37,20 @@ class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) 
         viewModelScope.launch {
             when (state.refresh) {
                 is LoadState.NotLoading -> {
-                    _listState.value = ListState.ShowResult
+                    _listState.value = ListFragment.State.Ready
                     isRefreshing = false
                 }
                 LoadState.Loading -> {
                     if (!isRefreshing)
-                        _listState.value = ListState.ShowLoading
+                        _listState.value = ListFragment.State.Loading
                 }
                 is LoadState.Error -> {
                     isRefreshing = false
                     val loadStateError = state.refresh as LoadState.Error
                     if (loadStateError.error is EmptyListException)
-                        _listState.value = ListState.ShowEmptyList
+                        _listState.value = ListFragment.State.Empty
                     else
-                        _listState.value = ListState.ShowError(loadStateError.error)
+                        _listState.value = ListFragment.State.Error(loadStateError.error)
                 }
             }
         }

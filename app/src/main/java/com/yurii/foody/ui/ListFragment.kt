@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.paging.PagingDataAdapter
@@ -82,6 +84,12 @@ class ListFragment(context: Context, attrs: AttributeSet) : FrameLayout(context,
     fun <T : Any, HV : RecyclerView.ViewHolder> setAdapter(adapter: PagingDataAdapter<T, HV>) {
         binding.list.adapter = adapter.withLoadStateFooter(LoaderStateAdapter())
         binding.list.layoutAnimation = android.view.animation.AnimationUtils.loadLayoutAnimation(context, R.anim.list_animation)
+    }
+
+    fun observeListState(state: LiveData<State>) {
+        state.observe(context as LifecycleOwner) {
+            this.state = it
+        }
     }
 
     fun setOnRefreshListener(callback: () -> Unit) {

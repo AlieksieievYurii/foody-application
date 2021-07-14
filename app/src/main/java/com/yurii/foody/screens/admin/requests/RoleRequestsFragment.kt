@@ -11,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentRoleRequestsBinding
-import com.yurii.foody.ui.ListFragment
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
 
@@ -48,8 +47,9 @@ class RoleRequestsFragment : Fragment() {
             findNavController().navigateUp()
         }
 
+        binding.requests.observeListState(viewModel.listState)
+
         observeLoadState()
-        observeListState()
         observeRequests()
         return binding.root
     }
@@ -57,17 +57,6 @@ class RoleRequestsFragment : Fragment() {
     private fun observeLoadState() {
         listAdapter.loadStateFlow.observeOnLifecycle(viewLifecycleOwner) { loadState ->
             viewModel.onLoadStateChange(loadState)
-        }
-    }
-
-    private fun observeListState() {
-        viewModel.listState.observe(viewLifecycleOwner) {
-            when (it) {
-                RoleRequestsViewModel.ListState.ShowLoading -> binding.requests.state = ListFragment.State.Loading
-                RoleRequestsViewModel.ListState.ShowResult -> binding.requests.state = ListFragment.State.Ready
-                RoleRequestsViewModel.ListState.ShowEmptyList -> binding.requests.state = ListFragment.State.Empty
-                is RoleRequestsViewModel.ListState.ShowError -> binding.requests.state = ListFragment.State.Error(it.exception)
-            }
         }
     }
 

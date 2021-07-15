@@ -3,18 +3,15 @@ package com.yurii.foody.authorization.login
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.api.*
-import com.yurii.foody.authorization.AuthorizationRepository
-import com.yurii.foody.authorization.AuthorizationRepositoryInterface
+import com.yurii.foody.utils.AuthorizationRepository
 import com.yurii.foody.utils.*
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST
 import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 
-class LogInViewModel(private val repository: AuthorizationRepositoryInterface) : ViewModel() {
+class LogInViewModel(private val repository: AuthorizationRepository) : ViewModel() {
     sealed class Event {
         object NavigateToChooseRoleScreen : Event()
         data class ServerError(val errorCode: Int) : Event()
@@ -29,11 +26,8 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
     val emailField = ObservableField(String.Empty)
     val passwordField = ObservableField(String.Empty)
 
-    private val _emailValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val emailValidation: LiveData<FieldValidation> = _emailValidation
-
-    private val _passwordValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val passwordValidation: LiveData<FieldValidation> = _passwordValidation
+    val emailValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val passwordValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -41,6 +35,12 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        viewModelScope.launch { handleResponseError(exception) }
+    }
+
+    private val viewModelJob = Job()
+    private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
 
     fun logIn() {
         if (isDataValidated())
@@ -48,16 +48,16 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
     }
 
     private fun isDataValidated(): Boolean {
-        if (emailField.value.isEmpty()) {
-            _emailValidation.value = FieldValidation.EmptyField
+        if (emailField.value.isNullOrBlank()) {
+            emailValidation.value = FieldValidation.EmptyField
             return false
         } else if (emailField.value.notMatches(EMAIL_REGEX)) {
-            _emailValidation.value = FieldValidation.WrongEmailFormat
+            emailValidation.value = FieldValidation.WrongEmailFormat
             return false
         }
 
-        if (passwordField.value.isEmpty()) {
-            _passwordValidation.value = FieldValidation.EmptyField
+        if (passwordField.value.isNullOrBlank()) {
+            passwordValidation.value = FieldValidation.EmptyField
             return false
         }
 
@@ -65,39 +65,36 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
     }
 
     private fun performLogIn() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.logIn(AuthData(emailField.value, passwordField.value)).onStart { _isLoading.value = true }
-                    .catch { exception ->
-                        handleResponseError(exception)
-                    }.collect {
-                        handleUser(it.userId)
-                    }
-            }
+        netWorkScope.launch {
+            _isLoading.value = true
+            val authData = repository.logIn(AuthData(emailField.value, passwordField.value))
+            handleUser(authData.userId)
         }
+
     }
 
     private suspend fun handleUser(userId: Long) {
-        repository.getUser(userId).catch { exception ->
-            handleResponseError(exception)
-        }.collect { user ->
-            repository.saveUser(user)
-            if (user.isEmailConfirmed)
-                handleUserRole(user.id)
-            else {
-                eventChannel.send(Event.NavigateToUserIsNotConfirmed)
-                _isLoading.value = false
-            }
+        val user = repository.getUser(userId)
+        repository.saveUser(user)
+        if (user.isEmailConfirmed)
+            handleUserRole()
+        else {
+            eventChannel.send(Event.NavigateToUserIsNotConfirmed)
+            _isLoading.value = false
         }
     }
 
-    private suspend fun handleUserRole(userId: Long) {
-        repository.getUsersRoles(userId).catch { exception ->
+    private suspend fun handleUserRole() {
+        val currentUserRole: UserRole? = try {
+            repository.getCurrentUserRole()
+        } catch (exception: ResponseException) {
             handleResponseError(exception, isAuthenticated = true)
-        }.collect { userRolePagination ->
-            val role = userRolePagination.results.first()
-            repository.setUserRole(role.role)
-            repository.setUserRoleStatus(role.isConfirmed)
+            null
+        }
+
+        if (currentUserRole != null) {
+            repository.setUserRole(currentUserRole.role)
+            repository.setUserRoleStatus(currentUserRole.isConfirmed)
             _isLoading.value = false
             eventChannel.send(Event.NavigateToChooseRoleScreen)
         }
@@ -109,7 +106,7 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
             is ResponseException.NetworkError -> eventChannel.send(Event.NetworkError(error.responseMessage))
             is ResponseException.ServerError -> {
                 if (isAuthenticated && error.code == HTTP_UNAUTHORIZED || error.code == HTTP_BAD_REQUEST)
-                    _emailValidation.postValue(FieldValidation.WrongCredentials)
+                    emailValidation.postValue(FieldValidation.WrongCredentials)
                 else
                     eventChannel.send(Event.ServerError(error.code))
             }
@@ -120,16 +117,6 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
     fun onClickSingUp() = viewModelScope.launch { eventChannel.send(Event.NavigateToSingUpScreen) }
 
     fun onClose() = viewModelScope.launch { eventChannel.send(Event.Close) }
-
-    fun resetEmailValidation() {
-        if (_emailValidation.value != FieldValidation.NoErrors)
-            _emailValidation.value = FieldValidation.NoErrors
-    }
-
-    fun resetPasswordValidation() {
-        if (_passwordValidation.value != FieldValidation.NoErrors)
-            _passwordValidation.value = FieldValidation.NoErrors
-    }
 
     class Factory(private val repository: AuthorizationRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {

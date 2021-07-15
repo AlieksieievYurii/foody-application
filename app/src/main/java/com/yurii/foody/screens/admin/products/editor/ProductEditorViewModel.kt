@@ -38,17 +38,11 @@ class ProductEditorViewModel(
     private val _defaultPhotoFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val defaultPhotoFieldValidation: LiveData<FieldValidation> = _defaultPhotoFieldValidation
 
-    private val _productNameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val productNameFieldValidation: LiveData<FieldValidation> = _productNameFieldValidation
+    val productNameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val productDescriptionFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val priceFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
 
-    private val _productDescriptionFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val productDescriptionFieldValidation: LiveData<FieldValidation> = _productDescriptionFieldValidation
-
-    private val _priceFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val priceFieldValidation: LiveData<FieldValidation> = _priceFieldValidation
-
-    private val _cookingTimeFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val cookingTimeFieldValidation: LiveData<FieldValidation> = _cookingTimeFieldValidation
+     val cookingTimeFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
 
     private val _categories: MutableStateFlow<List<Category>> = MutableStateFlow(emptyList())
     val categories: StateFlow<List<Category>> = _categories
@@ -340,19 +334,19 @@ class ProductEditorViewModel(
         var isValid = true
 
         if (productName.get().isNullOrBlank())
-            _productNameFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
+            productNameFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
         if (price.get().isNullOrBlank())
-            _priceFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
+            priceFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
         if (cookingTime.get().isNullOrBlank())
-            _cookingTimeFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
+            cookingTimeFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
         if (_mainPhoto.value == null)
             _defaultPhotoFieldValidation.value = FieldValidation.NoPhoto.also { isValid = false }
 
         if (description.get().isNullOrBlank())
-            _productDescriptionFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
+            productDescriptionFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
         return isValid
     }
@@ -374,22 +368,6 @@ class ProductEditorViewModel(
             addAll(_additionalImagesFlow.value)
             remove(photo)
         }
-    }
-
-    fun resetProductNameFieldValidation() {
-        _productNameFieldValidation.value = FieldValidation.NoErrors
-    }
-
-    fun resetProductDescriptionFieldValidation() {
-        _productDescriptionFieldValidation.value = FieldValidation.NoErrors
-    }
-
-    fun resetPriceFieldValidation() {
-        _priceFieldValidation.value = FieldValidation.NoErrors
-    }
-
-    fun resetCookingTimeFieldValidation() {
-        _cookingTimeFieldValidation.value = FieldValidation.NoErrors
     }
 
     override fun onCleared() {

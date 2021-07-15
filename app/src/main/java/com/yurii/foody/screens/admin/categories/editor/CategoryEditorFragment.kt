@@ -17,6 +17,7 @@ import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.Injector
+import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
 
@@ -45,9 +46,7 @@ class CategoryEditorFragment : Fragment() {
             uploadImageDialog.show { viewModel.setPhoto(CategoryPhoto.create(it)) }
         }
 
-        binding.toolbar.setNavigationOnClickListener {
-            closeFragment()
-        }
+        binding.toolbar.setNavigationOnClickListener { closeFragment() }
 
         observePhoto()
         observeLoading()
@@ -65,10 +64,6 @@ class CategoryEditorFragment : Fragment() {
                 is CategoryEditorViewModel.Event.ShowError -> errorDialog.show(it.exception.message ?: getString(R.string.label_no_message))
             }
         }
-    }
-
-    private fun closeFragment() {
-        findNavController().navigateUp()
     }
 
     private fun observeLoading() {

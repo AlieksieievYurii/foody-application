@@ -2,20 +2,20 @@ package com.yurii.foody.screens.admin.main
 
 import androidx.lifecycle.*
 import com.yurii.foody.api.User
-import com.yurii.foody.authorization.AuthorizationRepository
-import com.yurii.foody.authorization.AuthorizationRepositoryInterface
+import com.yurii.foody.utils.AuthorizationRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class AdminPanelViewModel(private val repository: AuthorizationRepositoryInterface) : ViewModel() {
+class AdminPanelViewModel(private val repository: AuthorizationRepository) : ViewModel() {
     sealed class Event {
         object NavigateToRequests : Event()
         object NavigateToProductsEditor : Event()
         object NavigateToCategoriesEditor : Event()
         object NavigateToLogInScreen : Event()
         object NavigateToChangeRole : Event()
+        object NavigateToPersonalInformation : Event()
     }
 
     private val _user: MutableLiveData<User> = MutableLiveData()
@@ -44,6 +44,12 @@ class AdminPanelViewModel(private val repository: AuthorizationRepositoryInterfa
 
             repository.setSelectedUserRole(null)
             eventChannel.send(Event.NavigateToChangeRole)
+        }
+    }
+
+    fun changePersonalInformation() {
+        viewModelScope.launch {
+            eventChannel.send(Event.NavigateToPersonalInformation)
         }
     }
 

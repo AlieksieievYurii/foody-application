@@ -46,6 +46,12 @@ data class User(
     @Json(name = "phone_number") val phoneNumber: String,
     @Json(name = "is_email_confirmed") val isEmailConfirmed: Boolean
 )
+@JsonClass(generateAdapter = true)
+data class UserPersonalInfo(
+    @Json(name = "first_name") val firstName: String,
+    @Json(name = "last_name") val lastName: String,
+    @Json(name = "phone_number") val phoneNumber: String,
+)
 
 @JsonClass(generateAdapter = true)
 data class UserRegistration(

@@ -27,8 +27,8 @@
                 android:background="@color/yellow"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:navigationIcon="@drawable/ic_arrow_white_24"
-                tools:title="Add product"
-                app:titleTextColor="@color/white" />
+                app:titleTextColor="@color/white"
+                tools:title="Add product" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -110,8 +110,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@+id/guideline15"
                 android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline15"
                 app:layout_constraintStart_toStartOf="@+id/guideline14"
                 app:layout_constraintTop_toBottomOf="@+id/error_image">
 
@@ -124,7 +124,7 @@
                     android:inputType="text"
                     android:maxLines="1"
                     android:text="@={viewModel.categoryName}"
-                    app:textWatcher="@{() -> viewModel.resetProductNameFieldValidation()}" />
+                    app:resetValidation="@{viewModel.categoryNameFieldValidation}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -145,9 +145,9 @@
                 android:id="@+id/action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:onClick="@{() -> viewModel.save()}"
                 android:text="@string/label_save"
-                android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline15"
                 app:layout_constraintStart_toStartOf="@+id/guideline14"
                 app:layout_constraintTop_toBottomOf="@+id/error_name_field" />

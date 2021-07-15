@@ -3,7 +3,6 @@ package com.yurii.foody.utils
 import android.app.Application
 import android.content.Context
 import com.yurii.foody.api.Service
-import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.authorization.confirmation.ConfirmationFragment
 import com.yurii.foody.authorization.confirmation.ConfirmationViewModel
 import com.yurii.foody.authorization.loading.LoadingViewModel
@@ -16,7 +15,8 @@ import com.yurii.foody.screens.admin.main.AdminPanelViewModel
 import com.yurii.foody.screens.admin.products.ProductsEditorViewModel
 import com.yurii.foody.screens.admin.products.editor.ProductEditorViewModel
 import com.yurii.foody.screens.admin.requests.RoleRequestsViewModel
-import com.yurii.foody.screens.admin.requests.UserRoleRepository
+import com.yurii.foody.screens.personal.PersonalInformationViewModel
+import com.yurii.foody.screens.personal.UserRepository
 
 object Injector {
 
@@ -56,7 +56,12 @@ object Injector {
         categoryIdToEdit = if (categoryIdToEdit == -1L) null else categoryIdToEdit
     )
 
-    fun provideRoleRequestsViewModel() = RoleRequestsViewModel.Factory(userRoleRepository = provideUserRoleRepository())
+    fun provideRoleRequestsViewModel(context: Context) =
+        RoleRequestsViewModel.Factory(authorizationRepository = provideAuthorizationRepository(context))
 
-    private fun provideUserRoleRepository(): UserRoleRepository = UserRoleRepository.create(Service)
+    fun providePersonalInformationViewModel(context: Context) = PersonalInformationViewModel.Factory(
+        UserRepository(
+            service = Service, authDataStorage = AuthDataStorage.create(context)
+        )
+    )
 }

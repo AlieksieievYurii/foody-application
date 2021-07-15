@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.databinding.ObservableField
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.paging.PagingSource
 import coil.load
 import com.airbnb.lottie.LottieAnimationView
@@ -110,4 +111,8 @@ fun ImageView.loadImage(urlOrUri: String) {
     this.load(urlOrUri) {
         error(R.drawable.image_error_placeholder)
     }
+}
+
+fun Fragment.closeFragment() {
+    findNavController().navigateUp()
 }

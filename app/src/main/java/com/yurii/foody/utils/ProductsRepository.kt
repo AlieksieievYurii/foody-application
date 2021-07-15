@@ -3,7 +3,6 @@ package com.yurii.foody.utils
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.yurii.foody.api.*
-import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.screens.admin.categories.CategoriesPagingSource
 import com.yurii.foody.screens.admin.products.ProductPagingSource
 import okhttp3.MediaType

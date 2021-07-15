@@ -48,8 +48,7 @@ class CategoryEditorViewModel(
     private val _categoryPhotoFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val categoryPhotoFieldValidation: LiveData<FieldValidation> = _categoryPhotoFieldValidation
 
-    private val _categoryNameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val categoryNameFieldValidation: LiveData<FieldValidation> = _categoryNameFieldValidation
+    val categoryNameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
 
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -82,10 +81,6 @@ class CategoryEditorViewModel(
             categoryName.set(category.name)
             _categoryPhoto.value = CategoryPhoto.create(category).also { originalPhoto = it }
         }
-    }
-
-    fun resetProductNameFieldValidation() {
-        _categoryNameFieldValidation.value = FieldValidation.NoErrors
     }
 
     fun save() {
@@ -151,7 +146,7 @@ class CategoryEditorViewModel(
             _categoryPhotoFieldValidation.value = FieldValidation.NoPhoto.apply { isValidated = false }
 
         if (categoryName.value.isNullOrBlank())
-            _categoryNameFieldValidation.value = FieldValidation.EmptyField.apply { isValidated = false }
+            categoryNameFieldValidation.value = FieldValidation.EmptyField.apply { isValidated = false }
 
         return isValidated
     }

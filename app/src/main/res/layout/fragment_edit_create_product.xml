@@ -27,8 +27,8 @@
                 android:background="@color/yellow"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:navigationIcon="@drawable/ic_arrow_white_24"
-                tools:title="Add product"
-                app:titleTextColor="@color/white" />
+                app:titleTextColor="@color/white"
+                tools:title="Add product" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -155,10 +155,10 @@
                     android:id="@+id/category"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:value="@={viewModel.category}"
                     app:layout_constraintEnd_toStartOf="@+id/guideline15"
                     app:layout_constraintStart_toStartOf="@+id/guideline14"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView3"
+                    app:value="@={viewModel.category}" />
 
                 <TextView
                     android:id="@+id/textView3"
@@ -188,7 +188,7 @@
                         android:inputType="text"
                         android:maxLines="1"
                         android:text="@={viewModel.productName}"
-                        app:textWatcher="@{() -> viewModel.resetProductNameFieldValidation()}" />
+                        app:resetValidation="@{viewModel.productNameFieldValidation}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
@@ -222,7 +222,7 @@
                         android:hint="@string/hint_description"
                         android:inputType="text"
                         android:text="@={viewModel.description}"
-                        app:textWatcher="@{() -> viewModel.resetProductDescriptionFieldValidation()}" />
+                        app:resetValidation="@{viewModel.productDescriptionFieldValidation}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -267,7 +267,7 @@
                         android:hint="@string/hint_price"
                         android:inputType="numberDecimal"
                         android:text="@={viewModel.price}"
-                        app:textWatcher="@{() -> viewModel.resetPriceFieldValidation()}" />
+                        app:resetValidation="@{viewModel.priceFieldValidation}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
@@ -301,7 +301,7 @@
                         android:hint="@string/hint_cooking_time"
                         android:inputType="numberSigned"
                         android:text="@={viewModel.cookingTime}"
-                        app:textWatcher="@{() -> viewModel.resetCookingTimeFieldValidation()}" />
+                        app:resetValidation="@{viewModel.cookingTimeFieldValidation}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView

@@ -19,6 +19,7 @@ import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.ui.UploadPhotoDialog
 import com.yurii.foody.utils.Injector
+import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
 
@@ -44,19 +45,16 @@ class ProductEditorFragment : Fragment() {
         binding.additionalImages.adapter = imagesListAdapter
         binding.toolbar.title = getString(if (viewModel.isEditMode) R.string.label_edit_product else R.string.label_create_product)
         binding.action.text = getString(if (viewModel.isEditMode) R.string.label_save else R.string.label_create)
-
+        loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner) { hideKeyboard() }
         binding.defaultImage.setOnClickListener {
             uploadImageDialog.show { viewModel.addMainPhoto(ProductPhoto.create(it)) }
         }
 
-        binding.toolbar.setNavigationOnClickListener {
-            closeFragment()
-        }
+        binding.toolbar.setNavigationOnClickListener { closeFragment() }
 
         observeAdditionalImages()
         observeMainPhoto()
         observeCategories()
-        observeLoadingState()
         observeEvents()
 
         return binding.root
@@ -85,20 +83,6 @@ class ProductEditorFragment : Fragment() {
                     closeFragment()
                 }
             }
-        }
-    }
-
-    private fun closeFragment() {
-        findNavController().navigateUp()
-    }
-
-    private fun observeLoadingState() {
-        viewModel.isLoading.observeOnLifecycle(viewLifecycleOwner) { isLoading ->
-            hideKeyboard()
-            if (isLoading)
-                loadingDialog.show()
-            else
-                loadingDialog.close()
         }
     }
 

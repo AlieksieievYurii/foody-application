@@ -29,8 +29,9 @@ class LogInFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        observeLoading()
         observeEventFlow()
+
+        loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner) { hideKeyboard() }
 
         return binding.root
     }
@@ -47,13 +48,6 @@ class LogInFragment : Fragment() {
         }
     }
 
-    private fun observeLoading() = viewModel.isLoading.observeOnLifecycle(viewLifecycleOwner) {
-        if (it) {
-            loadingDialog.show()
-            hideKeyboard()
-        } else
-            loadingDialog.close()
-    }
 
     private fun navigateToChooseRoleScreen() {
         findNavController().navigate(LogInFragmentDirections.actionLogInFragmentToChooseRoleFragment())

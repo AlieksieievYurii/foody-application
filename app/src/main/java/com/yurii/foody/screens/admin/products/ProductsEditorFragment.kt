@@ -19,6 +19,7 @@ import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentProductEditorBinding
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.utils.Injector
+import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.observeOnLifecycle
 
 class ProductsEditorFragment : Fragment() {
@@ -50,7 +51,7 @@ class ProductsEditorFragment : Fragment() {
             if (viewModel.selectableMode.value)
                 viewModel.selectableMode.value = false
             else
-                findNavController().navigateUp()
+                closeFragment()
         }
 
         binding.add.setOnClickListener {

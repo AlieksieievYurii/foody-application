@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentRoleRequestsBinding
 import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.utils.Injector
+import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.observeOnLifecycle
 
 class RoleRequestsFragment : Fragment() {
@@ -42,9 +42,7 @@ class RoleRequestsFragment : Fragment() {
         binding.requests.setOnRefreshListener { viewModel.refreshList() }
         binding.requests.setOnRetryListener { listAdapter.retry() }
 
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
+        binding.toolbar.setNavigationOnClickListener { closeFragment() }
 
         binding.requests.observeListState(viewModel.listState)
 
@@ -55,7 +53,7 @@ class RoleRequestsFragment : Fragment() {
     }
 
     private fun observeEvents() {
-        viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {event ->
+        viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) { event ->
             when (event) {
                 RoleRequestsViewModel.Event.RefreshList -> listAdapter.refresh()
                 is RoleRequestsViewModel.Event.ShowError -> errorDialog.show(event.exception.message ?: getString(R.string.label_no_message))

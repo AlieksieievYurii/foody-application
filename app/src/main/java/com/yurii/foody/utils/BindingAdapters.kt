@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
+import androidx.lifecycle.MutableLiveData
 import coil.load
 import com.google.android.material.textfield.TextInputEditText
 import com.yurii.foody.R
@@ -17,6 +18,14 @@ interface CallBack {
 @BindingAdapter("textWatcher")
 fun editTextListener(editText: TextInputEditText, callback: CallBack) =
     editText.setOnTextChangeListener { callback.onChange() }
+
+@BindingAdapter("resetValidation")
+fun resetErrorField(editText: TextInputEditText, errorField: MutableLiveData<FieldValidation>) {
+    editText.setOnTextChangeListener {
+        if (errorField.value != FieldValidation.NoErrors)
+            errorField.value = FieldValidation.NoErrors
+    }
+}
 
 @BindingAdapter("errorField")
 fun errorField(textView: TextView, fieldValidation: FieldValidation) {

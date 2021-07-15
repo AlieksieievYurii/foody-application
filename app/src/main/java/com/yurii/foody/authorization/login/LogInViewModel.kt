@@ -27,11 +27,8 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
     val emailField = ObservableField(String.Empty)
     val passwordField = ObservableField(String.Empty)
 
-    private val _emailValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val emailValidation: LiveData<FieldValidation> = _emailValidation
-
-    private val _passwordValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val passwordValidation: LiveData<FieldValidation> = _passwordValidation
+    val emailValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val passwordValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -53,15 +50,15 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
 
     private fun isDataValidated(): Boolean {
         if (emailField.value.isNullOrBlank()) {
-            _emailValidation.value = FieldValidation.EmptyField
+            emailValidation.value = FieldValidation.EmptyField
             return false
         } else if (emailField.value.notMatches(EMAIL_REGEX)) {
-            _emailValidation.value = FieldValidation.WrongEmailFormat
+            emailValidation.value = FieldValidation.WrongEmailFormat
             return false
         }
 
         if (passwordField.value.isNullOrBlank()) {
-            _passwordValidation.value = FieldValidation.EmptyField
+            passwordValidation.value = FieldValidation.EmptyField
             return false
         }
 
@@ -110,7 +107,7 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
             is ResponseException.NetworkError -> eventChannel.send(Event.NetworkError(error.responseMessage))
             is ResponseException.ServerError -> {
                 if (isAuthenticated && error.code == HTTP_UNAUTHORIZED || error.code == HTTP_BAD_REQUEST)
-                    _emailValidation.postValue(FieldValidation.WrongCredentials)
+                    emailValidation.postValue(FieldValidation.WrongCredentials)
                 else
                     eventChannel.send(Event.ServerError(error.code))
             }
@@ -121,16 +118,6 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
     fun onClickSingUp() = viewModelScope.launch { eventChannel.send(Event.NavigateToSingUpScreen) }
 
     fun onClose() = viewModelScope.launch { eventChannel.send(Event.Close) }
-
-    fun resetEmailValidation() {
-        if (_emailValidation.value != FieldValidation.NoErrors)
-            _emailValidation.value = FieldValidation.NoErrors
-    }
-
-    fun resetPasswordValidation() {
-        if (_passwordValidation.value != FieldValidation.NoErrors)
-            _passwordValidation.value = FieldValidation.NoErrors
-    }
 
     class Factory(private val repository: AuthorizationRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {

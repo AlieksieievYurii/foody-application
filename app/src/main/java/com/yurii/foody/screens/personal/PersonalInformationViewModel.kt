@@ -21,15 +21,9 @@ class PersonalInformationViewModel(private val userRepository: UserRepository) :
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    private val _nameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val nameFieldValidation: LiveData<FieldValidation> = _nameFieldValidation
-
-    private val _surnameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val surnameFieldValidation: LiveData<FieldValidation> = _surnameFieldValidation
-
-
-    private val _phoneFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val phoneFieldValidation: LiveData<FieldValidation> = _phoneFieldValidation
+    val nameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val surnameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val phoneFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
@@ -62,18 +56,6 @@ class PersonalInformationViewModel(private val userRepository: UserRepository) :
         }
     }
 
-    fun resetNameValidation() {
-        _nameFieldValidation.value = FieldValidation.NoErrors
-    }
-
-    fun resetSurnameValidation() {
-        _surnameFieldValidation.value = FieldValidation.NoErrors
-    }
-
-    fun resetPhoneValidation() {
-        _phoneFieldValidation.value = FieldValidation.NoErrors
-    }
-
     fun save() {
         if (isValidated())
             saveChanges()
@@ -99,13 +81,13 @@ class PersonalInformationViewModel(private val userRepository: UserRepository) :
         var isValidated = true
 
         if (nameField.value.isNullOrBlank())
-            _nameFieldValidation.value = FieldValidation.EmptyField.also { isValidated = false }
+            nameFieldValidation.value = FieldValidation.EmptyField.also { isValidated = false }
 
         if (surnameField.value.isNullOrBlank())
-            _surnameFieldValidation.value = FieldValidation.EmptyField.also { isValidated = false }
+            surnameFieldValidation.value = FieldValidation.EmptyField.also { isValidated = false }
 
         if (phoneField.value.isNullOrBlank())
-            _phoneFieldValidation.value = FieldValidation.EmptyField.also { isValidated = false }
+            phoneFieldValidation.value = FieldValidation.EmptyField.also { isValidated = false }
 
         return isValidated
     }

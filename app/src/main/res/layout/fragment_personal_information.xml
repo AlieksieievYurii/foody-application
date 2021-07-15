@@ -75,7 +75,7 @@
                         android:inputType="text"
                         android:maxLines="1"
                         android:text="@={viewModel.nameField}"
-                        app:textWatcher="@{() -> viewModel.resetNameValidation()}" />
+                        app:resetValidation="@{viewModel.nameFieldValidation}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
@@ -111,7 +111,7 @@
                         android:inputType="text"
                         android:maxLines="1"
                         android:text="@={viewModel.surnameField}"
-                        app:textWatcher="@{() -> viewModel.resetSurnameValidation()}" />
+                        app:resetValidation="@{viewModel.surnameFieldValidation}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
@@ -143,11 +143,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
+                        android:enabled="false"
                         android:hint="@string/label_e_mail"
                         android:inputType="text"
-                        android:text="@={viewModel.emailField}"
-                        android:enabled="false"
-                        android:maxLines="1" />
+                        android:maxLines="1"
+                        android:text="@={viewModel.emailField}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -169,7 +169,7 @@
                         android:inputType="phone"
                         android:maxLines="1"
                         android:text="@={viewModel.phoneField}"
-                        app:textWatcher="@{() -> viewModel.resetPhoneValidation()}" />
+                        app:resetValidation="@{viewModel.phoneFieldValidation}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView

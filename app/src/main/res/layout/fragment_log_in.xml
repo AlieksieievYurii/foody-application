@@ -79,7 +79,7 @@
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:text="@={viewModel.emailField}"
-                    app:textWatcher="@{() -> viewModel.resetEmailValidation()}" />
+                    app:resetValidation="@{viewModel.emailValidation}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -101,7 +101,7 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:text="@={viewModel.passwordField}"
-                    app:textWatcher="@{() -> viewModel.resetPasswordValidation()}" />
+                    app:resetValidation="@{viewModel.passwordValidation}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button

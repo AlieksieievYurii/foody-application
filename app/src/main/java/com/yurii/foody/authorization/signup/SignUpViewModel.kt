@@ -34,20 +34,11 @@ class SignUpViewModel(private val repository: AuthorizationRepositoryInterface) 
     private val _showRegistrationHasDodeDialog: MutableStateFlow<Event.ShowRegistrationHasDoneDialog?> = MutableStateFlow(null)
     val showRegistrationHasDodeDialog: StateFlow<Event.ShowRegistrationHasDoneDialog?> = _showRegistrationHasDodeDialog
 
-    private val _nameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val nameFieldValidation: LiveData<FieldValidation> = _nameFieldValidation
-
-    private val _surnameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val surnameFieldValidation: LiveData<FieldValidation> = _surnameFieldValidation
-
-    private val _emailFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val emailFieldValidation: LiveData<FieldValidation> = _emailFieldValidation
-
-    private val _phoneFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val phoneFieldValidation: LiveData<FieldValidation> = _phoneFieldValidation
-
-    private val _passwordValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val passwordValidation: LiveData<FieldValidation> = _passwordValidation
+    val nameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val surnameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val emailFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val phoneFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val passwordValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
@@ -97,7 +88,7 @@ class SignUpViewModel(private val repository: AuthorizationRepositoryInterface) 
                 if (exception.code == HTTP_BAD_REQUEST) {
                     exception.getErrorResponse()?.run {
                         if ((get("user") as? JsonObject)?.contains("email") == true)
-                            _emailFieldValidation.postValue(FieldValidation.EmailIsAlreadyUsed)
+                            emailFieldValidation.postValue(FieldValidation.EmailIsAlreadyUsed)
                         else
                             eventChannel.send(Event.ShowErrorDialog(exception.responseMessage))
                     }
@@ -120,54 +111,38 @@ class SignUpViewModel(private val repository: AuthorizationRepositoryInterface) 
         viewModelScope.launch { eventChannel.send(Event.NavigateToLogInScreen) }
     }
 
-    fun resetNameValidation() {
-        _nameFieldValidation.value = FieldValidation.NoErrors
-    }
-
-    fun resetSurnameValidation() {
-        _surnameFieldValidation.value = FieldValidation.NoErrors
-    }
-
-    fun resetEmailValidation() {
-        _emailFieldValidation.value = FieldValidation.NoErrors
-    }
-
-    fun resetPhoneValidation() {
-        _phoneFieldValidation.value = FieldValidation.NoErrors
-    }
-
     private fun isDataValid(): Boolean {
         var isValid = true
 
         if (nameField.value.isBlank()) {
             isValid = false
-            _nameFieldValidation.value = FieldValidation.EmptyField
+            nameFieldValidation.value = FieldValidation.EmptyField
         }
 
         if (surnameField.value.isBlank()) {
             isValid = false
-            _surnameFieldValidation.value = FieldValidation.EmptyField
+            surnameFieldValidation.value = FieldValidation.EmptyField
         }
 
         if (emailField.value.isBlank()) {
             isValid = false
-            _emailFieldValidation.value = FieldValidation.EmptyField
+            emailFieldValidation.value = FieldValidation.EmptyField
         } else if (emailField.value.notMatches(EMAIL_REGEX)) {
             isValid = false
-            _emailFieldValidation.value = FieldValidation.WrongEmailFormat
+            emailFieldValidation.value = FieldValidation.WrongEmailFormat
         }
 
         if (phoneField.value.isBlank()) {
             isValid = false
-            _phoneFieldValidation.value = FieldValidation.EmptyField
+            phoneFieldValidation.value = FieldValidation.EmptyField
         } else if (phoneField.value.notMatches(PHONE_REGEX)) {
             isValid = false
-            _phoneFieldValidation.value = FieldValidation.WrongPhoneFormat
+            phoneFieldValidation.value = FieldValidation.WrongPhoneFormat
         }
 
         if (!isPasswordSuitable) {
             isValid = false
-            _passwordValidation.value = FieldValidation.DoesNotFitRequirements
+            passwordValidation.value = FieldValidation.DoesNotFitRequirements
         }
 
         return isValid

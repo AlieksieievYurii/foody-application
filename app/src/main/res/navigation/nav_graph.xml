@@ -191,7 +191,11 @@
             app:popExitAnim="@anim/slide_out_2" />
         <action
             android:id="@+id/action_adminPanelFragment_to_personalInformationFragment"
-            app:destination="@id/personalInformationFragment" />
+            app:destination="@id/personalInformationFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out"
+            app:popEnterAnim="@anim/slide_in_2"
+            app:popExitAnim="@anim/slide_out_2"/>
     </fragment>
     <fragment
         android:id="@+id/productsEditorFragment"

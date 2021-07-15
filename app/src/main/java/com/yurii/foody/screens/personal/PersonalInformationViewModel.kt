@@ -5,11 +5,17 @@ import androidx.lifecycle.*
 import com.yurii.foody.authorization.signup.SignUpViewModel
 import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
+import com.yurii.foody.utils.value
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class PersonalInformationViewModel(private val userRepository: UserRepository) : ViewModel() {
+
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     private val _nameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val nameFieldValidation: LiveData<FieldValidation> = _nameFieldValidation
@@ -31,11 +37,13 @@ class PersonalInformationViewModel(private val userRepository: UserRepository) :
 
     init {
         viewModelScope.launch {
+            _isLoading.value = true
             val currentUser = userRepository.getCurrentUser()
             nameField.set(currentUser.firstName)
             surnameField.set(currentUser.lastName)
             emailField.set(currentUser.email)
             phoneField.set(currentUser.phoneNumber)
+            _isLoading.value = false
         }
     }
 
@@ -52,7 +60,38 @@ class PersonalInformationViewModel(private val userRepository: UserRepository) :
     }
 
     fun save() {
+        if (isValidated())
+            saveChanges()
+    }
 
+    private fun saveChanges() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val currentUser = userRepository.getCurrentUser()
+            val updatedUser = currentUser.copy(
+                firstName = nameField.value,
+                lastName = surnameField.value,
+                phoneNumber = phoneField.value
+            )
+
+            userRepository.updateUser(updatedUser)
+            _isLoading.value = false
+        }
+    }
+
+    private fun isValidated(): Boolean {
+        var isValidated = true
+
+        if (nameField.value.isNullOrBlank())
+            _nameFieldValidation.value = FieldValidation.EmptyField.also { isValidated = false }
+
+        if (surnameField.value.isNullOrBlank())
+            _surnameFieldValidation.value = FieldValidation.EmptyField.also { isValidated = false }
+
+        if (phoneField.value.isNullOrBlank())
+            _phoneFieldValidation.value = FieldValidation.EmptyField.also { isValidated = false }
+
+        return isValidated
     }
 
     class Factory(private val userRepository: UserRepository) : ViewModelProvider.Factory {

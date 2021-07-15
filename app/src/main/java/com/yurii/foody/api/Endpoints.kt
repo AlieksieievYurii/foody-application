@@ -35,6 +35,9 @@ interface ApiUsers {
 
     @PUT("/users/role/{id}")
     suspend fun updateUserRole(@Path("id") id: Long, @Body userRole: UserRole): UserRole
+
+    @PATCH("/users/{id}")
+    suspend fun updateUser(@Path("id") userId: Long, @Body user: UserPersonalInfo): User
 }
 
 interface ApiProducts {

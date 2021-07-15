@@ -58,6 +58,8 @@ class ProductsEditorFragment : Fragment() {
             findNavController().navigate(ProductsEditorFragmentDirections.actionProductsEditorFragmentToProductEditorFragment())
         }
 
+        loadingDialog.observeState(viewModel.loading, viewLifecycleOwner)
+
         observeEvents()
         initOptionMenu()
         observeSelectableMode()
@@ -166,10 +168,6 @@ class ProductsEditorFragment : Fragment() {
                     Snackbar.LENGTH_LONG
                 ).show()
             }
-        }
-
-        viewModel.loading.observeOnLifecycle(viewLifecycleOwner) {
-            if (it) loadingDialog.show() else loadingDialog.close()
         }
     }
 }

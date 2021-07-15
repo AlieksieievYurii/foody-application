@@ -45,7 +45,7 @@ class ProductEditorFragment : Fragment() {
         binding.additionalImages.adapter = imagesListAdapter
         binding.toolbar.title = getString(if (viewModel.isEditMode) R.string.label_edit_product else R.string.label_create_product)
         binding.action.text = getString(if (viewModel.isEditMode) R.string.label_save else R.string.label_create)
-
+        loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner) { hideKeyboard() }
         binding.defaultImage.setOnClickListener {
             uploadImageDialog.show { viewModel.addMainPhoto(ProductPhoto.create(it)) }
         }
@@ -55,7 +55,6 @@ class ProductEditorFragment : Fragment() {
         observeAdditionalImages()
         observeMainPhoto()
         observeCategories()
-        observeLoadingState()
         observeEvents()
 
         return binding.root
@@ -84,16 +83,6 @@ class ProductEditorFragment : Fragment() {
                     closeFragment()
                 }
             }
-        }
-    }
-
-    private fun observeLoadingState() {
-        viewModel.isLoading.observeOnLifecycle(viewLifecycleOwner) { isLoading ->
-            hideKeyboard()
-            if (isLoading)
-                loadingDialog.show()
-            else
-                loadingDialog.close()
         }
     }
 

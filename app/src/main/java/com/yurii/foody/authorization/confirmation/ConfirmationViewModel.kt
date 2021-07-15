@@ -1,15 +1,14 @@
 package com.yurii.foody.authorization.confirmation
 
 import androidx.lifecycle.*
-import com.yurii.foody.authorization.AuthorizationRepository
-import com.yurii.foody.authorization.AuthorizationRepositoryInterface
+import com.yurii.foody.utils.AuthorizationRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class ConfirmationViewModel(private val repository: AuthorizationRepositoryInterface, mode: ConfirmationFragment.Mode) : ViewModel() {
+class ConfirmationViewModel(private val repository: AuthorizationRepository, mode: ConfirmationFragment.Mode) : ViewModel() {
     sealed class Event {
         object NavigateToAuthorizationFragment : Event()
         object NavigateToChoosingRoleScreen : Event()

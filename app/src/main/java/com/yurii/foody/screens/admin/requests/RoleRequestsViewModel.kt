@@ -5,13 +5,14 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.yurii.foody.utils.AuthorizationRepository
 import com.yurii.foody.ui.ListFragment
 import com.yurii.foody.utils.EmptyListException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 
-class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) : ViewModel() {
+class RoleRequestsViewModel(private val authorizationRepository: AuthorizationRepository) : ViewModel() {
     sealed class Event {
         data class ShowError(val exception: Throwable) : Event()
         object RefreshList : Event()
@@ -43,7 +44,7 @@ class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) 
 
     private fun loadUserRolesRequests() {
         netWorkScope.launch {
-            userRoleRepository.getUnconfirmedUserRolesPager().cachedIn(viewModelScope).collectLatest {
+            authorizationRepository.getUnconfirmedUserRolesPager().cachedIn(viewModelScope).collectLatest {
                 _userRolesRequests.value = it
             }
         }
@@ -75,7 +76,7 @@ class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) 
 
     fun acceptRoleRequest(roleRequest: UserRoleRequest) {
         netWorkScope.launch {
-            userRoleRepository.confirmUserRole(roleRequest)
+            authorizationRepository.confirmUserRole(roleRequest)
             refreshList()
         }
     }
@@ -88,11 +89,11 @@ class RoleRequestsViewModel(private val userRoleRepository: UserRoleRepository) 
 
     }
 
-    class Factory(private val userRoleRepository: UserRoleRepository) : ViewModelProvider.Factory {
+    class Factory(private val authorizationRepository: AuthorizationRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(RoleRequestsViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return RoleRequestsViewModel(userRoleRepository) as T
+                return RoleRequestsViewModel(authorizationRepository) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

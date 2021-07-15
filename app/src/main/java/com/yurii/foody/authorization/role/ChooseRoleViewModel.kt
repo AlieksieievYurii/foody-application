@@ -2,13 +2,12 @@ package com.yurii.foody.authorization.role
 
 import androidx.lifecycle.*
 import com.yurii.foody.api.UserRoleEnum
-import com.yurii.foody.authorization.AuthorizationRepository
-import com.yurii.foody.authorization.AuthorizationRepositoryInterface
+import com.yurii.foody.utils.AuthorizationRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class ChooseRoleViewModel(private val repository: AuthorizationRepositoryInterface, private val selectNewRole: Boolean) : ViewModel() {
+class ChooseRoleViewModel(private val repository: AuthorizationRepository, private val selectNewRole: Boolean) : ViewModel() {
     sealed class Event {
         object NavigateToMainClientScreen : Event()
         object NavigateToMainExecutorScreen : Event()
@@ -65,7 +64,7 @@ class ChooseRoleViewModel(private val repository: AuthorizationRepositoryInterfa
         }
     }
 
-    private suspend fun showRoleOptions(roleEnum: UserRoleEnum) {
+    private fun showRoleOptions(roleEnum: UserRoleEnum) {
         _showRoleOptions.value = roleEnum
     }
 

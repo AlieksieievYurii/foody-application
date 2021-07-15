@@ -3,8 +3,7 @@ package com.yurii.foody.authorization.login
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.api.*
-import com.yurii.foody.authorization.AuthorizationRepository
-import com.yurii.foody.authorization.AuthorizationRepositoryInterface
+import com.yurii.foody.utils.AuthorizationRepository
 import com.yurii.foody.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -12,7 +11,7 @@ import kotlinx.coroutines.flow.*
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST
 import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 
-class LogInViewModel(private val repository: AuthorizationRepositoryInterface) : ViewModel() {
+class LogInViewModel(private val repository: AuthorizationRepository) : ViewModel() {
     sealed class Event {
         object NavigateToChooseRoleScreen : Event()
         data class ServerError(val errorCode: Int) : Event()

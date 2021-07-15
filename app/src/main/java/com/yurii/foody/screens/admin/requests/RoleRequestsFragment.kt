@@ -16,7 +16,7 @@ import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.observeOnLifecycle
 
 class RoleRequestsFragment : Fragment() {
-    private val viewModel: RoleRequestsViewModel by viewModels { Injector.provideRoleRequestsViewModel() }
+    private val viewModel: RoleRequestsViewModel by viewModels { Injector.provideRoleRequestsViewModel(requireContext()) }
     private lateinit var binding: FragmentRoleRequestsBinding
     private val errorDialog by lazy { ErrorDialog(requireContext()) }
     private val listAdapter: UserRoleAdapter by lazy {

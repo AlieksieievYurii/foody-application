@@ -2,7 +2,6 @@ package com.yurii.foody.screens.personal
 
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
-import com.yurii.foody.authorization.signup.SignUpViewModel
 import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.value
@@ -13,6 +12,11 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class PersonalInformationViewModel(private val userRepository: UserRepository) : ViewModel() {
+
+    sealed class Event {
+        data class ShowError(val exception: Throwable) : Event()
+        object CloseEditor : Event()
+    }
 
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -27,13 +31,14 @@ class PersonalInformationViewModel(private val userRepository: UserRepository) :
     private val _phoneFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val phoneFieldValidation: LiveData<FieldValidation> = _phoneFieldValidation
 
-    private val eventChannel = Channel<SignUpViewModel.Event>(Channel.BUFFERED)
+    private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
     val nameField = ObservableField(String.Empty)
     val surnameField = ObservableField(String.Empty)
     val emailField = ObservableField(String.Empty)
     val phoneField = ObservableField(String.Empty)
+
 
     init {
         viewModelScope.launch {
@@ -76,6 +81,7 @@ class PersonalInformationViewModel(private val userRepository: UserRepository) :
 
             userRepository.updateUser(updatedUser)
             _isLoading.value = false
+            eventChannel.send(Event.CloseEditor)
         }
     }
 

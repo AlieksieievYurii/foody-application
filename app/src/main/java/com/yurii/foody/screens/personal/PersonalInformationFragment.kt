@@ -11,7 +11,9 @@ import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentPersonalInformationBinding
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.utils.Injector
+import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.hideKeyboard
+import com.yurii.foody.utils.observeOnLifecycle
 
 class PersonalInformationFragment : Fragment() {
     private lateinit var binding: FragmentPersonalInformationBinding
@@ -23,8 +25,15 @@ class PersonalInformationFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner) {
-            hideKeyboard()
+        loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner) { hideKeyboard() }
+
+        binding.toolbar.setNavigationOnClickListener { closeFragment() }
+
+        viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) { event ->
+            when (event) {
+                PersonalInformationViewModel.Event.CloseEditor -> closeFragment()
+                is PersonalInformationViewModel.Event.ShowError -> TODO()
+            }
         }
 
         return binding.root

@@ -2,7 +2,10 @@ package com.yurii.foody.ui
 
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.LifecycleOwner
 import com.yurii.foody.R
+import com.yurii.foody.utils.observeOnLifecycle
+import kotlinx.coroutines.flow.StateFlow
 
 class LoadingDialog(context: Context) {
     private val dialog: AlertDialog by lazy {
@@ -20,5 +23,15 @@ class LoadingDialog(context: Context) {
     fun close() {
         if (dialog.isShowing)
             dialog.dismiss()
+    }
+
+    fun observeState(state: StateFlow<Boolean>, lifecycleOwner: LifecycleOwner, onChange: ((isLoading: Boolean) -> Unit)? = null) {
+        state.observeOnLifecycle(lifecycleOwner) { isLoading ->
+            onChange?.invoke(isLoading)
+            if (isLoading)
+                show()
+            else
+                close()
+        }
     }
 }

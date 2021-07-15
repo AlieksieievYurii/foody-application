@@ -28,22 +28,13 @@ class AdminPanelFragment : Fragment(), OnBackPressed {
 
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.item_personal_information -> {
-
-                }
+                R.id.item_personal_information -> viewModel.changePersonalInformation()
                 R.id.item_help -> {
-
                 }
-                R.id.item_change_role -> {
-                    viewModel.changeRole()
-
+                R.id.item_change_role -> viewModel.changeRole()
+                R.id.item_log_out -> askUserToAcceptLoggingOut {
+                    viewModel.logOut()
                 }
-                R.id.item_log_out -> {
-                    askUserToAcceptLoggingOut {
-                        viewModel.logOut()
-                    }
-                }
-
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             false
@@ -72,8 +63,13 @@ class AdminPanelFragment : Fragment(), OnBackPressed {
                 AdminPanelViewModel.Event.NavigateToRequests -> navigateToRequests()
                 AdminPanelViewModel.Event.NavigateToChangeRole -> navigateToChooseRoleScreen()
                 AdminPanelViewModel.Event.NavigateToLogInScreen -> navigateToLogInScreen()
+                AdminPanelViewModel.Event.NavigateToPersonalInformation -> navigateToPersonalInformationScreen()
             }
         }
+    }
+
+    private fun navigateToPersonalInformationScreen() {
+        findNavController().navigate(AdminPanelFragmentDirections.actionAdminPanelFragmentToPersonalInformationFragment())
     }
 
     private fun navigateToLogInScreen() {

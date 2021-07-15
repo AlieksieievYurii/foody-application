@@ -72,8 +72,12 @@ object Service : ApiServiceInterface {
     override val productCategory: ApiProductCategory by lazy { authenticatedService().create(ApiProductCategory::class.java) }
 
     fun <T : Any> asFlow(call: suspend () -> T) = flow {
+        emit(wrapWithResponseException(call))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun <T : Any> wrapWithResponseException(call: suspend () -> T): T {
         try {
-            emit(call())
+            return call()
         } catch (exception: Exception) {
             when (exception) {
                 is HttpException -> throw ResponseException.ServerError(exception.code(), exception.message(), exception.response()?.errorBody())
@@ -81,7 +85,7 @@ object Service : ApiServiceInterface {
                 else -> throw ResponseException.UnknownError(exception.message ?: "No error message", exception)
             }
         }
-    }.flowOn(Dispatchers.IO)
+    }
 }
 
 sealed class ResponseException : Exception() {

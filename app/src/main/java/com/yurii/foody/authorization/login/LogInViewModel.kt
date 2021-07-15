@@ -6,11 +6,9 @@ import com.yurii.foody.api.*
 import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.authorization.AuthorizationRepositoryInterface
 import com.yurii.foody.utils.*
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST
 import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 
@@ -41,6 +39,12 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        viewModelScope.launch { handleResponseError(exception) }
+    }
+
+    private val viewModelJob = Job()
+    private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
 
     fun logIn() {
         if (isDataValidated())
@@ -48,7 +52,7 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
     }
 
     private fun isDataValidated(): Boolean {
-        if (emailField.value.isEmpty()) {
+        if (emailField.value.isNullOrBlank()) {
             _emailValidation.value = FieldValidation.EmptyField
             return false
         } else if (emailField.value.notMatches(EMAIL_REGEX)) {
@@ -56,7 +60,7 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
             return false
         }
 
-        if (passwordField.value.isEmpty()) {
+        if (passwordField.value.isNullOrBlank()) {
             _passwordValidation.value = FieldValidation.EmptyField
             return false
         }
@@ -65,39 +69,36 @@ class LogInViewModel(private val repository: AuthorizationRepositoryInterface) :
     }
 
     private fun performLogIn() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.logIn(AuthData(emailField.value, passwordField.value)).onStart { _isLoading.value = true }
-                    .catch { exception ->
-                        handleResponseError(exception)
-                    }.collect {
-                        handleUser(it.userId)
-                    }
-            }
+        netWorkScope.launch {
+            _isLoading.value = true
+            val authData = repository.logIn(AuthData(emailField.value, passwordField.value))
+            handleUser(authData.userId)
         }
+
     }
 
     private suspend fun handleUser(userId: Long) {
-        repository.getUser(userId).catch { exception ->
-            handleResponseError(exception)
-        }.collect { user ->
-            repository.saveUser(user)
-            if (user.isEmailConfirmed)
-                handleUserRole(user.id)
-            else {
-                eventChannel.send(Event.NavigateToUserIsNotConfirmed)
-                _isLoading.value = false
-            }
+        val user = repository.getUser(userId)
+        repository.saveUser(user)
+        if (user.isEmailConfirmed)
+            handleUserRole()
+        else {
+            eventChannel.send(Event.NavigateToUserIsNotConfirmed)
+            _isLoading.value = false
         }
     }
 
-    private suspend fun handleUserRole(userId: Long) {
-        repository.getUsersRoles(userId).catch { exception ->
+    private suspend fun handleUserRole() {
+        val currentUserRole: UserRole? = try {
+            repository.getCurrentUserRole()
+        } catch (exception: ResponseException) {
             handleResponseError(exception, isAuthenticated = true)
-        }.collect { userRolePagination ->
-            val role = userRolePagination.results.first()
-            repository.setUserRole(role.role)
-            repository.setUserRoleStatus(role.isConfirmed)
+            null
+        }
+
+        if (currentUserRole != null) {
+            repository.setUserRole(currentUserRole.role)
+            repository.setUserRoleStatus(currentUserRole.isConfirmed)
             _isLoading.value = false
             eventChannel.send(Event.NavigateToChooseRoleScreen)
         }

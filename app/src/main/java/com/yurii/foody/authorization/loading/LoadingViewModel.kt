@@ -9,13 +9,9 @@ import com.yurii.foody.authorization.AuthorizationRepository
 import com.yurii.foody.authorization.AuthorizationRepositoryInterface
 import com.yurii.foody.utils.AuthDataStorage
 import com.yurii.foody.utils.isInsideScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 
 class LoadingViewModel(private val repository: AuthorizationRepositoryInterface) : ViewModel() {
@@ -31,8 +27,15 @@ class LoadingViewModel(private val repository: AuthorizationRepositoryInterface)
     private val eventChannel = Channel<Event>()
     val eventFlow = eventChannel.receiveAsFlow()
 
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        viewModelScope.launch { handleResponseError(exception) }
+    }
+
+    private val viewModelJob = Job()
+    private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
+
     init {
-        viewModelScope.launch {
+        netWorkScope.launch {
             repository.getAuthenticationData()?.run {
                 checkAuthorization(this)
             } ?: eventChannel.send(Event.NavigateToAuthenticationScreen)
@@ -41,11 +44,10 @@ class LoadingViewModel(private val repository: AuthorizationRepositoryInterface)
 
     private suspend fun checkAuthorization(authData: AuthDataStorage.Data) {
         repository.setToken(authData.token)
-        withContext(Dispatchers.IO) {
-            repository.getUser(authData.userId).catch { exception -> handleResponseError(exception) }.collect { user ->
-                repository.saveUser(user)
-                checkEmailConfirmation(user)
-            }
+        netWorkScope.launch {
+            val user = repository.getUser(authData.userId)
+            repository.saveUser(user)
+            checkEmailConfirmation(user)
         }
     }
 
@@ -75,22 +77,20 @@ class LoadingViewModel(private val repository: AuthorizationRepositoryInterface)
 
     private suspend fun checkEmailConfirmation(user: User) {
         if (user.isEmailConfirmed)
-            fetchUserRole(user)
+            fetchUserRole()
         else
             eventChannel.send(Event.NavigateToUserIsNotConfirmedScreen)
     }
 
-    private suspend fun fetchUserRole(user: User) {
-        repository.getUsersRoles(user.id).catch { exception -> handleResponseError(exception) }.collect {
-            val roleResponse = it.results.first()
-            repository.setUserRoleStatus(roleResponse.isConfirmed)
-            repository.setUserRole(roleResponse.role)
-            repository.getSelectedUserRole()?.run {
-                if (!isInsideScope(roleResponse.role))
-                    repository.setSelectedUserRole(null)
-            }
-            eventChannel.send(Event.NavigateToChooseRoleScreen)
+    private suspend fun fetchUserRole() {
+        val currentUserRole = repository.getCurrentUserRole()
+        repository.setUserRoleStatus(currentUserRole.isConfirmed)
+        repository.setUserRole(currentUserRole.role)
+        repository.getSelectedUserRole()?.run {
+            if (!isInsideScope(currentUserRole.role))
+                repository.setSelectedUserRole(null)
         }
+        eventChannel.send(Event.NavigateToChooseRoleScreen)
     }
 
     class Factory(private val repository: AuthorizationRepository) : ViewModelProvider.Factory {

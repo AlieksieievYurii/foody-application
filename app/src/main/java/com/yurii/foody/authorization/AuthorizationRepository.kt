@@ -6,14 +6,16 @@ import com.yurii.foody.utils.AuthDataStorage
 import com.yurii.foody.utils.AuthDataStorageInterface
 import com.yurii.foody.utils.toAuthDataStorage
 import kotlinx.coroutines.flow.*
+import java.lang.IllegalStateException
 
 interface AuthorizationRepositoryInterface {
-    suspend fun logIn(authData: AuthData): Flow<AuthResponseData>
+    suspend fun logIn(authData: AuthData): AuthResponseData
     suspend fun logOut()
     suspend fun register(user: RegistrationForm): Flow<RegistrationForm>
     fun setToken(token: String)
-    suspend fun getUser(id: Long): Flow<User>
+    suspend fun getUser(id: Long): User
     suspend fun getUsersRoles(userId: Long? = null): Flow<Pagination<UserRole>>
+    suspend fun getCurrentUserRole(): UserRole
 
     suspend fun setSelectedUserRole(userRole: UserRoleEnum?)
     suspend fun setUserRole(userRoleEnum: UserRoleEnum)
@@ -32,12 +34,12 @@ class AuthorizationRepository @VisibleForTesting constructor(
     private val api: ApiServiceInterface
 ) : AuthorizationRepositoryInterface {
 
-    override suspend fun logIn(authData: AuthData): Flow<AuthResponseData> =
-        Service.asFlow { api.authService.logIn(authData) }.map {
-            authDataStorage.saveAuthData(it.toAuthDataStorage())
-            api.createAuthenticatedService(it.token)
-            it
-        }
+    override suspend fun logIn(authData: AuthData): AuthResponseData {
+        val authData = Service.wrapWithResponseException { api.authService.logIn(authData) }
+        authDataStorage.saveAuthData(authData.toAuthDataStorage())
+        api.createAuthenticatedService(authData.token)
+        return authData
+    }
 
     override suspend fun logOut() = authDataStorage.cleanAllAuthData()
 
@@ -45,13 +47,18 @@ class AuthorizationRepository @VisibleForTesting constructor(
 
     override fun setToken(token: String) = api.createAuthenticatedService(token)
 
-    override suspend fun getUser(id: Long) = Service.asFlow { api.usersService.getUser(id) }
+    override suspend fun getUser(id: Long) = Service.wrapWithResponseException { api.usersService.getUser(id) }
 
     override suspend fun getSavedUser(): User? = authDataStorage.currentUser.first()
 
     override suspend fun getUsersRoles(userId: Long?) = Service.asFlow { api.usersService.getUsersRoles(userId) }
 
     override suspend fun setSelectedUserRole(userRole: UserRoleEnum?) = authDataStorage.saveSelectedUserRole(userRole)
+
+    override suspend fun getCurrentUserRole(): UserRole {
+        val userId = getAuthenticationData()?.userId ?: throw IllegalStateException("No saved user")
+        return Service.wrapWithResponseException { api.usersService.getUsersRoles(userId = userId).results.first() }
+    }
 
     override suspend fun setUserRole(userRoleEnum: UserRoleEnum) = authDataStorage.saveUserRole(userRoleEnum)
 

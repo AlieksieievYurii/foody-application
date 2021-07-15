@@ -17,6 +17,8 @@ import com.yurii.foody.screens.admin.products.ProductsEditorViewModel
 import com.yurii.foody.screens.admin.products.editor.ProductEditorViewModel
 import com.yurii.foody.screens.admin.requests.RoleRequestsViewModel
 import com.yurii.foody.screens.admin.requests.UserRoleRepository
+import com.yurii.foody.screens.personal.PersonalInformationViewModel
+import com.yurii.foody.screens.personal.UserRepository
 
 object Injector {
 
@@ -59,4 +61,8 @@ object Injector {
     fun provideRoleRequestsViewModel() = RoleRequestsViewModel.Factory(userRoleRepository = provideUserRoleRepository())
 
     private fun provideUserRoleRepository(): UserRoleRepository = UserRoleRepository.create(Service)
+
+    fun providePersonalInformationViewModel(context: Context) = PersonalInformationViewModel.Factory(UserRepository(
+        service = Service, authDataStorage = AuthDataStorage.create(context)
+    ))
 }

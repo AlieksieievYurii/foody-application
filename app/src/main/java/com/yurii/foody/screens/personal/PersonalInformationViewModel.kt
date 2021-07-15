@@ -5,11 +5,11 @@ import androidx.lifecycle.*
 import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
 import com.yurii.foody.utils.value
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 
 class PersonalInformationViewModel(private val userRepository: UserRepository) : ViewModel() {
 
@@ -39,9 +39,19 @@ class PersonalInformationViewModel(private val userRepository: UserRepository) :
     val emailField = ObservableField(String.Empty)
     val phoneField = ObservableField(String.Empty)
 
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        _isLoading.value = false
+        viewModelScope.launch {
+            eventChannel.send(Event.ShowError(exception))
+        }
+    }
+
+    private val viewModelJob = Job()
+    private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
+
 
     init {
-        viewModelScope.launch {
+        netWorkScope.launch {
             _isLoading.value = true
             val currentUser = userRepository.getCurrentUser()
             nameField.set(currentUser.firstName)
@@ -70,7 +80,7 @@ class PersonalInformationViewModel(private val userRepository: UserRepository) :
     }
 
     private fun saveChanges() {
-        viewModelScope.launch {
+        netWorkScope.launch {
             _isLoading.value = true
             val currentUser = userRepository.getCurrentUser()
             val updatedUser = currentUser.copy(

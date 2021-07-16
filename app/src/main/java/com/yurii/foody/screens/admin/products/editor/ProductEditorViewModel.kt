@@ -35,14 +35,11 @@ class ProductEditorViewModel(
     private val _additionalImagesFlow: MutableStateFlow<MutableList<ProductPhoto>> = MutableStateFlow(mutableListOf())
     val additionalImagesFlow: StateFlow<MutableList<ProductPhoto>> = _additionalImagesFlow
 
-    private val _defaultPhotoFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val defaultPhotoFieldValidation: LiveData<FieldValidation> = _defaultPhotoFieldValidation
-
+    val defaultPhotoFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val productNameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val productDescriptionFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val priceFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-
-     val cookingTimeFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
+    val cookingTimeFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
 
     private val _categories: MutableStateFlow<List<Category>> = MutableStateFlow(emptyList())
     val categories: StateFlow<List<Category>> = _categories
@@ -73,7 +70,7 @@ class ProductEditorViewModel(
         }
     }
 
-    private val viewModelJob = Job()
+    private val viewModelJob = SupervisorJob()
     private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
 
     init {
@@ -343,7 +340,7 @@ class ProductEditorViewModel(
             cookingTimeFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
         if (_mainPhoto.value == null)
-            _defaultPhotoFieldValidation.value = FieldValidation.NoPhoto.also { isValid = false }
+            defaultPhotoFieldValidation.value = FieldValidation.NoPhoto.also { isValid = false }
 
         if (description.get().isNullOrBlank())
             productDescriptionFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
@@ -353,7 +350,7 @@ class ProductEditorViewModel(
 
     fun addMainPhoto(photo: ProductPhoto) {
         _mainPhoto.value = photo
-        _defaultPhotoFieldValidation.value = FieldValidation.NoErrors
+        defaultPhotoFieldValidation.value = FieldValidation.NoErrors
     }
 
     fun addAdditionalImage(photo: ProductPhoto) {

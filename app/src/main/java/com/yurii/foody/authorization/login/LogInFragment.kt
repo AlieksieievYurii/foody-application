@@ -14,6 +14,7 @@ import com.yurii.foody.databinding.FragmentLogInBinding
 import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.utils.Injector
+import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
 
@@ -42,7 +43,7 @@ class LogInFragment : Fragment() {
             is LogInViewModel.Event.ServerError -> errorDialog.show(getString(R.string.label_server_error, it.errorCode))
             is LogInViewModel.Event.NetworkError -> errorDialog.show(getString(R.string.label_network_error, it.message))
             is LogInViewModel.Event.UnknownError -> errorDialog.show(getString(R.string.label_unknown_error, it.message))
-            is LogInViewModel.Event.Close -> findNavController().navigateUp()
+            is LogInViewModel.Event.Close -> closeFragment()
             is LogInViewModel.Event.NavigateToSingUpScreen -> navigateToSingUpScreen()
             LogInViewModel.Event.NavigateToUserIsNotConfirmed -> navigateToUserIsNotConfirmed()
         }

@@ -68,7 +68,7 @@ class SignUpViewModel(private val repository: AuthorizationRepository) : ViewMod
         }
     }
 
-    private val viewModelJob = Job()
+    private val viewModelJob = SupervisorJob()
     private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
 
     fun singUp() {
@@ -112,36 +112,24 @@ class SignUpViewModel(private val repository: AuthorizationRepository) : ViewMod
     private fun isDataValid(): Boolean {
         var isValid = true
 
-        if (nameField.value.isBlank()) {
-            isValid = false
-            nameFieldValidation.value = FieldValidation.EmptyField
-        }
+        if (nameField.value.isBlank())
+            nameFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
-        if (surnameField.value.isBlank()) {
-            isValid = false
-            surnameFieldValidation.value = FieldValidation.EmptyField
-        }
+        if (surnameField.value.isBlank())
+            surnameFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
 
-        if (emailField.value.isBlank()) {
-            isValid = false
-            emailFieldValidation.value = FieldValidation.EmptyField
-        } else if (emailField.value.notMatches(EMAIL_REGEX)) {
-            isValid = false
-            emailFieldValidation.value = FieldValidation.WrongEmailFormat
-        }
+        if (emailField.value.isBlank())
+            emailFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
+        else if (emailField.value.notMatches(EMAIL_REGEX))
+            emailFieldValidation.value = FieldValidation.WrongEmailFormat.also { isValid = false }
 
-        if (phoneField.value.isBlank()) {
-            isValid = false
-            phoneFieldValidation.value = FieldValidation.EmptyField
-        } else if (phoneField.value.notMatches(PHONE_REGEX)) {
-            isValid = false
-            phoneFieldValidation.value = FieldValidation.WrongPhoneFormat
-        }
+        if (phoneField.value.isBlank())
+            phoneFieldValidation.value = FieldValidation.EmptyField.also { isValid = false }
+        else if (phoneField.value.notMatches(PHONE_REGEX))
+            phoneFieldValidation.value = FieldValidation.WrongPhoneFormat.also { isValid = false }
 
-        if (!isPasswordSuitable) {
-            isValid = false
-            passwordValidation.value = FieldValidation.DoesNotFitRequirements
-        }
+        if (!isPasswordSuitable)
+            passwordValidation.value = FieldValidation.DoesNotFitRequirements.also { isValid = false }
 
         return isValid
     }

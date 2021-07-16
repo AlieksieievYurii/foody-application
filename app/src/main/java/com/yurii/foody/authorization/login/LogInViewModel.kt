@@ -39,7 +39,7 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
         viewModelScope.launch { handleResponseError(exception) }
     }
 
-    private val viewModelJob = Job()
+    private val viewModelJob = SupervisorJob()
     private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
 
     fun logIn() {
@@ -48,20 +48,17 @@ class LogInViewModel(private val repository: AuthorizationRepository) : ViewMode
     }
 
     private fun isDataValidated(): Boolean {
-        if (emailField.value.isNullOrBlank()) {
-            emailValidation.value = FieldValidation.EmptyField
-            return false
-        } else if (emailField.value.notMatches(EMAIL_REGEX)) {
-            emailValidation.value = FieldValidation.WrongEmailFormat
-            return false
-        }
+        var isValidated = true
 
-        if (passwordField.value.isNullOrBlank()) {
-            passwordValidation.value = FieldValidation.EmptyField
-            return false
-        }
+        if (emailField.value.isNullOrBlank())
+            emailValidation.value = FieldValidation.EmptyField.also { isValidated = false }
+        else if (emailField.value.notMatches(EMAIL_REGEX))
+            emailValidation.value = FieldValidation.WrongEmailFormat.also { isValidated = false }
 
-        return true
+        if (passwordField.value.isNullOrBlank())
+            passwordValidation.value = FieldValidation.EmptyField.also { isValidated = false }
+
+        return isValidated
     }
 
     private fun performLogIn() {

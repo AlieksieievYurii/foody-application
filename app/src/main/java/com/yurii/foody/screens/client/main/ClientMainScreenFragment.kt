@@ -27,8 +27,7 @@ class ClientMainScreenFragment : Fragment(), OnBackPressed {
                 R.id.item_personal_information -> navigateToPersonalInformation()
                 R.id.item_help -> {
                 }
-                R.id.item_change_role -> {
-                }
+                R.id.item_change_role -> navigateToChangeRole()
                 R.id.item_log_out -> {
                 }
             }
@@ -41,6 +40,10 @@ class ClientMainScreenFragment : Fragment(), OnBackPressed {
 
     private fun navigateToPersonalInformation() {
         findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToPersonalInformationFragment())
+    }
+
+    private fun navigateToChangeRole() {
+        findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToChooseRoleFragment(selectNewRole = true))
     }
 
     override fun onBackPressed(): Boolean {

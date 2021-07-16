@@ -136,6 +136,9 @@
             app:destination="@id/adminPanelFragment"
             app:popUpTo="@id/chooseRoleFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_chooseRoleFragment_to_clientMainScreenFragment"
+            app:destination="@id/clientMainScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/fragmentTest"
@@ -253,4 +256,9 @@
         android:name="com.yurii.foody.screens.personal.PersonalInformationFragment"
         android:label="PersonalInformationFragment"
         tools:layout="@layout/fragment_personal_information"/>
+    <fragment
+        android:id="@+id/clientMainScreenFragment"
+        android:name="com.yurii.foody.screens.client.main.ClientMainScreenFragment"
+        android:label="ClientMainScreenFragment"
+        tools:layout="@layout/fragment_navigation_client_panel"/>
 </navigation>

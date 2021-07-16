@@ -46,7 +46,7 @@ class ChooseRoleFragment : Fragment() {
     }
 
     private fun navigateToMainClientScreen() {
-        findNavController().navigate(ChooseRoleFragmentDirections.actionChooseRoleFragmentToFragmentTest(UserRoleEnum.CLIENT))
+        findNavController().navigate(ChooseRoleFragmentDirections.actionChooseRoleFragmentToClientMainScreenFragment())
     }
 
     private fun navigateToMainExecutorScreen() {

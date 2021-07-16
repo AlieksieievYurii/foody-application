@@ -97,4 +97,5 @@
     <string name="label_unconfirmed">unconfirmed</string>
     <string name="label_role_request">Role request</string>
     <string name="label_comfirm_role_request">Are you sure to accept the role request?</string>
+    <string name="label_become_cook">Become a cook</string>
 </resources>

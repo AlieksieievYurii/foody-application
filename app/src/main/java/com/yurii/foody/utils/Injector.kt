@@ -15,6 +15,7 @@ import com.yurii.foody.screens.admin.main.AdminPanelViewModel
 import com.yurii.foody.screens.admin.products.ProductsEditorViewModel
 import com.yurii.foody.screens.admin.products.editor.ProductEditorViewModel
 import com.yurii.foody.screens.admin.requests.RoleRequestsViewModel
+import com.yurii.foody.screens.client.main.ClientMainScreenViewModel
 import com.yurii.foody.screens.personal.PersonalInformationViewModel
 import com.yurii.foody.screens.personal.UserRepository
 
@@ -64,4 +65,6 @@ object Injector {
             service = Service, authDataStorage = AuthDataStorage.create(context)
         )
     )
+
+    fun provideClientMainScreenViewModel() = ClientMainScreenViewModel.Factory()
 }

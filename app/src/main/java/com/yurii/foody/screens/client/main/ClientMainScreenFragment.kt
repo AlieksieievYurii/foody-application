@@ -7,12 +7,15 @@ import android.view.ViewGroup
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentNavigationClientPanelBinding
+import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.OnBackPressed
 
 class ClientMainScreenFragment : Fragment(), OnBackPressed {
     private lateinit var binding: FragmentNavigationClientPanelBinding
+    private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel()  }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_navigation_client_panel, container, false)

@@ -30,7 +30,7 @@ class LoadingViewModel(private val repository: AuthorizationRepository) : ViewMo
         viewModelScope.launch { handleResponseError(exception) }
     }
 
-    private val viewModelJob = Job()
+    private val viewModelJob = SupervisorJob()
     private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
 
     init {
@@ -52,9 +52,9 @@ class LoadingViewModel(private val repository: AuthorizationRepository) : ViewMo
 
     private suspend fun handleResponseError(error: Throwable) {
         when (error) {
-            is ResponseException.NetworkError -> handleNetworkError(error.responseMessage)
+            is ResponseException.NetworkError -> eventChannel.send(Event.NetworkError(error.responseMessage))
             is ResponseException.ServerError -> handleServerError(error.code)
-            is ResponseException.UnknownError -> handleUnknownError(error.responseMessage)
+            is ResponseException.UnknownError -> eventChannel.send(Event.UnknownError(error.responseMessage))
         }
     }
 
@@ -64,14 +64,6 @@ class LoadingViewModel(private val repository: AuthorizationRepository) : ViewMo
             eventChannel.send(Event.NavigateToAuthenticationScreen)
         } else
             eventChannel.send(Event.ServerError(errorCode))
-    }
-
-    private suspend fun handleNetworkError(message: String?) {
-        eventChannel.send(Event.NetworkError(message))
-    }
-
-    private suspend fun handleUnknownError(message: String?) {
-        eventChannel.send(Event.UnknownError(message))
     }
 
     private suspend fun checkEmailConfirmation(user: User) {

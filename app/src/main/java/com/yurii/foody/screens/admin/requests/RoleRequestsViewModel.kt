@@ -35,7 +35,7 @@ class RoleRequestsViewModel(private val authorizationRepository: AuthorizationRe
         }
     }
 
-    private val viewModelJob = Job()
+    private val viewModelJob = SupervisorJob()
     private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
 
     init {

@@ -45,9 +45,7 @@ class CategoryEditorViewModel(
     private val _categoryPhoto: MutableStateFlow<CategoryPhoto?> = MutableStateFlow(null)
     val categoryPhoto: StateFlow<CategoryPhoto?> = _categoryPhoto
 
-    private val _categoryPhotoFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
-    val categoryPhotoFieldValidation: LiveData<FieldValidation> = _categoryPhotoFieldValidation
-
+    val categoryPhotoFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
     val categoryNameFieldValidation = MutableLiveData<FieldValidation>(FieldValidation.NoErrors)
 
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -67,7 +65,7 @@ class CategoryEditorViewModel(
         }
     }
 
-    private val viewModelJob = Job()
+    private val viewModelJob = SupervisorJob()
     private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
 
     init {
@@ -143,7 +141,7 @@ class CategoryEditorViewModel(
         var isValidated = true
 
         if (_categoryPhoto.value == null)
-            _categoryPhotoFieldValidation.value = FieldValidation.NoPhoto.apply { isValidated = false }
+            categoryPhotoFieldValidation.value = FieldValidation.NoPhoto.apply { isValidated = false }
 
         if (categoryName.value.isNullOrBlank())
             categoryNameFieldValidation.value = FieldValidation.EmptyField.apply { isValidated = false }
@@ -152,7 +150,7 @@ class CategoryEditorViewModel(
     }
 
     fun setPhoto(photo: CategoryPhoto) {
-        _categoryPhotoFieldValidation.value = FieldValidation.NoErrors
+        categoryPhotoFieldValidation.value = FieldValidation.NoErrors
         _categoryPhoto.value = photo
     }
 

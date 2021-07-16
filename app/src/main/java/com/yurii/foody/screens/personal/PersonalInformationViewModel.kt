@@ -40,7 +40,7 @@ class PersonalInformationViewModel(private val userRepository: UserRepository) :
         }
     }
 
-    private val viewModelJob = Job()
+    private val viewModelJob = SupervisorJob()
     private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
 
 

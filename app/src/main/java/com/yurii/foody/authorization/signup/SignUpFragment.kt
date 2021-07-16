@@ -17,10 +17,7 @@ import com.yurii.foody.databinding.FragmentSignupBinding
 import com.yurii.foody.ui.ErrorDialog
 import com.yurii.foody.ui.InformationDialog
 import com.yurii.foody.ui.LoadingDialog
-import com.yurii.foody.utils.FieldValidation
-import com.yurii.foody.utils.Injector
-import com.yurii.foody.utils.hideKeyboard
-import com.yurii.foody.utils.observeOnLifecycle
+import com.yurii.foody.utils.*
 
 class SignUpFragment : Fragment() {
     private val viewModel: SignUpViewModel by viewModels { Injector.provideSignUpViewModel(requireContext()) }
@@ -35,6 +32,7 @@ class SignUpFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+        loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner) {hideKeyboard()}
 
         observePasswordRequirements()
         observeEvents()
@@ -66,7 +64,7 @@ class SignUpFragment : Fragment() {
     private fun observeEvents() {
         viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {
             when (it) {
-                SignUpViewModel.Event.CloseScreen -> findNavController().navigateUp()
+                SignUpViewModel.Event.CloseScreen -> closeFragment()
                 SignUpViewModel.Event.NavigateToLogInScreen -> navigateToLogInScreen()
                 SignUpViewModel.Event.ShowInfoAboutCook -> cookInfoDialog.show(getString(R.string.description_cook))
                 is SignUpViewModel.Event.ShowErrorDialog -> errorDialog.show(it.message)
@@ -80,14 +78,6 @@ class SignUpFragment : Fragment() {
                     else getString(R.string.hint_registration_done_cook, it.email)
                 )
             }
-        }
-
-        viewModel.isLoading.observeOnLifecycle(viewLifecycleOwner) { isLoading ->
-            hideKeyboard()
-            if (isLoading)
-                loadingDialog.show()
-            else
-                loadingDialog.close()
         }
     }
 

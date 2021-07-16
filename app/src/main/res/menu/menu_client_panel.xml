@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/group_options"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/item_personal_information"
+            android:icon="@drawable/ic_account_circle_24"
+            android:title="@string/label_personal_information" />
+        <item
+            android:id="@+id/item_help"
+            android:icon="@drawable/ic_help_outline_24"
+            android:title="@string/label_help" />
+        <item
+            android:id="@+id/item_change_role"
+            android:icon="@drawable/ic_supervised_user_circle_24"
+            android:title="@string/label_change_role" />
+    </group>
+    <group
+        android:id="@+id/group_other_options"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/item_become_cook"
+            android:icon="@drawable/ic_baseline_login_24"
+            android:title="@string/label_become_cook" />
+        <item
+            android:id="@+id/item_log_out"
+            android:icon="@drawable/ic_baseline_login_24"
+            android:title="@string/label_log_out" />
+
+    </group>
+</menu>

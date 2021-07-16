@@ -271,5 +271,10 @@
             app:destination="@id/chooseRoleFragment"
             app:popUpTo="@id/clientMainScreenFragment"
             app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_clientMainScreenFragment_to_authenticationFragment"
+            app:destination="@id/authenticationFragment"
+            app:popUpTo="@id/clientMainScreenFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 </navigation>

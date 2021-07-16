@@ -66,5 +66,5 @@ object Injector {
         )
     )
 
-    fun provideClientMainScreenViewModel() = ClientMainScreenViewModel.Factory()
+    fun provideClientMainScreenViewModel(context: Context) = ClientMainScreenViewModel.Factory(repository = provideAuthorizationRepository(context))
 }

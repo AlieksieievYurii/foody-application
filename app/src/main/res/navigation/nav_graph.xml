@@ -260,5 +260,9 @@
         android:id="@+id/clientMainScreenFragment"
         android:name="com.yurii.foody.screens.client.main.ClientMainScreenFragment"
         android:label="ClientMainScreenFragment"
-        tools:layout="@layout/fragment_navigation_client_panel"/>
+        tools:layout="@layout/fragment_navigation_client_panel">
+        <action
+            android:id="@+id/action_clientMainScreenFragment_to_personalInformationFragment"
+            app:destination="@id/personalInformationFragment" />
+    </fragment>
 </navigation>

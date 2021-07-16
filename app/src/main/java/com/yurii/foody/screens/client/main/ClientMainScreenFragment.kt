@@ -8,6 +8,7 @@ import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentNavigationClientPanelBinding
 import com.yurii.foody.utils.Injector
@@ -15,7 +16,7 @@ import com.yurii.foody.utils.OnBackPressed
 
 class ClientMainScreenFragment : Fragment(), OnBackPressed {
     private lateinit var binding: FragmentNavigationClientPanelBinding
-    private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel()  }
+    private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_navigation_client_panel, container, false)
@@ -23,8 +24,7 @@ class ClientMainScreenFragment : Fragment(), OnBackPressed {
 
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.item_personal_information -> {
-                }
+                R.id.item_personal_information -> navigateToPersonalInformation()
                 R.id.item_help -> {
                 }
                 R.id.item_change_role -> {
@@ -37,6 +37,10 @@ class ClientMainScreenFragment : Fragment(), OnBackPressed {
         }
 
         return binding.root
+    }
+
+    private fun navigateToPersonalInformation() {
+        findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToPersonalInformationFragment())
     }
 
     override fun onBackPressed(): Boolean {

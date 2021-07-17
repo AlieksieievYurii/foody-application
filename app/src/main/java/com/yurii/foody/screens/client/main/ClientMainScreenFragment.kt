@@ -43,6 +43,10 @@ class ClientMainScreenFragment : Fragment(), OnBackPressed {
             setHeaderText("${it.firstName} ${it.lastName}")
         }
         observeEvents()
+
+        binding.content.products.setOnClickListener {
+            findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToProductsFragment())
+        }
         return binding.root
     }
 

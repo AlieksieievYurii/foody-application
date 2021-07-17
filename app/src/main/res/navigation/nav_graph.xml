@@ -276,5 +276,13 @@
             app:destination="@id/authenticationFragment"
             app:popUpTo="@id/clientMainScreenFragment"
             app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_clientMainScreenFragment_to_productsFragment"
+            app:destination="@id/productsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/productsFragment"
+        android:name="com.yurii.foody.screens.client.products.ProductsFragment"
+        android:label="ProductsFragment"
+        tools:layout="@layout/fragment_client_products"/>
 </navigation>

@@ -44,13 +44,13 @@ data class ProductItem(
     }
 }
 
-class ProductsPagingSource(private val api: Service) : PagingSource<Int, ProductItem>() {
+class ProductsPagingSource(private val api: Service, private val search: String? = null) : PagingSource<Int, ProductItem>() {
     override fun getRefreshKey(state: PagingState<Int, ProductItem>) = 1
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ProductItem> {
         return try {
             val page = params.key ?: 1
-            val products = api.productsService.getProducts(page = page, size = params.loadSize)
+            val products = api.productsService.getProducts(search = search,page = page, size = params.loadSize)
             if (products.results.isEmpty())
                 return LoadResult.Error(EmptyListException())
 

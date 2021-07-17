@@ -13,7 +13,8 @@ class ProductsRepository(private val service: Service) {
 
     private val pagingConfig = PagingConfig(pageSize = 10, enablePlaceholders = false)
 
-    fun getProductsPagerForClient() = Pager(config = pagingConfig, pagingSourceFactory = { ProductsPagingSource(service) }).flow
+    fun getProductsPagerForClient(search: String? = null) =
+        Pager(config = pagingConfig, pagingSourceFactory = { ProductsPagingSource(service, search) }).flow
 
     fun getProductsPager(query: ProductPagingSource.Query? = null) =
         Pager(config = pagingConfig, pagingSourceFactory = { ProductPagingSource(service, query) }).flow

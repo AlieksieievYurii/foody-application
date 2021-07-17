@@ -12,6 +12,7 @@ import com.yurii.foody.databinding.FragmentClientProductsBinding
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.observeOnLifecycle
+import com.yurii.foody.utils.setOnQueryTextListener
 
 class ProductsFragment : Fragment() {
     private lateinit var binding: FragmentClientProductsBinding
@@ -25,11 +26,7 @@ class ProductsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_client_products, container, false)
         binding.back.setOnClickListener { closeFragment() }
-
-        listAdapter.apply {
-            observeData(viewModel.products, viewLifecycleOwner)
-            bindListState(viewModel::onLoadStateChange, viewLifecycleOwner)
-        }
+        binding.searchBar.setOnQueryTextListener(viewModel::searchProduct)
 
         binding.listFragment.apply {
             setAdapter(listAdapter)
@@ -37,6 +34,12 @@ class ProductsFragment : Fragment() {
             setOnRefreshListener(viewModel::refreshList)
             setOnRetryListener(listAdapter::retry)
         }
+
+        listAdapter.apply {
+            observeData(viewModel.products, viewLifecycleOwner)
+            bindListState(viewModel::onLoadStateChange, viewLifecycleOwner)
+        }
+
         observeEvents()
         return binding.root
     }

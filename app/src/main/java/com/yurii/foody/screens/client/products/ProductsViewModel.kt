@@ -16,6 +16,7 @@ class ProductsViewModel(private val repository: ProductsRepository) : ViewModel(
     sealed class Event {
         object Refresh : Event()
     }
+
     private var isRefreshing = false
 
     private val _products: MutableStateFlow<PagingData<ProductItem>> = MutableStateFlow(PagingData.empty())
@@ -33,10 +34,19 @@ class ProductsViewModel(private val repository: ProductsRepository) : ViewModel(
     private val viewModelJob = SupervisorJob()
     private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
 
+    private var searchJob: Job? = null
+
     init {
+        searchProduct()
+    }
+
+    fun searchProduct(keyWords: String? = null) {
+        searchJob?.cancel()
         netWorkScope.launch {
-            repository.getProductsPagerForClient().cachedIn(viewModelScope).collectLatest {
-                _products.value = it
+            searchJob = launch {
+                repository.getProductsPagerForClient(search = keyWords).cachedIn(viewModelScope).collectLatest {
+                    _products.value = it
+                }
             }
         }
     }

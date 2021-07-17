@@ -5,9 +5,11 @@ import android.app.Activity
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.databinding.ObservableField
 import androidx.fragment.app.Fragment
@@ -115,4 +117,14 @@ fun ImageView.loadImage(urlOrUri: String) {
 
 fun Fragment.closeFragment() {
     findNavController().navigateUp()
+}
+
+fun EditText.setOnQueryTextListener(callback: (text: String) -> Unit) {
+    this.setOnKeyListener { _, i, keyEvent ->
+        if (keyEvent.action == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+            callback.invoke(this.text.toString())
+            return@setOnKeyListener true
+        } else
+            return@setOnKeyListener false
+    }
 }

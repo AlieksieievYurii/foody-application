@@ -49,6 +49,7 @@
     <string name="list_is_empty">List is empty</string>
     <string name="label_retry">Try again</string>
     <string name="label_price">Price: %s zl</string>
+    <string name="label_product_price">%s zl</string>
     <string name="label_available">Available: %d</string>
     <string name="label_is_available">Available</string>
     <string name="label_is_unavailable">Unavailable</string>

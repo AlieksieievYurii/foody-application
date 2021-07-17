@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentClientProductsBinding
 import com.yurii.foody.utils.Injector
+import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.observeOnLifecycle
 
 class ProductsFragment : Fragment() {
@@ -23,6 +24,8 @@ class ProductsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_client_products, container, false)
+        binding.back.setOnClickListener { closeFragment() }
+
         listAdapter.apply {
             observeData(viewModel.products, viewLifecycleOwner)
             bindListState(viewModel::onLoadStateChange, viewLifecycleOwner)

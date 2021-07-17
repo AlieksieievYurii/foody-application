@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="product"
+            type="com.yurii.foody.screens.client.products.ProductItem" />
+    </data>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/body"
@@ -22,6 +28,7 @@
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/thumbnail"
+                imageUrl="@{product.thumbnailUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
@@ -36,46 +43,49 @@
                 style="@style/TextAppearance.White.Headline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Pizza"
+                android:text="@{product.name}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Pizza" />
 
             <ImageView
                 android:id="@+id/icon_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
+                android:contentDescription="@string/content_desc_price"
                 android:src="@drawable/ic_price"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline20"
-                android:contentDescription="@string/content_desc_price" />
+                app:layout_constraintStart_toStartOf="@+id/guideline20" />
 
             <TextView
                 android:id="@+id/price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                tools:text="17 zł"
+                android:text="@{String.format(@string/label_price, product.price)}"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/icon_price"
                 app:layout_constraintStart_toEndOf="@+id/icon_price"
-                app:layout_constraintTop_toTopOf="@+id/icon_price" />
+                app:layout_constraintTop_toTopOf="@+id/icon_price"
+                tools:text="17 zł" />
 
             <TextView
                 android:id="@+id/cooking_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                tools:text="20-40"
                 android:textColor="@color/white"
                 android:textSize="16sp"
+                android:text="@{product.averageTime}"
                 app:layout_constraintBottom_toBottomOf="@+id/rating"
                 app:layout_constraintEnd_toStartOf="@+id/cooking_time_icon"
                 app:layout_constraintTop_toTopOf="@+id/rating"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintVertical_bias="1.0"
+                tools:text="20-40" />
 
             <RatingBar
                 android:id="@+id/rating"
@@ -84,9 +94,10 @@
                 android:layout_height="wrap_content"
                 android:numStars="5"
                 android:progressTint="@color/white"
-                android:rating="3.5"
+                tools:rating="3.5"
                 android:scaleX="2"
                 android:scaleY="2"
+                android:rating="@{product.rating}"
                 app:layout_constraintBottom_toBottomOf="@+id/price"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -96,11 +107,11 @@
                 android:id="@+id/cooking_time_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/content_desc_cooking_time_icon"
                 android:src="@drawable/ic_clock"
                 app:layout_constraintBottom_toBottomOf="@+id/cooking_time"
                 app:layout_constraintEnd_toStartOf="@+id/guideline21"
-                app:layout_constraintTop_toTopOf="@+id/cooking_time"
-                android:contentDescription="@string/content_desc_cooking_time_icon" />
+                app:layout_constraintTop_toTopOf="@+id/cooking_time" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline20"

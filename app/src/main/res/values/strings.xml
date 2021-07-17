@@ -98,4 +98,9 @@
     <string name="label_role_request">Role request</string>
     <string name="label_comfirm_role_request">Are you sure to accept the role request?</string>
     <string name="label_become_cook">Become a cook</string>
+    <string name="label_what_would_you_like">What would you like?</string>
+    <string name="content_description_back">Move back</string>
+    <string name="content_description_cart">Open the cart</string>
+    <string name="content_desc_price">Price icon</string>
+    <string name="content_desc_cooking_time_icon">Cooking time icon</string>
 </resources>

@@ -10,13 +10,39 @@ import androidx.fragment.app.viewModels
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentClientProductsBinding
 import com.yurii.foody.utils.Injector
+import com.yurii.foody.utils.observeOnLifecycle
 
 class ProductsFragment : Fragment() {
     private lateinit var binding: FragmentClientProductsBinding
     private val viewModel: ProductsViewModel by viewModels { Injector.provideProductsViewModel() }
+    private val listAdapter: ProductAdapter by lazy {
+        ProductAdapter {
+
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_client_products, container, false)
+        listAdapter.apply {
+            observeData(viewModel.products, viewLifecycleOwner)
+            bindListState(viewModel::onLoadStateChange, viewLifecycleOwner)
+        }
+
+        binding.listFragment.apply {
+            setAdapter(listAdapter)
+            observeListState(viewModel.listState)
+            setOnRefreshListener(viewModel::refreshList)
+            setOnRetryListener(listAdapter::retry)
+        }
+        observeEvents()
         return binding.root
+    }
+
+    private fun observeEvents() {
+        viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) { event ->
+            when (event) {
+                ProductsViewModel.Event.Refresh -> listAdapter.refresh()
+            }
+        }
     }
 }

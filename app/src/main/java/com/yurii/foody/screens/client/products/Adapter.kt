@@ -5,9 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.paging.PagingDataAdapter
-import androidx.paging.PagingSource
-import androidx.paging.PagingState
+import androidx.lifecycle.LifecycleOwner
+import androidx.paging.*
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.yurii.foody.R
@@ -15,8 +14,9 @@ import com.yurii.foody.api.Product
 import com.yurii.foody.api.ProductAvailability
 import com.yurii.foody.api.Service
 import com.yurii.foody.databinding.ItemProductBinding
-import com.yurii.foody.screens.admin.products.ProductData
 import com.yurii.foody.utils.EmptyListException
+import com.yurii.foody.utils.observeOnLifecycle
+import kotlinx.coroutines.flow.StateFlow
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -92,6 +92,18 @@ class ProductAdapter(private val onClick: (product: ProductItem) -> Unit) :
             holder.bind(product = this, onClick = {
                 onClick.invoke(this)
             })
+        }
+    }
+
+    fun observeData(data: StateFlow<PagingData<ProductItem>>, lifecycleOwner: LifecycleOwner) {
+        data.observeOnLifecycle(lifecycleOwner) {
+            submitData(it)
+        }
+    }
+
+    fun bindListState(callback: (state: CombinedLoadStates) -> Unit, lifecycleOwner: LifecycleOwner) {
+        loadStateFlow.observeOnLifecycle(lifecycleOwner) { loadState ->
+            callback.invoke(loadState)
         }
     }
 

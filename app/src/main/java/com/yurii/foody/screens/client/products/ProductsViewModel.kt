@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.*
 class ProductsViewModel(private val repository: ProductsRepository) : ViewModel() {
     sealed class Event {
         object Refresh : Event()
+        data class NavigateToProduct(val productItem: ProductItem) : Event()
     }
 
     private var isRefreshing = false
@@ -71,6 +72,12 @@ class ProductsViewModel(private val repository: ProductsRepository) : ViewModel(
             }
         }
 
+    }
+
+    fun onProductClick(productItem: ProductItem) {
+        viewModelScope.launch {
+            _eventChannel.send(Event.NavigateToProduct(productItem))
+        }
     }
 
     fun refreshList() {

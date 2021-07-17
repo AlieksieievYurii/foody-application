@@ -13,15 +13,12 @@ import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.observeOnLifecycle
 import com.yurii.foody.utils.setOnQueryTextListener
+import timber.log.Timber
 
 class ProductsFragment : Fragment() {
     private lateinit var binding: FragmentClientProductsBinding
     private val viewModel: ProductsViewModel by viewModels { Injector.provideProductsViewModel() }
-    private val listAdapter: ProductAdapter by lazy {
-        ProductAdapter {
-
-        }
-    }
+    private val listAdapter: ProductAdapter by lazy { ProductAdapter(viewModel::onProductClick) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_client_products, container, false)
@@ -48,6 +45,7 @@ class ProductsFragment : Fragment() {
         viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) { event ->
             when (event) {
                 ProductsViewModel.Event.Refresh -> listAdapter.refresh()
+                is ProductsViewModel.Event.NavigateToProduct -> Timber.i(event.productItem.name)
             }
         }
     }

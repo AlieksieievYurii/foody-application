@@ -128,3 +128,10 @@ fun EditText.setOnQueryTextListener(callback: (text: String) -> Unit) {
             return@setOnKeyListener false
     }
 }
+
+fun convertToAverageTime(seconds: Int) : String {
+    val minutes = seconds / 60
+    val minTime = (minutes - minutes * 0.1).toInt()
+    val maxTime = (minutes + minutes * 0.1).toInt()
+    return "$minTime-$maxTime"
+}

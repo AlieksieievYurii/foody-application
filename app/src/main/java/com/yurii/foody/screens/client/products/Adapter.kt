@@ -15,6 +15,7 @@ import com.yurii.foody.api.ProductAvailability
 import com.yurii.foody.api.Service
 import com.yurii.foody.databinding.ItemProductBinding
 import com.yurii.foody.utils.EmptyListException
+import com.yurii.foody.utils.convertToAverageTime
 import com.yurii.foody.utils.observeOnLifecycle
 import kotlinx.coroutines.flow.StateFlow
 import retrofit2.HttpException
@@ -29,7 +30,7 @@ data class ProductItem(
     val thumbnailUrl: String,
     val isAvailable: Boolean
 ) {
-    val averageTime: String = "20-40"
+    val averageTime = convertToAverageTime(cookingTime)
 
     companion object {
         fun createFrom(product: Product, productAvailability: ProductAvailability?, rating: Float?, thumbnailUrl: String?) = ProductItem(
@@ -50,7 +51,7 @@ class ProductsPagingSource(private val api: Service, private val search: String?
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ProductItem> {
         return try {
             val page = params.key ?: 1
-            val products = api.productsService.getProducts(search = search,page = page, size = params.loadSize)
+            val products = api.productsService.getProducts(search = search, page = page, size = params.loadSize)
             if (products.results.isEmpty())
                 return LoadResult.Error(EmptyListException())
 

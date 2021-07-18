@@ -69,7 +69,7 @@
     </style>
 
     <style name="Button.Rounded.Navy" parent="Widget.AppCompat.Button">
-        <item name="android:background">@drawable/button_background_navy</item>
+        <item name="android:background">@drawable/background_navy</item>
         <item name="backgroundTint">@null</item>
     </style>
 

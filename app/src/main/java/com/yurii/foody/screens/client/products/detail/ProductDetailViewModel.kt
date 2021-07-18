@@ -1,22 +1,17 @@
 package com.yurii.foody.screens.client.products.detail
 
+import androidx.databinding.Observable
+import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.api.Product
 import com.yurii.foody.api.ProductAvailability
 import com.yurii.foody.api.ProductImage
 import com.yurii.foody.utils.ProductsRepository
+import com.yurii.foody.utils.value
 import kotlinx.coroutines.*
 import timber.log.Timber
 
 class ProductDetailViewModel(private val repository: ProductsRepository, private val productId: Long) : ViewModel() {
-
-    data class CostBreakDown(
-        val price: Float
-    ) {
-        companion object {
-        }
-    }
-
     private val _isLoading: MutableLiveData<Boolean> = MutableLiveData(true)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -33,9 +28,29 @@ class ProductDetailViewModel(private val repository: ProductsRepository, private
     private val _availability: MutableLiveData<ProductAvailability> = MutableLiveData()
     val availability: LiveData<ProductAvailability> = _availability
 
+    private val _total: MutableLiveData<Float> = MutableLiveData(0f)
+    val total: LiveData<Float> = _total
+
+    private val _isOrderingEnable: MutableLiveData<Boolean> = MutableLiveData()
+    val isOrderingEnable: LiveData<Boolean> = _isOrderingEnable
+
     private val _images: MutableLiveData<List<ProductImage>> = MutableLiveData()
     val images: LiveData<List<String>> = Transformations.map(_images) { productImages ->
         productImages.map { it.imageUrl }
+    }
+
+    val count = ObservableField(0).also {
+        it.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                calculateTotal()
+            }
+
+        })
+    }
+
+    private fun calculateTotal() {
+        _total.postValue(_product.value!!.price * count.value)
+        _isOrderingEnable.postValue(count.value != 0)
     }
 
     init {

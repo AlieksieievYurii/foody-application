@@ -8,8 +8,10 @@
         <variable
             name="viewModel"
             type="com.yurii.foody.screens.client.products.detail.ProductDetailViewModel" />
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -283,8 +285,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:singleLine="true"
-                                android:text="12"
-                                android:textAppearance="?android:attr/textAppearanceMedium" />
+                                android:text="@{Integer.toString(viewModel.availability.available)}"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                tools:text="12" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -355,8 +358,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:singleLine="true"
-                                android:text="12"
-                                android:textAppearance="?android:attr/textAppearanceMedium" />
+                                android:text="@{Integer.toString(viewModel.count)}"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                tools:text="12" />
 
                         </LinearLayout>
 
@@ -391,8 +395,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:singleLine="true"
-                                android:text="13422"
-                                android:textAppearance="?android:attr/textAppearanceMedium" />
+                                android:text="@{String.format(@string/label_product_price,viewModel.total)}"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                tools:text="8" />
                         </LinearLayout>
 
                         <com.yurii.foody.ui.NumberSelection
@@ -402,7 +407,8 @@
                             android:layout_marginStart="16dp"
                             app:layout_constraintBottom_toBottomOf="@+id/add_to_cart"
                             app:layout_constraintStart_toStartOf="@+id/total_label"
-                            app:layout_constraintTop_toTopOf="@+id/add_to_cart" />
+                            app:layout_constraintTop_toTopOf="@+id/add_to_cart"
+                            app:value="@={viewModel.count}" />
 
                         <Button
                             android:id="@+id/add_to_cart"
@@ -412,6 +418,7 @@
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="16dp"
                             android:text="@string/label_add"
+                            android:enabled="@{viewModel.isOrderingEnable}"
                             android:textColor="@color/white"
                             app:icon="@drawable/ic_baseline_shopping_cart_24"
                             app:layout_constraintEnd_toEndOf="@+id/total_label"
@@ -425,6 +432,7 @@
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="16dp"
                             android:text="@string/label_order"
+                            android:enabled="@{viewModel.isOrderingEnable}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="@+id/total_label"
                             app:layout_constraintStart_toStartOf="@+id/total_label"

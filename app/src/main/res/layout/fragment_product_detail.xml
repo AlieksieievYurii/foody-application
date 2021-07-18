@@ -408,6 +408,7 @@
                             app:layout_constraintBottom_toBottomOf="@+id/add_to_cart"
                             app:layout_constraintStart_toStartOf="@+id/total_label"
                             app:layout_constraintTop_toTopOf="@+id/add_to_cart"
+                            app:maxValue="@{viewModel.availability.available}"
                             app:value="@={viewModel.count}" />
 
                         <Button
@@ -417,8 +418,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="16dp"
-                            android:text="@string/label_add"
                             android:enabled="@{viewModel.isOrderingEnable}"
+                            android:text="@string/label_add"
                             android:textColor="@color/white"
                             app:icon="@drawable/ic_baseline_shopping_cart_24"
                             app:layout_constraintEnd_toEndOf="@+id/total_label"
@@ -431,8 +432,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="16dp"
-                            android:text="@string/label_order"
                             android:enabled="@{viewModel.isOrderingEnable}"
+                            android:text="@string/label_order"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="@+id/total_label"
                             app:layout_constraintStart_toStartOf="@+id/total_label"

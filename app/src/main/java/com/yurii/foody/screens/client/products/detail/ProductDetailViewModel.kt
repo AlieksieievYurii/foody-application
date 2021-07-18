@@ -9,14 +9,21 @@ import com.yurii.foody.api.ProductImage
 import com.yurii.foody.utils.ProductsRepository
 import com.yurii.foody.utils.value
 import kotlinx.coroutines.*
-import timber.log.Timber
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 
 class ProductDetailViewModel(private val repository: ProductsRepository, private val productId: Long) : ViewModel() {
+    sealed class Event {
+        data class ShowError(val exception: Throwable) : Event()
+    }
+
     private val _isLoading: MutableLiveData<Boolean> = MutableLiveData(true)
     val isLoading: LiveData<Boolean> = _isLoading
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-        Timber.i(exception.toString())
+        viewModelScope.launch {
+            eventChannel.send(Event.ShowError(exception))
+        }
     }
 
     private val viewModelJob = SupervisorJob()
@@ -47,6 +54,10 @@ class ProductDetailViewModel(private val repository: ProductsRepository, private
 
         })
     }
+
+    private val eventChannel = Channel<Event>(Channel.BUFFERED)
+    val eventFlow = eventChannel.receiveAsFlow()
+
 
     private fun calculateTotal() {
         _total.postValue(_product.value!!.price * count.value)

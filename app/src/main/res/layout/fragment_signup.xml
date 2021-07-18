@@ -14,291 +14,296 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:animateLayoutChanges="true"
-            android:background="@color/white">
+            android:orientation="vertical"
+            android:background="@color/yellow">
 
-            <ImageButton
-                android:id="@+id/close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/label_close"
-                android:onClick="@{() -> viewModel.close()}"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toTopOf="@+id/guideline4"
-                app:srcCompat="@drawable/ic_close_32" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
+                android:background="@color/white">
 
-            <Button
-                android:id="@+id/login"
-                style="@style/Button.ButtonText.Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:onClick="@{() -> viewModel.logIn()}"
-                android:text="@string/label_log_in"
-                app:layout_constraintEnd_toStartOf="@+id/guideline7"
-                app:layout_constraintTop_toTopOf="@+id/guideline4" />
-
-            <TextView
-                android:id="@+id/title"
-                style="@style/TextAppearance.Black.Display3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="128dp"
-                android:text="@string/label_sing_up"
-                app:layout_constraintEnd_toStartOf="@+id/guideline7"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_begin="16dp" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_begin="16dp" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_end="16dp" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/name_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toStartOf="@+id/guideline7"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/title">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/name"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:id="@+id/close"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:hint="@string/label_name"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:text="@={viewModel.nameField}"
-                    app:resetValidation="@{viewModel.nameFieldValidation}" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_alignParentStart="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/label_close"
+                    android:onClick="@{() -> viewModel.close()}"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toTopOf="@+id/guideline4"
+                    app:srcCompat="@drawable/ic_close_32" />
 
-            <TextView
-                android:id="@+id/error_name_field"
-                style="@style/TextAppearance.Red.Body2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_error_red_24"
-                app:errorField="@{viewModel.nameFieldValidation}"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/name_layout"
-                tools:text="TextView"
-                tools:visibility="visible" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/surname_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@+id/guideline7"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/error_name_field">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/surname"
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/login"
+                    style="@style/Button.ButtonText.Medium"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:hint="@string/label_surname"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:text="@={viewModel.surnameField}"
-                    app:resetValidation="@{viewModel.surnameFieldValidation}" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_alignParentEnd="true"
+                    android:onClick="@{() -> viewModel.logIn()}"
+                    android:text="@string/label_log_in"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                    app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
-            <TextView
-                android:id="@+id/error_surname_field"
-                style="@style/TextAppearance.Red.Body2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_error_red_24"
-                app:errorField="@{viewModel.surnameFieldValidation}"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/surname_layout"
-                tools:text="TextView"
-                tools:visibility="visible" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/email_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@+id/guideline7"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/error_surname_field">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/email"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/title"
+                    style="@style/TextAppearance.Black.Display3"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:hint="@string/label_e_mail"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:text="@={viewModel.emailField}"
-                    app:resetValidation="@{viewModel.emailFieldValidation}" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginTop="128dp"
+                    android:text="@string/label_sing_up"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/error_email_field"
-                style="@style/TextAppearance.Red.Body2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_error_red_24"
-                app:errorField="@{viewModel.emailFieldValidation}"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/email_layout"
-                tools:text="TextView"
-                tools:visibility="visible" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/phone_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@+id/guideline7"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/error_email_field">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/phone"
-                    android:layout_width="match_parent"
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline4"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:hint="@string/label_phone"
-                    android:inputType="phone"
-                    android:maxLines="1"
-                    android:text="@={viewModel.phoneField}"
-                    app:resetValidation="@{viewModel.phoneFieldValidation}" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_begin="16dp" />
 
-            <TextView
-                android:id="@+id/error_phone_field"
-                style="@style/TextAppearance.Red.Body2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_error_red_24"
-                app:errorField="@{viewModel.phoneFieldValidation}"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/phone_layout"
-                tools:text="TextView"
-                tools:visibility="visible" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/password_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@+id/guideline7"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/error_phone_field"
-                app:passwordToggleEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/password"
-                    android:layout_width="match_parent"
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline6"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:hint="@string/label_password"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:text="@={viewModel.passwordField}" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="16dp" />
 
-            <com.yurii.foody.authorization.signup.PasswordRequirementsFragment
-                android:id="@+id/password_requirements"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toStartOf="@+id/guideline7"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/password_layout" />
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="16dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/name_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toBottomOf="@+id/title">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:hint="@string/label_name"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:text="@={viewModel.nameField}"
+                        app:resetValidation="@{viewModel.nameFieldValidation}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/error_name_field"
+                    style="@style/TextAppearance.Red.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/ic_error_red_24"
+                    app:errorField="@{viewModel.nameFieldValidation}"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toBottomOf="@+id/name_layout"
+                    tools:text="TextView"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/surname_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toBottomOf="@+id/error_name_field">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/surname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:hint="@string/label_surname"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:text="@={viewModel.surnameField}"
+                        app:resetValidation="@{viewModel.surnameFieldValidation}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/error_surname_field"
+                    style="@style/TextAppearance.Red.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/ic_error_red_24"
+                    app:errorField="@{viewModel.surnameFieldValidation}"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toBottomOf="@+id/surname_layout"
+                    tools:text="TextView"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/email_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toBottomOf="@+id/error_surname_field">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:hint="@string/label_e_mail"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:text="@={viewModel.emailField}"
+                        app:resetValidation="@{viewModel.emailFieldValidation}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/error_email_field"
+                    style="@style/TextAppearance.Red.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/ic_error_red_24"
+                    app:errorField="@{viewModel.emailFieldValidation}"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toBottomOf="@+id/email_layout"
+                    tools:text="TextView"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/phone_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toBottomOf="@+id/error_email_field">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:hint="@string/label_phone"
+                        android:inputType="phone"
+                        android:maxLines="1"
+                        android:text="@={viewModel.phoneField}"
+                        app:resetValidation="@{viewModel.phoneFieldValidation}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/error_phone_field"
+                    style="@style/TextAppearance.Red.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/ic_error_red_24"
+                    app:errorField="@{viewModel.phoneFieldValidation}"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toBottomOf="@+id/phone_layout"
+                    tools:text="TextView"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/password_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toBottomOf="@+id/error_phone_field"
+                    app:passwordToggleEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:hint="@string/label_password"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:text="@={viewModel.passwordField}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.yurii.foody.authorization.signup.PasswordRequirementsFragment
+                    android:id="@+id/password_requirements"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toBottomOf="@+id/password_layout" />
 
 
-            <CheckBox
-                android:id="@+id/cook"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:checked="@={viewModel.isCook}"
-                android:text="@string/label_i_want_to_cook"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@id/password_requirements" />
+                <CheckBox
+                    android:id="@+id/cook"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:checked="@={viewModel.isCook}"
+                    android:text="@string/label_i_want_to_cook"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toBottomOf="@id/password_requirements" />
 
-            <Button
-                android:id="@+id/signup"
-                style="@style/Button.Rounded.NavyText.Display2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:onClick="@{() -> viewModel.singUp()}"
-                android:text="@string/label_sing_up"
-                app:layout_constraintEnd_toStartOf="@+id/guideline7"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@id/cook" />
+                <Button
+                    android:id="@+id/signup"
+                    style="@style/Button.Rounded.NavyText.Display2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:onClick="@{() -> viewModel.singUp()}"
+                    android:text="@string/label_sing_up"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                    app:layout_constraintStart_toStartOf="@+id/guideline6"
+                    app:layout_constraintTop_toBottomOf="@id/cook" />
+
+                <ImageButton
+                    android:id="@+id/imageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/label_cook_about"
+                    android:onClick="@{() -> viewModel.showInfoAboutCook()}"
+                    app:layout_constraintBottom_toBottomOf="@+id/cook"
+                    app:layout_constraintStart_toEndOf="@+id/cook"
+                    app:layout_constraintTop_toTopOf="@+id/cook"
+                    app:srcCompat="@drawable/ic_help_outline_32" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/background_bottom"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/signup" />
+                android:layout_marginBottom="50dp"/>
+        </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/imageButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/label_cook_about"
-                android:onClick="@{() -> viewModel.showInfoAboutCook()}"
-                app:layout_constraintBottom_toBottomOf="@+id/cook"
-                app:layout_constraintStart_toEndOf="@+id/cook"
-                app:layout_constraintTop_toTopOf="@+id/cook"
-                app:srcCompat="@drawable/ic_help_outline_32" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
 </layout>

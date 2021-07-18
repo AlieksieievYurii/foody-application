@@ -2,6 +2,7 @@ package com.yurii.foody.api
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import com.yurii.foody.utils.convertToAverageTime
 import java.util.*
 
 const val ID_NO_NEEDED = -1L
@@ -46,6 +47,7 @@ data class User(
     @Json(name = "phone_number") val phoneNumber: String,
     @Json(name = "is_email_confirmed") val isEmailConfirmed: Boolean
 )
+
 @JsonClass(generateAdapter = true)
 data class UserPersonalInfo(
     @Json(name = "first_name") val firstName: String,
@@ -76,6 +78,8 @@ data class Product(
     val price: Float,
     @Json(name = "cooking_time") val cookingTime: Int
 ) {
+    val averageTime = convertToAverageTime(cookingTime)
+
     companion object {
         fun create(name: String, description: String, price: Float, cookingTime: Int): Product {
             return Product(

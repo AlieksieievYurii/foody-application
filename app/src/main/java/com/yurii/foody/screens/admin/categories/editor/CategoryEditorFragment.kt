@@ -1,10 +1,8 @@
 package com.yurii.foody.screens.admin.categories.editor
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
+import android.viewbinding.library.fragment.viewBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -21,25 +19,21 @@ import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
 
-class CategoryEditorFragment : Fragment() {
+class CategoryEditorFragment : Fragment(R.layout.fragment_edit_create_category) {
     private val args: CategoryEditorFragmentArgs by navArgs()
-    private lateinit var binding: FragmentEditCreateCategoryBinding
+    private val binding: FragmentEditCreateCategoryBinding by viewBinding()
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     private val errorDialog by lazy { ErrorDialog(requireContext()) }
     private val uploadImageDialog: UploadPhotoDialog by lazy { UploadPhotoDialog(requireContext(), requireActivity().activityResultRegistry) }
     private val viewModel: CategoryEditorViewModel by viewModels {
-        Injector.provideCategoryEditorViewModel(
-            requireActivity().application,
-            args.categoryIdToEdit,
-        )
+        Injector.provideCategoryEditorViewModel(requireActivity().application, args.categoryIdToEdit)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_create_category, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        binding.toolbar.title =  getString(if (viewModel.isEditMode) R.string.label_edit_category else R.string.label_create_category)
+        binding.toolbar.title = getString(if (viewModel.isEditMode) R.string.label_edit_category else R.string.label_create_category)
         binding.action.text = getString(if (viewModel.isEditMode) R.string.label_save else R.string.label_create)
 
         binding.image.setOnClickListener {
@@ -51,7 +45,6 @@ class CategoryEditorFragment : Fragment() {
         observePhoto()
         observeLoading()
         observeEvents()
-        return binding.root
     }
 
     private fun observeEvents() {

@@ -1,12 +1,10 @@
 package com.yurii.foody.screens.client.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.viewbinding.library.fragment.viewBinding
 import android.widget.TextView
 import androidx.core.view.GravityCompat
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -17,12 +15,11 @@ import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.OnBackPressed
 import com.yurii.foody.utils.observeOnLifecycle
 
-class ClientMainScreenFragment : Fragment(), OnBackPressed {
-    private lateinit var binding: FragmentNavigationClientPanelBinding
+class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_panel), OnBackPressed {
+    private val binding: FragmentNavigationClientPanelBinding by viewBinding()
     private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel(requireContext()) }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_navigation_client_panel, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.content.openMenu.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
 
         binding.navView.setNavigationItemSelectedListener {
@@ -47,7 +44,6 @@ class ClientMainScreenFragment : Fragment(), OnBackPressed {
         binding.content.products.setOnClickListener {
             findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToProductsFragment())
         }
-        return binding.root
     }
 
     private fun observeEvents() {

@@ -1,12 +1,10 @@
 package com.yurii.foody.screens.admin.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.viewbinding.library.fragment.viewBinding
 import android.widget.TextView
 import androidx.core.view.GravityCompat
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -17,11 +15,11 @@ import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.OnBackPressed
 import com.yurii.foody.utils.observeOnLifecycle
 
-class AdminPanelFragment : Fragment(), OnBackPressed {
-    private lateinit var binding: FragmentNavigationAdminPanelBinding
+class AdminPanelFragment : Fragment(R.layout.fragment_navigation_admin_panel), OnBackPressed {
+    private val binding: FragmentNavigationAdminPanelBinding by viewBinding()
     private val viewModel: AdminPanelViewModel by viewModels { Injector.provideAdminPanelViewModel(requireContext()) }
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_navigation_admin_panel, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.content.viewModel = viewModel
         binding.content.openMenu.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
         observeEvents()
@@ -43,8 +41,6 @@ class AdminPanelFragment : Fragment(), OnBackPressed {
         viewModel.user.observe(viewLifecycleOwner) {
             setHeaderText("${it.firstName} ${it.lastName}")
         }
-
-        return binding.root
     }
 
     private fun askUserToAcceptLoggingOut(callback: () -> Unit) {

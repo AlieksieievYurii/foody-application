@@ -1,11 +1,9 @@
 package com.yurii.foody.screens.admin.products.editor
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.viewbinding.library.fragment.viewBinding
 import android.widget.ArrayAdapter
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -23,23 +21,18 @@ import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
 
-class ProductEditorFragment : Fragment() {
+class ProductEditorFragment : Fragment(R.layout.fragment_edit_create_product) {
     private val args: ProductEditorFragmentArgs by navArgs()
     private val viewModel: ProductEditorViewModel by viewModels {
-        Injector.provideProductEditorViewModel(
-            requireActivity().application,
-            args.productIdToEdit
-        )
+        Injector.provideProductEditorViewModel(requireActivity().application, args.productIdToEdit)
     }
     private val uploadImageDialog: UploadPhotoDialog by lazy { UploadPhotoDialog(requireContext(), requireActivity().activityResultRegistry) }
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     private val errorDialog by lazy { ErrorDialog(requireContext()) }
-    private lateinit var binding: FragmentEditCreateProductBinding
+    private val binding: FragmentEditCreateProductBinding by viewBinding()
     private val imagesListAdapter = ImagesListAdapter(this::onAddNewAdditionalImage, this::onDeleteAdditionalImage)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_create_product, container, false)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         binding.additionalImages.adapter = imagesListAdapter
@@ -56,8 +49,6 @@ class ProductEditorFragment : Fragment() {
         observeMainPhoto()
         observeCategories()
         observeEvents()
-
-        return binding.root
     }
 
     private fun observeMainPhoto() {

@@ -1,11 +1,9 @@
 package com.yurii.foody.authorization.confirmation
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.viewbinding.library.fragment.viewBinding
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -15,25 +13,16 @@ import com.yurii.foody.databinding.FragmentConfirmationBinding
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
 
-class ConfirmationFragment : Fragment() {
-    enum class Mode {
-        EMAIL_IS_NOT_CONFIRMED, ROLE_IS_NOT_CONFIRMED
-    }
+class ConfirmationFragment : Fragment(R.layout.fragment_confirmation) {
+    enum class Mode { EMAIL_IS_NOT_CONFIRMED, ROLE_IS_NOT_CONFIRMED }
 
-    private val viewModel: ConfirmationViewModel by viewModels {
-        Injector.provideConfirmationViewModel(
-            requireContext(),
-            args.mode
-        )
-    }
+    private val viewModel: ConfirmationViewModel by viewModels { Injector.provideConfirmationViewModel(requireContext(), args.mode) }
     private val args: ConfirmationFragmentArgs by navArgs()
-    private lateinit var binding: FragmentConfirmationBinding
+    private val binding: FragmentConfirmationBinding by viewBinding()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_confirmation, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.viewModel = viewModel
         observeEvents()
-        return binding.root
     }
 
     private fun observeEvents() {

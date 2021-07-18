@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.yurii.foody.R
@@ -45,4 +47,10 @@ class ImageSlider(context: Context, attrs: AttributeSet) : FrameLayout(context, 
         LayoutInflater.from(context),
         R.layout.fragment_image_slider, this, true
     )
+
+    fun observe(list: LiveData<List<String>>, lifecycleOwner: LifecycleOwner) {
+        list.observe(lifecycleOwner) {
+            setImages(it)
+        }
+    }
 }

@@ -68,6 +68,14 @@ class ProductDetailViewModel(private val repository: ProductsRepository, private
         }
     }
 
+    fun order() {
+
+    }
+
+    fun addToCart() {
+
+    }
+
     class Factory(private val repository: ProductsRepository, private val productId: Long) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ProductDetailViewModel::class.java)) {

@@ -104,4 +104,10 @@
     <string name="content_description_cart">Open the cart</string>
     <string name="content_desc_price">Price icon</string>
     <string name="content_desc_cooking_time_icon">Cooking time icon</string>
+    <string name="content_desc_rating">Raiting icon</string>
+    <string name="label_description">Description</string>
+    <string name="label_cost_breakdown">cost breakdown</string>
+    <string name="label_count">Count</string>
+    <string name="label_total">Total</string>
+    <string name="label_order">Order</string>
 </resources>

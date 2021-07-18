@@ -41,7 +41,11 @@ class ProductsFragment : Fragment(R.layout.fragment_client_products) {
         viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) { event ->
             when (event) {
                 ProductsViewModel.Event.Refresh -> listAdapter.refresh()
-                is ProductsViewModel.Event.NavigateToProduct -> findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToProductDetailFragment())
+                is ProductsViewModel.Event.NavigateToProduct -> findNavController().navigate(
+                    ProductsFragmentDirections.actionProductsFragmentToProductDetailFragment(
+                        event.productItem.id
+                    )
+                )
             }
         }
     }

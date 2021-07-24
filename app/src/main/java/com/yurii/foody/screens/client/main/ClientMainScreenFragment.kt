@@ -22,9 +22,11 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.content.openMenu.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
-        viewModel.role.observeOnLifecycle(viewLifecycleOwner) {
-            if (it != UserRoleEnum.CLIENT)
-                binding.navView.menu.findItem(R.id.item_change_role).isVisible = true
+        viewModel.role.observeOnLifecycle(viewLifecycleOwner) { role ->
+            binding.navView.menu.apply {
+                findItem(R.id.item_become_cook).isVisible = role == UserRoleEnum.CLIENT
+                findItem(R.id.item_change_role).isVisible = role != UserRoleEnum.CLIENT
+            }
         }
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {

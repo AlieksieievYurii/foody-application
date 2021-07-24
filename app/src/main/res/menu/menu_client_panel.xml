@@ -22,7 +22,7 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/item_become_cook"
-            android:icon="@drawable/ic_baseline_login_24"
+            android:icon="@drawable/ic_baseline_fastfood_24"
             android:title="@string/label_become_cook" />
         <item
             android:id="@+id/item_log_out"

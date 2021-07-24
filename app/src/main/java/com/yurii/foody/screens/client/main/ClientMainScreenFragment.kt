@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
+import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.databinding.FragmentNavigationClientPanelBinding
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.OnBackPressed
@@ -21,7 +22,10 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.content.openMenu.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
-
+        viewModel.role.observeOnLifecycle(viewLifecycleOwner) {
+            if (it != UserRoleEnum.CLIENT)
+                binding.navView.menu.findItem(R.id.item_change_role).isVisible = true
+        }
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.item_personal_information -> navigateToPersonalInformation()

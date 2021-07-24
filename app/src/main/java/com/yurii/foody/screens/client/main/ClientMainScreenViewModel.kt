@@ -2,9 +2,11 @@ package com.yurii.foody.screens.client.main
 
 import androidx.lifecycle.*
 import com.yurii.foody.api.User
+import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.utils.AuthorizationRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
@@ -16,6 +18,10 @@ class ClientMainScreenViewModel(private val repository: AuthorizationRepository)
 
     private val _user: MutableLiveData<User> = MutableLiveData()
     val user: LiveData<User> = _user
+
+    val role: Flow<UserRoleEnum?> = flow {
+        emit(repository.getUserRole())
+    }
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow: Flow<Event> = eventChannel.receiveAsFlow()

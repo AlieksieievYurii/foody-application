@@ -14,7 +14,8 @@
         <item
             android:id="@+id/item_change_role"
             android:icon="@drawable/ic_supervised_user_circle_24"
-            android:title="@string/label_change_role" />
+            android:title="@string/label_change_role"
+            android:visible="false" />
     </group>
     <group
         android:id="@+id/group_other_options"

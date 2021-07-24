@@ -12,12 +12,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
 import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.databinding.FragmentNavigationClientPanelBinding
+import com.yurii.foody.ui.InformationDialog
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.OnBackPressed
 import com.yurii.foody.utils.observeOnLifecycle
 
 class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_panel), OnBackPressed {
     private val binding: FragmentNavigationClientPanelBinding by viewBinding()
+    private val registrationHasDoneDialog by lazy { InformationDialog(requireContext()) }
     private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel(requireContext()) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,9 +36,8 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
                 R.id.item_help -> {
                 }
                 R.id.item_change_role -> navigateToChangeRole()
-                R.id.item_log_out -> askUserToAcceptLoggingOut {
-                    viewModel.logOut()
-                }
+                R.id.item_become_cook -> viewModel.requestToBecomeCook()
+                R.id.item_log_out -> askUserToAcceptLoggingOut { viewModel.logOut() }
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             false
@@ -56,8 +57,18 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
         viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {
             when (it) {
                 ClientMainScreenViewModel.Event.NavigateToLogInScreen -> navigateToLogInScreen()
+                ClientMainScreenViewModel.Event.ShowDialogToBecomeCook -> showDialogToBecomeCook()
+                ClientMainScreenViewModel.Event.ShowDialogYouBecameCook -> registrationHasDoneDialog.show(getString(R.string.message_you_became_cook))
             }
         }
+    }
+
+    private fun showDialogToBecomeCook() {
+        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.label_become_cook)
+            .setMessage(R.string.message_become_cook)
+            .setPositiveButton(R.string.label_yes) { _, _ -> viewModel.becomeCook() }
+            .setNegativeButton(R.string.label_no) { _, _ -> }
+            .show()
     }
 
     private fun navigateToLogInScreen() {

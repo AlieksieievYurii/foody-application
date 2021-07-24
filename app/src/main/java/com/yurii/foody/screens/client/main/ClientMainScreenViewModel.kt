@@ -6,7 +6,6 @@ import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.utils.AuthorizationRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
@@ -14,14 +13,14 @@ class ClientMainScreenViewModel(private val repository: AuthorizationRepository)
 
     sealed class Event {
         object NavigateToLogInScreen : Event()
+        object ShowDialogToBecomeCook : Event()
+        object ShowDialogYouBecameCook : Event()
     }
 
     private val _user: MutableLiveData<User> = MutableLiveData()
     val user: LiveData<User> = _user
 
-    val role: Flow<UserRoleEnum?> = flow {
-        emit(repository.getUserRole())
-    }
+    val role: Flow<UserRoleEnum?> = repository.getUserRoleFlow()
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow: Flow<Event> = eventChannel.receiveAsFlow()
@@ -38,6 +37,21 @@ class ClientMainScreenViewModel(private val repository: AuthorizationRepository)
         viewModelScope.launch {
             repository.logOut()
             eventChannel.send(Event.NavigateToLogInScreen)
+        }
+    }
+
+    fun requestToBecomeCook() {
+        viewModelScope.launch {
+            eventChannel.send(Event.ShowDialogToBecomeCook)
+        }
+    }
+
+    fun becomeCook() {
+        viewModelScope.launch {
+            repository.becomeCook()
+            eventChannel.send(Event.ShowDialogYouBecameCook)
+            repository.setUserRole(UserRoleEnum.EXECUTOR)
+            repository.setUserRoleStatus(false)
         }
     }
 

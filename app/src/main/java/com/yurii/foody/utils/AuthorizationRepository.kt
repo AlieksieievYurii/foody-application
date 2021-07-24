@@ -56,9 +56,13 @@ class AuthorizationRepository @VisibleForTesting constructor(
 
     suspend fun getUserRole() = authDataStorage.userRole.first()
 
+    fun getUserRoleFlow() = authDataStorage.userRole
+
     suspend fun getAuthenticationData() = authDataStorage.authData.first()
 
     suspend fun isUserRoleConfirmed() = authDataStorage.isRoleConfirmed.first()
+
+    suspend fun becomeCook() = api.usersService.becomeCook()
 
     companion object {
         private var INSTANCE: AuthorizationRepository? = null

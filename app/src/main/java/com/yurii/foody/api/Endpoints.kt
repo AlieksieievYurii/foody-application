@@ -38,6 +38,9 @@ interface ApiUsers {
 
     @PATCH("/users/{id}")
     suspend fun updateUser(@Path("id") userId: Long, @Body user: UserPersonalInfo): User
+
+    @POST("/users/become-cook/")
+    suspend fun becomeCook(): Response<Unit>
 }
 
 interface ApiProducts {

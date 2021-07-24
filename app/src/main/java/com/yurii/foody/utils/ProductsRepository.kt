@@ -93,6 +93,8 @@ class ProductsRepository(private val service: Service) {
 
     suspend fun updateCategory(category: Category): Category = service.categories.updateCategory(category.id, category)
 
+    suspend fun createOrder(orderForm: OrderForm): Order = service.orders.createOrder(orderForm)
+
     companion object {
         private var INSTANCE: ProductsRepository? = null
         fun create(api: Service): ProductsRepository {

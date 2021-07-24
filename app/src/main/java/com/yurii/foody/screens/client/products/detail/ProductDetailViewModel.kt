@@ -3,6 +3,7 @@ package com.yurii.foody.screens.client.products.detail
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
+import com.yurii.foody.api.OrderForm
 import com.yurii.foody.api.Product
 import com.yurii.foody.api.ProductAvailability
 import com.yurii.foody.api.ProductImage
@@ -10,18 +11,25 @@ import com.yurii.foody.utils.ProductsRepository
 import com.yurii.foody.utils.value
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 
 class ProductDetailViewModel(private val repository: ProductsRepository, private val productId: Long) : ViewModel() {
     sealed class Event {
         data class ShowError(val exception: Throwable) : Event()
+        object CloseScreen : Event()
     }
 
-    private val _isLoading: MutableLiveData<Boolean> = MutableLiveData(true)
-    val isLoading: LiveData<Boolean> = _isLoading
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    private val _isInitialized: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isInitialized: LiveData<Boolean> = _isInitialized
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         viewModelScope.launch {
+            _isLoading.value = false
             eventChannel.send(Event.ShowError(exception))
         }
     }
@@ -75,11 +83,21 @@ class ProductDetailViewModel(private val repository: ProductsRepository, private
                     _images.postValue(images)
                 }
             )
-            _isLoading.postValue(false)
+            _isInitialized.postValue(true)
         }
     }
 
     fun order() {
+        val orderForm = OrderForm(
+            product = productId,
+            count = count.value
+        )
+        netWorkScope.launch {
+            _isLoading.value = true
+            repository.createOrder(orderForm)
+            _isLoading.value = false
+            eventChannel.send(Event.CloseScreen)
+        }
 
     }
 

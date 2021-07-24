@@ -159,3 +159,20 @@ data class ProductCategory(val product: Long, val category: Long)
 
 @JsonClass(generateAdapter = true)
 data class LoadedImage(val url: String)
+
+@JsonClass(generateAdapter = true)
+data class Order(
+    val id: Long,
+    val product: Long,
+    val user: Long,
+    val count: Int,
+    val price: Float,
+    @Json(name = "cooking_time") val cookingTime: Int,
+    val timestamp: String
+)
+
+@JsonClass(generateAdapter = true)
+data class OrderForm(
+    val product: Long,
+    val count: Int,
+)

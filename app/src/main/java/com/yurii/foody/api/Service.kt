@@ -29,6 +29,7 @@ interface ApiServiceInterface {
     val productImage: ApiProductImage
     val categories: ApiCategories
     val productCategory: ApiProductCategory
+    val orders: ApiOrders
 }
 
 object Service : ApiServiceInterface {
@@ -70,6 +71,7 @@ object Service : ApiServiceInterface {
     override val productImage: ApiProductImage by lazy { authenticatedService().create(ApiProductImage::class.java) }
     override val categories: ApiCategories by lazy { authenticatedService().create(ApiCategories::class.java) }
     override val productCategory: ApiProductCategory by lazy { authenticatedService().create(ApiProductCategory::class.java) }
+    override val orders: ApiOrders by lazy { authenticatedService().create(ApiOrders::class.java) }
 
     fun <T : Any> asFlow(call: suspend () -> T) = flow {
         emit(wrapWithResponseException(call))

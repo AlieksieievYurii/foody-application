@@ -135,3 +135,8 @@ interface ApiProductCategory {
     @DELETE("/products/productCategory/{product}/")
     suspend fun removeProductCategory(@Path("product") productId: Long): Response<Unit>
 }
+
+interface ApiOrders {
+    @POST("/orders/")
+    suspend fun createOrder(@Body order: OrderForm): Order
+}

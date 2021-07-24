@@ -30,7 +30,10 @@ class AuthorizationRepository @VisibleForTesting constructor(
         return api.usersService.updateUserRole(id = userRoleRequest.id, userRoleRequest.toConfirmedUserRole())
     }
 
-    suspend fun logOut() = authDataStorage.cleanAllAuthData()
+    suspend fun logOut() {
+        authDataStorage.cleanAllAuthData()
+        Service.cleanAuthService()
+    }
 
     suspend fun register(user: RegistrationForm) = Service.wrapWithResponseException { api.authService.registerUser(user) }
 

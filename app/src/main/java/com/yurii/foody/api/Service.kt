@@ -12,6 +12,7 @@ import okhttp3.*
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import timber.log.Timber
 import java.io.IOException
 import kotlin.Exception
 
@@ -46,6 +47,10 @@ object Service : ApiServiceInterface {
         authenticatedService = service.newBuilder()
             .client(createHttpClient(token))
             .build()
+    }
+
+    fun cleanAuthService() {
+        authenticatedService = null
     }
 
     private fun authenticatedService(): Retrofit {

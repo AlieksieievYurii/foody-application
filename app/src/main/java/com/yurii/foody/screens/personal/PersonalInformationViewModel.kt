@@ -4,6 +4,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.utils.Empty
 import com.yurii.foody.utils.FieldValidation
+import com.yurii.foody.utils.UserRepository
 import com.yurii.foody.utils.value
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel

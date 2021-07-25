@@ -1,10 +1,8 @@
 package com.yurii.foody.screens.admin.requests
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
+import android.viewbinding.library.fragment.viewBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -15,9 +13,9 @@ import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.observeOnLifecycle
 
-class RoleRequestsFragment : Fragment() {
+class RoleRequestsFragment : Fragment(R.layout.fragment_role_requests) {
     private val viewModel: RoleRequestsViewModel by viewModels { Injector.provideRoleRequestsViewModel(requireContext()) }
-    private lateinit var binding: FragmentRoleRequestsBinding
+    private val binding: FragmentRoleRequestsBinding by viewBinding()
     private val errorDialog by lazy { ErrorDialog(requireContext()) }
     private val listAdapter: UserRoleAdapter by lazy {
         UserRoleAdapter {
@@ -35,8 +33,7 @@ class RoleRequestsFragment : Fragment() {
             .show()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_role_requests, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.requests.setAdapter(listAdapter)
 
         binding.requests.setOnRefreshListener { viewModel.refreshList() }
@@ -49,7 +46,6 @@ class RoleRequestsFragment : Fragment() {
         observeLoadState()
         observeRequests()
         observeEvents()
-        return binding.root
     }
 
     private fun observeEvents() {

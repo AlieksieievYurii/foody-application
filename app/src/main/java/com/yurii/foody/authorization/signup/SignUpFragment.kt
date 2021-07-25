@@ -1,12 +1,10 @@
 package com.yurii.foody.authorization.signup
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.viewbinding.library.fragment.viewBinding
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -19,25 +17,20 @@ import com.yurii.foody.ui.InformationDialog
 import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.utils.*
 
-class SignUpFragment : Fragment() {
+class SignUpFragment : Fragment(R.layout.fragment_signup) {
     private val viewModel: SignUpViewModel by viewModels { Injector.provideSignUpViewModel(requireContext()) }
-    private lateinit var binding: FragmentSignupBinding
+    private val binding: FragmentSignupBinding by viewBinding()
     private val loadingDialog by lazy { LoadingDialog(requireContext()) }
     private val errorDialog by lazy { ErrorDialog(requireContext()) }
     private val registrationHasDoneDialog by lazy { InformationDialog(requireContext(), isCancelable = false) { viewModel.onGotIt() } }
-
     private val cookInfoDialog by lazy { InformationDialog(requireContext()) }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner) {hideKeyboard()}
-
         observePasswordRequirements()
         observeEvents()
-
-        return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

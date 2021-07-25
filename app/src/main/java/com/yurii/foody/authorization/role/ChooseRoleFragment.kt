@@ -1,11 +1,9 @@
 package com.yurii.foody.authorization.role
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.viewbinding.library.fragment.viewBinding
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -17,18 +15,14 @@ import com.yurii.foody.databinding.FragmentChooseRoleBinding
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.observeOnLifecycle
 
-class ChooseRoleFragment : Fragment() {
-    private lateinit var binding: FragmentChooseRoleBinding
+class ChooseRoleFragment : Fragment(R.layout.fragment_choose_role) {
+    private val binding: FragmentChooseRoleBinding by viewBinding()
     private val args: ChooseRoleFragmentArgs by navArgs()
-    private val viewModel: ChooseRoleViewModel by viewModels {
-        Injector.provideChooseRoleViewModel(requireContext(), args.selectNewRole)
-    }
+    private val viewModel: ChooseRoleViewModel by viewModels { Injector.provideChooseRoleViewModel(requireContext(), args.selectNewRole) }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_choose_role, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.viewModel = viewModel
         observeEvents()
-        return binding.root
     }
 
     private fun observeEvents() {
@@ -46,7 +40,7 @@ class ChooseRoleFragment : Fragment() {
     }
 
     private fun navigateToMainClientScreen() {
-        findNavController().navigate(ChooseRoleFragmentDirections.actionChooseRoleFragmentToFragmentTest(UserRoleEnum.CLIENT))
+        findNavController().navigate(ChooseRoleFragmentDirections.actionChooseRoleFragmentToClientMainScreenFragment())
     }
 
     private fun navigateToMainExecutorScreen() {

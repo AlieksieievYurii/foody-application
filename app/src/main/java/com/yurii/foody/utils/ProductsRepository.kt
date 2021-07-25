@@ -5,12 +5,16 @@ import androidx.paging.PagingConfig
 import com.yurii.foody.api.*
 import com.yurii.foody.screens.admin.categories.CategoriesPagingSource
 import com.yurii.foody.screens.admin.products.ProductPagingSource
+import com.yurii.foody.screens.client.products.ProductsPagingSource
 import okhttp3.MediaType
 import okhttp3.RequestBody
 
 class ProductsRepository(private val service: Service) {
 
     private val pagingConfig = PagingConfig(pageSize = 10, enablePlaceholders = false)
+
+    fun getProductsPagerForClient(search: String? = null) =
+        Pager(config = pagingConfig, pagingSourceFactory = { ProductsPagingSource(service, search) }).flow
 
     fun getProductsPager(query: ProductPagingSource.Query? = null) =
         Pager(config = pagingConfig, pagingSourceFactory = { ProductPagingSource(service, query) }).flow
@@ -88,6 +92,8 @@ class ProductsRepository(private val service: Service) {
     suspend fun getCategory(categoryIdToEdit: Long): Category = service.categories.getCategory(categoryIdToEdit)
 
     suspend fun updateCategory(category: Category): Category = service.categories.updateCategory(category.id, category)
+
+    suspend fun createOrder(orderForm: OrderForm): Order = service.orders.createOrder(orderForm)
 
     companion object {
         private var INSTANCE: ProductsRepository? = null

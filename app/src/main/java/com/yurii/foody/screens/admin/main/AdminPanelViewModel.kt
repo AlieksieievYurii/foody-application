@@ -2,13 +2,13 @@ package com.yurii.foody.screens.admin.main
 
 import androidx.lifecycle.*
 import com.yurii.foody.api.User
-import com.yurii.foody.utils.AuthorizationRepository
+import com.yurii.foody.utils.UserRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class AdminPanelViewModel(private val repository: AuthorizationRepository) : ViewModel() {
+class AdminPanelViewModel(private val repository: UserRepository) : ViewModel() {
     sealed class Event {
         object NavigateToRequests : Event()
         object NavigateToProductsEditor : Event()
@@ -65,7 +65,7 @@ class AdminPanelViewModel(private val repository: AuthorizationRepository) : Vie
         viewModelScope.launch { eventChannel.send(Event.NavigateToCategoriesEditor) }
     }
 
-    class Factory(private val repository: AuthorizationRepository) : ViewModelProvider.Factory {
+    class Factory(private val repository: UserRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(AdminPanelViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")

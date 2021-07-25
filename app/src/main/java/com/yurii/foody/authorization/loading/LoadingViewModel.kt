@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.foody.api.ResponseException
 import com.yurii.foody.api.User
-import com.yurii.foody.utils.AuthorizationRepository
 import com.yurii.foody.utils.AuthDataStorage
+import com.yurii.foody.utils.AuthorizationRepository
 import com.yurii.foody.utils.isInsideScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -42,7 +42,7 @@ class LoadingViewModel(private val repository: AuthorizationRepository) : ViewMo
     }
 
     private suspend fun checkAuthorization(authData: AuthDataStorage.Data) {
-        repository.setToken(authData.token)
+        repository.createAuthApiService(authData.token)
         netWorkScope.launch {
             val user = repository.getUser(authData.userId)
             repository.saveUser(user)

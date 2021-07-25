@@ -15,53 +15,87 @@ import com.yurii.foody.screens.admin.main.AdminPanelViewModel
 import com.yurii.foody.screens.admin.products.ProductsEditorViewModel
 import com.yurii.foody.screens.admin.products.editor.ProductEditorViewModel
 import com.yurii.foody.screens.admin.requests.RoleRequestsViewModel
+import com.yurii.foody.screens.client.main.ClientMainScreenViewModel
+import com.yurii.foody.screens.client.products.ProductsViewModel
+import com.yurii.foody.screens.client.products.detail.ProductDetailViewModel
 import com.yurii.foody.screens.personal.PersonalInformationViewModel
-import com.yurii.foody.screens.personal.UserRepository
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 object Injector {
 
-    private fun provideAuthorizationRepository(context: Context) = AuthorizationRepository.create(
+    private fun provideAuthorizedApiService(context: Context): Service {
+        val token = runBlocking {
+            AuthDataStorage.create(context).authData.first()?.token
+                ?: throw IllegalStateException("There is not token")
+        }
+        return Service(token)
+    }
+
+    private fun provideUnAuthorizedApiService() = Service()
+
+    private fun provideUserRepository(context: Context) = UserRepository.create(
         authDataStorage = AuthDataStorage.create(context),
-        api = Service
+        api = provideAuthorizedApiService(context)
     )
 
-    private fun provideProductRepository() = ProductsRepository.create(api = Service)
+    private fun provideUnAuthRepo(context: Context) = AuthorizationRepository(
+        AuthDataStorage.create(context),
+        provideUnAuthorizedApiService()
+    )
+
+    private fun provideProductRepository(context: Context) =
+        ProductsRepository.create(api = provideAuthorizedApiService(context))
 
     fun provideChooseRoleViewModel(context: Context, selectNewRole: Boolean) =
-        ChooseRoleViewModel.Factory(repository = provideAuthorizationRepository(context), selectNewRole = selectNewRole)
+        ChooseRoleViewModel.Factory(repository = provideUnAuthRepo(context), selectNewRole = selectNewRole)
 
-    fun provideLogInViewModel(context: Context) = LogInViewModel.Factory(repository = provideAuthorizationRepository(context))
+    fun provideLogInViewModel(context: Context) =
+        LogInViewModel.Factory(repository = provideUnAuthRepo(context))
 
-    fun provideLoadingViewModel(context: Context) = LoadingViewModel.Factory(repository = provideAuthorizationRepository(context))
+    fun provideLoadingViewModel(context: Context) =
+        LoadingViewModel.Factory(repository = provideUnAuthRepo(context))
 
     fun provideConfirmationViewModel(context: Context, mode: ConfirmationFragment.Mode) =
-        ConfirmationViewModel.Factory(provideAuthorizationRepository(context), mode)
+        ConfirmationViewModel.Factory(provideUnAuthRepo(context), mode)
 
-    fun provideSignUpViewModel(context: Context) = SignUpViewModel.Factory(repository = provideAuthorizationRepository(context))
+    fun provideSignUpViewModel(context: Context) =
+        SignUpViewModel.Factory(repository = provideUnAuthRepo(context))
 
-    fun provideAdminPanelViewModel(context: Context) = AdminPanelViewModel.Factory(repository = provideAuthorizationRepository(context))
+    fun provideAdminPanelViewModel(context: Context) =
+        AdminPanelViewModel.Factory(repository = provideUserRepository(context))
 
-    fun provideProductsEditorViewModel() = ProductsEditorViewModel.Factory(repository = provideProductRepository())
+    fun provideProductsEditorViewModel(context: Context) =
+        ProductsEditorViewModel.Factory(repository = provideProductRepository(context))
 
     fun provideProductEditorViewModel(application: Application, productIdToEdit: Long) = ProductEditorViewModel.Factory(
         application = application,
-        productsRepository = provideProductRepository(),
+        productsRepository = provideProductRepository(application.applicationContext),
         productIdToEdit = if (productIdToEdit == -1L) null else productIdToEdit
     )
 
-    fun provideCategoriesEditorViewModel() = CategoriesEditorViewModel.Factory(repository = provideProductRepository())
-    fun provideCategoryEditorViewModel(application: Application, categoryIdToEdit: Long) = CategoryEditorViewModel.Factory(
-        application = application,
-        productsRepository = provideProductRepository(),
-        categoryIdToEdit = if (categoryIdToEdit == -1L) null else categoryIdToEdit
-    )
+    fun provideCategoriesEditorViewModel(context: Context) =
+        CategoriesEditorViewModel.Factory(repository = provideProductRepository(context))
+
+    fun provideCategoryEditorViewModel(application: Application, categoryIdToEdit: Long) =
+        CategoryEditorViewModel.Factory(
+            application = application,
+            productsRepository = provideProductRepository(application.applicationContext),
+            categoryIdToEdit = if (categoryIdToEdit == -1L) null else categoryIdToEdit
+        )
 
     fun provideRoleRequestsViewModel(context: Context) =
-        RoleRequestsViewModel.Factory(authorizationRepository = provideAuthorizationRepository(context))
+        RoleRequestsViewModel.Factory(userRepository = provideUserRepository(context))
 
-    fun providePersonalInformationViewModel(context: Context) = PersonalInformationViewModel.Factory(
-        UserRepository(
-            service = Service, authDataStorage = AuthDataStorage.create(context)
-        )
-    )
+    fun providePersonalInformationViewModel(context: Context) =
+        PersonalInformationViewModel.Factory(provideUserRepository(context))
+
+    fun provideClientMainScreenViewModel(context: Context) =
+        ClientMainScreenViewModel.Factory(repository = provideUserRepository(context))
+
+    fun provideProductsViewModel(context: Context) =
+        ProductsViewModel.Factory(repository = provideProductRepository(context))
+
+    fun provideProductDetailViewModel(context: Context, productId: Long) =
+        ProductDetailViewModel.Factory(repository = provideProductRepository(context), productId = productId)
 }

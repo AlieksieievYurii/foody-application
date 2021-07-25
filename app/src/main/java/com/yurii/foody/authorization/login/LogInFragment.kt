@@ -1,10 +1,8 @@
 package com.yurii.foody.authorization.login
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
+import android.viewbinding.library.fragment.viewBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -18,24 +16,19 @@ import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.hideKeyboard
 import com.yurii.foody.utils.observeOnLifecycle
 
-class LogInFragment : Fragment() {
+class LogInFragment : Fragment(R.layout.fragment_log_in) {
     private val viewModel: LogInViewModel by viewModels { Injector.provideLogInViewModel(requireContext()) }
-
-    private lateinit var binding: FragmentLogInBinding
+    private val binding: FragmentLogInBinding by viewBinding()
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     private val errorDialog: ErrorDialog by lazy { ErrorDialog(requireContext()) }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_log_in, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
         observeEventFlow()
-
         loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner) { hideKeyboard() }
-
-        return binding.root
     }
+
 
     private fun observeEventFlow() = viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {
         when (it) {

@@ -1,10 +1,8 @@
 package com.yurii.foody.authorization.loading
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
+import android.viewbinding.library.fragment.viewBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -18,15 +16,13 @@ import com.yurii.foody.utils.observeOnLifecycle
 import com.yurii.foody.utils.setListener
 import com.yurii.foody.utils.statusBar
 
-class LoadingFragment : Fragment() {
+class LoadingFragment : Fragment(R.layout.fragment_loading) {
     private val viewModel: LoadingViewModel by viewModels { Injector.provideLoadingViewModel(requireContext()) }
-    private lateinit var binding: FragmentLoadingBinding
+    private val binding: FragmentLoadingBinding by viewBinding()
     private val errorDialog: ErrorDialog by lazy { ErrorDialog(requireContext()) }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_loading, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.animation.setListener { observeEvents() }
-        return binding.root
     }
 
     private fun observeEvents() = viewModel.eventFlow.observeOnLifecycle(viewLifecycleOwner) {

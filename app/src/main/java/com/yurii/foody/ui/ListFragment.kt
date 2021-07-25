@@ -12,10 +12,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
+import androidx.paging.PagingData
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentListBinding
+import com.yurii.foody.utils.observeOnLifecycle
+import kotlinx.coroutines.flow.StateFlow
 
 class ListFragment(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     sealed class State {
@@ -87,6 +90,7 @@ class ListFragment(context: Context, attrs: AttributeSet) : FrameLayout(context,
     }
 
     fun observeListState(state: LiveData<State>) {
+        //TODO(Specify lifecycleOwner directly in the parameters)
         state.observe(context as LifecycleOwner) {
             this.state = it
         }

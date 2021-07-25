@@ -7,7 +7,6 @@ import com.yurii.foody.api.ResponseException
 import com.yurii.foody.api.RegistrationForm
 import com.yurii.foody.api.UserRegistration
 import com.yurii.foody.api.UserRoleEnum
-import com.yurii.foody.utils.AuthorizationRepository
 import com.yurii.foody.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel

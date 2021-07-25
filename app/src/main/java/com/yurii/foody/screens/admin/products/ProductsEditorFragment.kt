@@ -1,14 +1,12 @@
 package com.yurii.foody.screens.admin.products
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.viewbinding.library.fragment.viewBinding
 import android.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -22,21 +20,17 @@ import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.observeOnLifecycle
 
-class ProductsEditorFragment : Fragment() {
-
+class ProductsEditorFragment : Fragment(R.layout.fragment_product_editor) {
     companion object {
         const val REFRESH_PRODUCTS = "refresh_products"
     }
 
-    private val viewModel: ProductsEditorViewModel by viewModels { Injector.provideProductsEditorViewModel() }
-    private lateinit var binding: FragmentProductEditorBinding
+    private val viewModel: ProductsEditorViewModel by viewModels { Injector.provideProductsEditorViewModel(requireContext()) }
+    private val binding: FragmentProductEditorBinding by viewBinding()
     private val listAdapter: ProductAdapter by lazy { ProductAdapter(viewModel.selectableMode, lifecycleScope) }
-    private lateinit var searchView: SearchView
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_product_editor, container, false)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         listAdapter.onClickItem = { productData ->
             navigateToEditor(productData)
         }
@@ -63,11 +57,8 @@ class ProductsEditorFragment : Fragment() {
         observeEvents()
         initOptionMenu()
         observeSelectableMode()
-        return binding.root
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+
         val refresh = findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(REFRESH_PRODUCTS)
         if (refresh == true)
             listAdapter.refresh()
@@ -105,7 +96,7 @@ class ProductsEditorFragment : Fragment() {
 
     private fun initOptionMenu() {
         binding.toolbar.inflateMenu(R.menu.menu_product_list_editor)
-        searchView = binding.toolbar.menu.findItem(R.id.search).actionView as SearchView
+        val searchView = binding.toolbar.menu.findItem(R.id.search).actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(text: String?): Boolean {
                 searchView.clearFocus()

@@ -49,6 +49,7 @@
     <string name="list_is_empty">List is empty</string>
     <string name="label_retry">Try again</string>
     <string name="label_price">Price: %s zl</string>
+    <string name="label_product_price">%s zl</string>
     <string name="label_available">Available: %d</string>
     <string name="label_is_available">Available</string>
     <string name="label_is_unavailable">Unavailable</string>
@@ -97,4 +98,20 @@
     <string name="label_unconfirmed">unconfirmed</string>
     <string name="label_role_request">Role request</string>
     <string name="label_comfirm_role_request">Are you sure to accept the role request?</string>
+    <string name="label_become_cook">Become a cook</string>
+    <string name="label_what_would_you_like">What would you like?</string>
+    <string name="content_description_back">Move back</string>
+    <string name="content_description_cart">Open the cart</string>
+    <string name="content_desc_price">Price icon</string>
+    <string name="content_desc_cooking_time_icon">Cooking time icon</string>
+    <string name="content_desc_rating">Raiting icon</string>
+    <string name="label_description">Description</string>
+    <string name="label_cost_breakdown">cost breakdown</string>
+    <string name="label_count">Count</string>
+    <string name="label_total">Total</string>
+    <string name="label_order">Order</string>
+    <string name="label_rating">%d%%</string>
+    <string name="label_product_id">Product ID #%d</string>
+    <string name="message_become_cook">You can become a cook. Your responsibily will be to take orders and cook. Do you want to become a cook?</string>
+    <string name="message_you_became_cook">Congratulations! You have become a cook. Now wait utill the request will be approved by the administrar</string>
 </resources>

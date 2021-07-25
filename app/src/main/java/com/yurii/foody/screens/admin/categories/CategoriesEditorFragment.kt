@@ -1,12 +1,10 @@
 package com.yurii.foody.screens.admin.categories
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.viewbinding.library.fragment.viewBinding
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -20,18 +18,17 @@ import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.closeFragment
 import com.yurii.foody.utils.observeOnLifecycle
 
-class CategoriesEditorFragment : Fragment() {
+class CategoriesEditorFragment : Fragment(R.layout.fragment_categories_edit) {
     companion object {
         const val REFRESH_CATEGORIES = "refresh_categories"
     }
 
-    private lateinit var binding: FragmentCategoriesEditBinding
-    private val viewModel: CategoriesEditorViewModel by viewModels { Injector.provideCategoriesEditorViewModel() }
+    private val binding: FragmentCategoriesEditBinding by viewBinding()
+    private val viewModel: CategoriesEditorViewModel by viewModels { Injector.provideCategoriesEditorViewModel(requireContext()) }
     private val listAdapter: CategoriesAdapter by lazy { CategoriesAdapter(viewModel.selectableMode, lifecycleScope) }
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_categories_edit, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.lifecycleOwner = viewLifecycleOwner
 
         listAdapter.onClickItem = {
@@ -64,11 +61,6 @@ class CategoriesEditorFragment : Fragment() {
         observeLoading()
         observeEvents()
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val refresh = findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(REFRESH_CATEGORIES)
         if (refresh == true)
             listAdapter.refresh()

@@ -25,7 +25,7 @@ class ProductsEditorFragment : Fragment(R.layout.fragment_product_editor) {
         const val REFRESH_PRODUCTS = "refresh_products"
     }
 
-    private val viewModel: ProductsEditorViewModel by viewModels { Injector.provideProductsEditorViewModel() }
+    private val viewModel: ProductsEditorViewModel by viewModels { Injector.provideProductsEditorViewModel(requireContext()) }
     private val binding: FragmentProductEditorBinding by viewBinding()
     private val listAdapter: ProductAdapter by lazy { ProductAdapter(viewModel.selectableMode, lifecycleScope) }
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }

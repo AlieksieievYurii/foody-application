@@ -24,7 +24,7 @@ class CategoriesEditorFragment : Fragment(R.layout.fragment_categories_edit) {
     }
 
     private val binding: FragmentCategoriesEditBinding by viewBinding()
-    private val viewModel: CategoriesEditorViewModel by viewModels { Injector.provideCategoriesEditorViewModel() }
+    private val viewModel: CategoriesEditorViewModel by viewModels { Injector.provideCategoriesEditorViewModel(requireContext()) }
     private val listAdapter: CategoriesAdapter by lazy { CategoriesAdapter(viewModel.selectableMode, lifecycleScope) }
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
 

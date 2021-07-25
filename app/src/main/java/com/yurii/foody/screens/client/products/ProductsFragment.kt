@@ -15,7 +15,7 @@ import com.yurii.foody.utils.setOnQueryTextListener
 
 class ProductsFragment : Fragment(R.layout.fragment_client_products) {
     private val binding: FragmentClientProductsBinding by viewBinding()
-    private val viewModel: ProductsViewModel by viewModels { Injector.provideProductsViewModel() }
+    private val viewModel: ProductsViewModel by viewModels { Injector.provideProductsViewModel(requireContext()) }
     private val listAdapter: ProductAdapter by lazy { ProductAdapter(viewModel::onProductClick) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

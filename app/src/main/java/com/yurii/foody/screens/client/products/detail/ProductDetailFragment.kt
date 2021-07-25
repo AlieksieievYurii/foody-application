@@ -19,7 +19,7 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     private val args: ProductDetailFragmentArgs by navArgs()
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
     private val errorDialog by lazy { ErrorDialog(requireContext()) }
-    private val viewModel: ProductDetailViewModel by viewModels { Injector.provideProductDetailViewModel(args.productId) }
+    private val viewModel: ProductDetailViewModel by viewModels { Injector.provideProductDetailViewModel(requireContext(), args.productId) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.lifecycleOwner = viewLifecycleOwner

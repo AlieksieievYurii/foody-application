@@ -3,7 +3,6 @@ package com.yurii.foody.authorization.login
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.yurii.foody.api.*
-import com.yurii.foody.utils.AuthorizationRepository
 import com.yurii.foody.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel

@@ -25,7 +25,10 @@ import kotlinx.coroutines.runBlocking
 object Injector {
 
     private fun provideAuthorizedApiService(context: Context): Service {
-        val token = runBlocking { AuthDataStorage.create(context).authData.first()?.token ?: throw IllegalStateException("There is not token") }
+        val token = runBlocking {
+            AuthDataStorage.create(context).authData.first()?.token
+                ?: throw IllegalStateException("There is not token")
+        }
         return Service(token)
     }
 
@@ -41,23 +44,29 @@ object Injector {
         provideUnAuthorizedApiService()
     )
 
-    private fun provideProductRepository(context: Context) = ProductsRepository.create(api = provideAuthorizedApiService(context))
+    private fun provideProductRepository(context: Context) =
+        ProductsRepository.create(api = provideAuthorizedApiService(context))
 
     fun provideChooseRoleViewModel(context: Context, selectNewRole: Boolean) =
         ChooseRoleViewModel.Factory(repository = provideUnAuthRepo(context), selectNewRole = selectNewRole)
 
-    fun provideLogInViewModel(context: Context) = LogInViewModel.Factory(repository = provideUnAuthRepo(context))
+    fun provideLogInViewModel(context: Context) =
+        LogInViewModel.Factory(repository = provideUnAuthRepo(context))
 
-    fun provideLoadingViewModel(context: Context) = LoadingViewModel.Factory(repository = provideUnAuthRepo(context))
+    fun provideLoadingViewModel(context: Context) =
+        LoadingViewModel.Factory(repository = provideUnAuthRepo(context))
 
     fun provideConfirmationViewModel(context: Context, mode: ConfirmationFragment.Mode) =
         ConfirmationViewModel.Factory(provideUnAuthRepo(context), mode)
 
-    fun provideSignUpViewModel(context: Context) = SignUpViewModel.Factory(repository = provideUnAuthRepo(context))
+    fun provideSignUpViewModel(context: Context) =
+        SignUpViewModel.Factory(repository = provideUnAuthRepo(context))
 
-    fun provideAdminPanelViewModel(context: Context) = AdminPanelViewModel.Factory(repository = provideUserRepository(context))
+    fun provideAdminPanelViewModel(context: Context) =
+        AdminPanelViewModel.Factory(repository = provideUserRepository(context))
 
-    fun provideProductsEditorViewModel(context: Context) = ProductsEditorViewModel.Factory(repository = provideProductRepository(context))
+    fun provideProductsEditorViewModel(context: Context) =
+        ProductsEditorViewModel.Factory(repository = provideProductRepository(context))
 
     fun provideProductEditorViewModel(application: Application, productIdToEdit: Long) = ProductEditorViewModel.Factory(
         application = application,
@@ -65,13 +74,15 @@ object Injector {
         productIdToEdit = if (productIdToEdit == -1L) null else productIdToEdit
     )
 
-    fun provideCategoriesEditorViewModel(context: Context) = CategoriesEditorViewModel.Factory(repository = provideProductRepository(context))
+    fun provideCategoriesEditorViewModel(context: Context) =
+        CategoriesEditorViewModel.Factory(repository = provideProductRepository(context))
 
-    fun provideCategoryEditorViewModel(application: Application, categoryIdToEdit: Long) = CategoryEditorViewModel.Factory(
-        application = application,
-        productsRepository = provideProductRepository(application.applicationContext),
-        categoryIdToEdit = if (categoryIdToEdit == -1L) null else categoryIdToEdit
-    )
+    fun provideCategoryEditorViewModel(application: Application, categoryIdToEdit: Long) =
+        CategoryEditorViewModel.Factory(
+            application = application,
+            productsRepository = provideProductRepository(application.applicationContext),
+            categoryIdToEdit = if (categoryIdToEdit == -1L) null else categoryIdToEdit
+        )
 
     fun provideRoleRequestsViewModel(context: Context) =
         RoleRequestsViewModel.Factory(userRepository = provideUserRepository(context))

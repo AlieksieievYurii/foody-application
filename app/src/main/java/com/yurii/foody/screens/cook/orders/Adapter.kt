@@ -32,6 +32,8 @@ data class Order(
     val total = count * price
     val averageTime = convertToAverageTime(cookingTime)
     val timestampDateTime: String = SimpleDateFormat("MM.dd.yyyy hh:mm", Locale.getDefault()).format(Date(timestamp))
+
+    val isDelayed: Boolean = System.currentTimeMillis() > (timestamp + (cookingTime * 1000))
 }
 
 class OrdersPagingSource(private val api: Service) : PagingSource<Int, Order>() {

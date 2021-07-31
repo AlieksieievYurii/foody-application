@@ -305,7 +305,8 @@
         tools:layout="@layout/fragment_cook_orders">
         <action
             android:id="@+id/action_cookOrdersScreenFragment_to_orderExecutionFragment"
-            app:destination="@id/orderExecutionFragment" />
+            app:destination="@id/orderExecutionFragment"
+            app:popUpTo="@id/cookMainScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/orderExecutionFragment"

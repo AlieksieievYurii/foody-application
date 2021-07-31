@@ -5,6 +5,7 @@ import android.view.View
 import android.viewbinding.library.fragment.viewBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentCookOrdersBinding
@@ -18,11 +19,7 @@ class CookOrdersScreenFragment : Fragment(R.layout.fragment_cook_orders) {
     private val viewModel: CookOrdersViewModel by viewModels { Injector.provideCookOrdersViewModel(requireContext()) }
     private val errorDialog by lazy { ErrorDialog(requireContext()) }
     private val listAdapter: OrdersAdapter by lazy {
-        OrdersAdapter(viewLifecycleOwner) {
-            askUserToConfirm {
-
-            }
-        }
+        OrdersAdapter(viewLifecycleOwner) { order -> askUserToConfirm { viewModel.takeOrder(order) } }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,8 +44,13 @@ class CookOrdersScreenFragment : Fragment(R.layout.fragment_cook_orders) {
             when (event) {
                 CookOrdersViewModel.Event.RefreshList -> listAdapter.refresh()
                 is CookOrdersViewModel.Event.ShowError -> errorDialog.show(event.exception.message ?: getString(R.string.label_no_message))
+                is CookOrdersViewModel.Event.NavigateToOrderExecution -> navigateToOrderExecution(event.orderExecutionId)
             }
         }
+    }
+
+    private fun navigateToOrderExecution(orderExecutionId: Long) {
+        findNavController().navigate(CookOrdersScreenFragmentDirections.actionCookOrdersScreenFragmentToOrderExecutionFragment(orderExecutionId))
     }
 
     private fun askUserToConfirm(callback: () -> Unit) {

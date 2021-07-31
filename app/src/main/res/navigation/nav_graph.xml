@@ -313,7 +313,7 @@
         android:label="OrderExecutionFragment"
         tools:layout="@layout/fragment_order_execution">
         <argument
-            android:name="orderId"
+            android:name="orderExecutionId"
             app:argType="long" />
     </fragment>
 </navigation>

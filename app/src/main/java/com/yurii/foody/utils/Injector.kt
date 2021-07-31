@@ -109,6 +109,6 @@ object Injector {
     fun provideCookOrdersViewModel(context: Context) =
         CookOrdersViewModel.Factory(productsRepository = provideProductRepository(context))
 
-    fun provideOrderExecutionViewModel(context: Context) =
-        OrderExecutionViewModel.Factory(productsRepository = provideProductRepository(context))
+    fun provideOrderExecutionViewModel(context: Context, orderExecutionId: Long) =
+        OrderExecutionViewModel.Factory(productsRepository = provideProductRepository(context), orderExecutionId)
 }

@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 
 class CookMainScreenViewModel(private val repository: UserRepository) : ViewModel() {
     sealed class Event {
+        object NavigateToOrders : Event()
         object NavigateToLogInScreen : Event()
         object NavigateToChangeRole : Event()
         object NavigateToPersonalInformation : Event()
@@ -41,6 +42,12 @@ class CookMainScreenViewModel(private val repository: UserRepository) : ViewMode
     fun changePersonalInformation() {
         viewModelScope.launch {
             eventChannel.send(Event.NavigateToPersonalInformation)
+        }
+    }
+
+    fun beginWork() {
+        viewModelScope.launch {
+            eventChannel.send(Event.NavigateToOrders)
         }
     }
 

@@ -50,8 +50,13 @@ class CookMainScreenFragment : Fragment(R.layout.fragment_navigation_cook_panel)
                 CookMainScreenViewModel.Event.NavigateToChangeRole -> navigateToChooseRoleScreen()
                 CookMainScreenViewModel.Event.NavigateToLogInScreen -> navigateToLogInScreen()
                 CookMainScreenViewModel.Event.NavigateToPersonalInformation -> navigateToPersonalInformationScreen()
+                CookMainScreenViewModel.Event.NavigateToOrders -> navigateToOrders()
             }
         }
+    }
+
+    private fun navigateToOrders() {
+        findNavController().navigate(CookMainScreenFragmentDirections.actionCookMainScreenFragmentToCookOrdersScreenFragment())
     }
 
     private fun navigateToPersonalInformationScreen() {

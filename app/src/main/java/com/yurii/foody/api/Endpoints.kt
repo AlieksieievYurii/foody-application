@@ -147,3 +147,8 @@ interface ApiOrders {
     @POST("/orders/")
     suspend fun createOrder(@Body order: OrderForm): Order
 }
+
+interface ApiOrderExecution {
+    @POST("/orders/execution/")
+    suspend fun createOrderExecution(@Body orderExecution: OrderExecution): OrderExecutionResponse
+}

@@ -24,7 +24,6 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
-        binding.images.observe(viewModel.images, viewLifecycleOwner)
         loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner)
 
         observeEvents()

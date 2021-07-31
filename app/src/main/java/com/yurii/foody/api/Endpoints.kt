@@ -141,6 +141,9 @@ interface ApiProductCategory {
 }
 
 interface ApiOrders {
+    @GET("/orders/{id}/")
+    suspend fun getOrder(@Path("id") orderId: Long): Order
+
     @GET("/orders/")
     suspend fun getOrders(@Query("ordering") ordering: String? = null, @Query("page") page: Int? = null, @Query("size") size: Int): Pagination<Order>
 
@@ -149,6 +152,9 @@ interface ApiOrders {
 }
 
 interface ApiOrderExecution {
+    @GET("/orders/execution/{id}/")
+    suspend fun getOrderExecution(@Path("id") orderExecutionId: Long): OrderExecutionResponse
+
     @POST("/orders/execution/")
     suspend fun createOrderExecution(@Body orderExecution: OrderExecution): OrderExecutionResponse
 }

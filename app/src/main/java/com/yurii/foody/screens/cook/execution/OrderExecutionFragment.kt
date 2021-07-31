@@ -16,6 +16,7 @@ class OrderExecutionFragment : Fragment(R.layout.fragment_order_execution) {
     private val viewModel: OrderExecutionViewModel by viewModels { Injector.provideOrderExecutionViewModel(requireContext(), args.orderExecutionId) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
     }
 }

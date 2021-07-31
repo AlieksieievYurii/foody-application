@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.yurii.foody.screens.client.products.detail.ProductDetailViewModel" />
+            type="com.yurii.foody.screens.cook.execution.OrderExecutionViewModel" />
 
         <import type="android.view.View" />
     </data>
@@ -52,6 +52,7 @@
                     android:id="@+id/images"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
+                    images="@{viewModel.product.imagesUrls}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -127,7 +128,7 @@
                             style="@style/TextAppearance.AppCompat.Body2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{String.format(@string/label_rating, 50)}"
+                            android:text="@{String.format(@string/label_rating, viewModel.product.rating)}"
                             android:textSize="22sp"
                             app:layout_constraintEnd_toStartOf="@+id/cooking_time"
                             app:layout_constraintStart_toEndOf="@+id/price"

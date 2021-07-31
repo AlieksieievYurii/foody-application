@@ -5,6 +5,7 @@ import android.view.View
 import android.viewbinding.library.fragment.viewBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentCookOrdersBinding
 import com.yurii.foody.ui.ErrorDialog
@@ -18,7 +19,9 @@ class CookOrdersScreenFragment : Fragment(R.layout.fragment_cook_orders) {
     private val errorDialog by lazy { ErrorDialog(requireContext()) }
     private val listAdapter: OrdersAdapter by lazy {
         OrdersAdapter(viewLifecycleOwner) {
+            askUserToConfirm {
 
+            }
         }
     }
 
@@ -46,5 +49,13 @@ class CookOrdersScreenFragment : Fragment(R.layout.fragment_cook_orders) {
                 is CookOrdersViewModel.Event.ShowError -> errorDialog.show(event.exception.message ?: getString(R.string.label_no_message))
             }
         }
+    }
+
+    private fun askUserToConfirm(callback: () -> Unit) {
+        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.label_take_order)
+            .setMessage(R.string.message_take_order_confirmation)
+            .setPositiveButton(R.string.label_yes) { _, _ -> callback.invoke() }
+            .setNegativeButton(R.string.label_no) { _, _ -> }
+            .show()
     }
 }

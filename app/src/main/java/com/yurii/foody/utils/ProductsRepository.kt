@@ -9,6 +9,8 @@ import com.yurii.foody.screens.client.products.ProductsPagingSource
 import com.yurii.foody.screens.cook.orders.OrdersPagingSource
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import retrofit2.HttpException
+import java.net.HttpURLConnection
 
 class ProductsRepository(private val service: Service) {
 
@@ -66,6 +68,16 @@ class ProductsRepository(private val service: Service) {
     }
 
     suspend fun getCategories() = getAllCategories(page = 1)
+
+    suspend fun getCurrentOrderExecution(): OrderExecutionResponse? =
+        try {
+            service.ordersExecution.getCurrentOrderExecution()
+        } catch (error: HttpException) {
+            if (error.code() == HttpURLConnection.HTTP_NOT_FOUND)
+                null
+            else
+                throw error
+        }
 
     private suspend fun getAllCategories(page: Int): List<Category> {
         val res = service.categories.getCategories(page, size = 100)

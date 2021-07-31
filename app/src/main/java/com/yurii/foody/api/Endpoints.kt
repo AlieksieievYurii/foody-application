@@ -152,6 +152,9 @@ interface ApiOrders {
 }
 
 interface ApiOrderExecution {
+    @GET("/orders/current_order_execution")
+    suspend fun getCurrentOrderExecution(): OrderExecutionResponse
+
     @GET("/orders/execution/{id}/")
     suspend fun getOrderExecution(@Path("id") orderExecutionId: Long): OrderExecutionResponse
 

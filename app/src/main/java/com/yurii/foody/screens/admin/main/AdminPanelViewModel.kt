@@ -18,19 +18,14 @@ class AdminPanelViewModel(private val repository: UserRepository) : ViewModel() 
         object NavigateToPersonalInformation : Event()
     }
 
-    private val _user: MutableLiveData<User> = MutableLiveData()
-    val user: LiveData<User> = _user
+    val user: LiveData<User> = liveData {
+        repository.getSavedUser()?.run {
+            emit(this)
+        }
+    }
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow: Flow<Event> = eventChannel.receiveAsFlow()
-
-    init {
-        viewModelScope.launch {
-            repository.getSavedUser()?.run {
-                _user.value = this
-            }
-        }
-    }
 
     fun logOut() {
         viewModelScope.launch {

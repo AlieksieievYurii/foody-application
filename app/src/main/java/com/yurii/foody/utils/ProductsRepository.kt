@@ -59,6 +59,12 @@ class ProductsRepository(private val service: Service) {
             page = 1, size = 1, isDefault = true
         ).results.first()
 
+    suspend fun getImages(productId: Long): List<ProductImage> {
+        val images = mutableListOf(getMainProductImage(productId))
+        images.addAll(getAdditionalProductImages(productId))
+        return images
+    }
+
     suspend fun getCategories() = getAllCategories(page = 1)
 
     private suspend fun getAllCategories(page: Int): List<Category> {
@@ -97,6 +103,10 @@ class ProductsRepository(private val service: Service) {
     suspend fun updateCategory(category: Category): Category = service.categories.updateCategory(category.id, category)
 
     suspend fun createOrder(orderForm: OrderForm): Order = service.orders.createOrder(orderForm)
+
+    suspend fun getOrder(orderId: Long): Order = service.orders.getOrder(orderId)
+
+    suspend fun getOrderExecution(orderId: Long): OrderExecutionResponse = service.ordersExecution.getOrderExecution(orderId)
 
     suspend fun createOrderExecution(order: OrderExecution): OrderExecutionResponse = service.ordersExecution.createOrderExecution(order)
 

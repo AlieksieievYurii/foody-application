@@ -142,7 +142,7 @@ interface ApiProductCategory {
 
 interface ApiOrders {
     @GET("/orders/")
-    suspend fun getOrders(@Query("page") page: Int? = null, @Query("size") size: Int): Pagination<Order>
+    suspend fun getOrders(@Query("ordering") ordering: String? = null, @Query("page") page: Int? = null, @Query("size") size: Int): Pagination<Order>
 
     @POST("/orders/")
     suspend fun createOrder(@Body order: OrderForm): Order

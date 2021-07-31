@@ -110,7 +110,7 @@
     <string name="label_cost_breakdown">cost breakdown</string>
     <string name="label_count">Count</string>
     <string name="label_total">Total</string>
-    <string name="label_total_number">Total: %f</string>
+    <string name="label_total_number">Total: %.2f</string>
     <string name="label_order">Order</string>
     <string name="label_rating">%d%%</string>
     <string name="label_product_id">Product ID #%d</string>

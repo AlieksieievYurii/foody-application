@@ -44,7 +44,7 @@ class OrdersPagingSource(private val api: Service) : PagingSource<Int, Order>() 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Order> {
         return try {
             val page = params.key ?: 1
-            val orders = api.orders.getOrders(page = page, size = params.loadSize)
+            val orders = api.orders.getOrders(page = page, size = params.loadSize, ordering = "timestamp")
             if (orders.results.isEmpty())
                 return LoadResult.Error(EmptyListException())
             val productIds = orders.results.joinToString(",") { it.product.toString() }
@@ -65,7 +65,11 @@ class OrdersPagingSource(private val api: Service) : PagingSource<Int, Order>() 
                     count = order.count
                 )
             }
-            LoadResult.Page(result, prevKey = if (page == 1) null else page - 1, nextKey = if (orders.next != null) page + 1 else null)
+            LoadResult.Page(
+                result.sortedBy { !it.isDelayed },
+                prevKey = if (page == 1) null else page - 1,
+                nextKey = if (orders.next != null) page + 1 else null
+            )
         } catch (exception: IOException) {
             return LoadResult.Error(exception)
         } catch (exception: HttpException) {

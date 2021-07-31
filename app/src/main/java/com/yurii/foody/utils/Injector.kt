@@ -18,6 +18,7 @@ import com.yurii.foody.screens.admin.requests.RoleRequestsViewModel
 import com.yurii.foody.screens.client.main.ClientMainScreenViewModel
 import com.yurii.foody.screens.client.products.ProductsViewModel
 import com.yurii.foody.screens.client.products.detail.ProductDetailViewModel
+import com.yurii.foody.screens.cook.execution.OrderExecutionViewModel
 import com.yurii.foody.screens.cook.main.CookMainScreenViewModel
 import com.yurii.foody.screens.cook.orders.CookOrdersViewModel
 import com.yurii.foody.screens.personal.PersonalInformationViewModel
@@ -107,4 +108,7 @@ object Injector {
 
     fun provideCookOrdersViewModel(context: Context) =
         CookOrdersViewModel.Factory(productsRepository = provideProductRepository(context))
+
+    fun provideOrderExecutionViewModel(context: Context) =
+        OrderExecutionViewModel.Factory(productsRepository = provideProductRepository(context))
 }

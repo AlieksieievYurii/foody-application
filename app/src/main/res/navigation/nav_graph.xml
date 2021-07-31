@@ -302,5 +302,18 @@
         android:id="@+id/cookOrdersScreenFragment"
         android:name="com.yurii.foody.screens.cook.orders.CookOrdersScreenFragment"
         android:label="CookOrdersScreenFragment"
-        tools:layout="@layout/fragment_cook_orders"/>
+        tools:layout="@layout/fragment_cook_orders">
+        <action
+            android:id="@+id/action_cookOrdersScreenFragment_to_orderExecutionFragment"
+            app:destination="@id/orderExecutionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderExecutionFragment"
+        android:name="com.yurii.foody.screens.cook.execution.OrderExecutionFragment"
+        android:label="OrderExecutionFragment"
+        tools:layout="@layout/fragment_order_execution">
+        <argument
+            android:name="orderId"
+            app:argType="long" />
+    </fragment>
 </navigation>

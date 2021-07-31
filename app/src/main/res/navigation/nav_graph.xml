@@ -297,6 +297,9 @@
         <action
             android:id="@+id/action_cookMainScreenFragment_to_cookOrdersScreenFragment"
             app:destination="@id/cookOrdersScreenFragment" />
+        <action
+            android:id="@+id/action_cookMainScreenFragment_to_orderExecutionFragment"
+            app:destination="@id/orderExecutionFragment" />
     </fragment>
     <fragment
         android:id="@+id/cookOrdersScreenFragment"

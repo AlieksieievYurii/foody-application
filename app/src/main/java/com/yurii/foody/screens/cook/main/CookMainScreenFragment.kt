@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentNavigationCookPanelBinding
+import com.yurii.foody.ui.LoadingDialog
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.OnBackPressed
 import com.yurii.foody.utils.observeOnLifecycle
@@ -18,11 +19,12 @@ import com.yurii.foody.utils.observeOnLifecycle
 class CookMainScreenFragment : Fragment(R.layout.fragment_navigation_cook_panel), OnBackPressed {
     private val binding: FragmentNavigationCookPanelBinding by viewBinding()
     private val viewModel: CookMainScreenViewModel by viewModels { Injector.provideCookMainScreenViewModel(requireContext()) }
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog(requireContext()) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.content.viewModel = viewModel
         binding.content.openMenu.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
-
+        loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner)
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.item_personal_information -> viewModel.changePersonalInformation()
@@ -51,8 +53,13 @@ class CookMainScreenFragment : Fragment(R.layout.fragment_navigation_cook_panel)
                 CookMainScreenViewModel.Event.NavigateToLogInScreen -> navigateToLogInScreen()
                 CookMainScreenViewModel.Event.NavigateToPersonalInformation -> navigateToPersonalInformationScreen()
                 CookMainScreenViewModel.Event.NavigateToOrders -> navigateToOrders()
+                is CookMainScreenViewModel.Event.NavigateToOrderExecution -> navigateToOrderExecution(it.orderExecutionId)
             }
         }
+    }
+
+    private fun navigateToOrderExecution(orderExecutionId: Long) {
+        findNavController().navigate(CookMainScreenFragmentDirections.actionCookMainScreenFragmentToOrderExecutionFragment(orderExecutionId))
     }
 
     private fun navigateToOrders() {

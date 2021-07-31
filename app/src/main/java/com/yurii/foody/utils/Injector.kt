@@ -102,9 +102,11 @@ object Injector {
     fun provideProductDetailViewModel(context: Context, productId: Long) =
         ProductDetailViewModel.Factory(repository = provideProductRepository(context), productId = productId)
 
-    fun provideCookMainScreenViewModel(context: Context) = CookMainScreenViewModel.Factory(
-        repository = provideUserRepository(context)
-    )
+    fun provideCookMainScreenViewModel(context: Context) =
+        CookMainScreenViewModel.Factory(
+            repository = provideUserRepository(context),
+            productsRepository = provideProductRepository(context)
+        )
 
     fun provideCookOrdersViewModel(context: Context) =
         CookOrdersViewModel.Factory(productsRepository = provideProductRepository(context))

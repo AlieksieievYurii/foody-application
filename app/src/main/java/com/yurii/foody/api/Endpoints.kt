@@ -49,8 +49,9 @@ interface ApiProducts {
         @Query("search") search: String? = null,
         @Query("availability__is_available") isAvailable: Boolean? = null,
         @Query("availability__is_active") isActive: Boolean? = null,
-        @Query("page") page: Int,
-        @Query("size") size: Int
+        @Query("ids") ids: String? = null,
+        @Query("page") page: Int? = null,
+        @Query("size") size: Int,
     ): Pagination<Product>
 
     @POST("/products/")
@@ -140,6 +141,9 @@ interface ApiProductCategory {
 }
 
 interface ApiOrders {
+    @GET("/orders/")
+    suspend fun getOrders(@Query("page") page: Int? = null, @Query("size") size: Int): Pagination<Order>
+
     @POST("/orders/")
     suspend fun createOrder(@Body order: OrderForm): Order
 }

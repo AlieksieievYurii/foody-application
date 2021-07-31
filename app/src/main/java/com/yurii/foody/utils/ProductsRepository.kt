@@ -6,6 +6,7 @@ import com.yurii.foody.api.*
 import com.yurii.foody.screens.admin.categories.CategoriesPagingSource
 import com.yurii.foody.screens.admin.products.ProductPagingSource
 import com.yurii.foody.screens.client.products.ProductsPagingSource
+import com.yurii.foody.screens.cook.orders.OrdersPagingSource
 import okhttp3.MediaType
 import okhttp3.RequestBody
 
@@ -20,6 +21,8 @@ class ProductsRepository(private val service: Service) {
         Pager(config = pagingConfig, pagingSourceFactory = { ProductPagingSource(service, query) }).flow
 
     fun getCategoriesPager() = Pager(config = pagingConfig, pagingSourceFactory = { CategoriesPagingSource(service) }).flow
+
+    fun getOrdersPager() = Pager(config = pagingConfig, pagingSourceFactory = { OrdersPagingSource(service) }).flow
 
     suspend fun deleteCategories(items: List<Long>) = service.categories.deleteCategories(items.joinToString(","))
 

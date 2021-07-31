@@ -44,7 +44,7 @@ class ChooseRoleFragment : Fragment(R.layout.fragment_choose_role) {
     }
 
     private fun navigateToMainExecutorScreen() {
-        findNavController().navigate(ChooseRoleFragmentDirections.actionChooseRoleFragmentToFragmentTest(UserRoleEnum.EXECUTOR))
+        findNavController().navigate(ChooseRoleFragmentDirections.actionChooseRoleFragmentToCookMainScreenFragment())
     }
 
     private fun navigateToMainAdministratorScreen() {

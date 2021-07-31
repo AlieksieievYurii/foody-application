@@ -19,6 +19,7 @@ import com.yurii.foody.screens.client.main.ClientMainScreenViewModel
 import com.yurii.foody.screens.client.products.ProductsViewModel
 import com.yurii.foody.screens.client.products.detail.ProductDetailViewModel
 import com.yurii.foody.screens.cook.main.CookMainScreenViewModel
+import com.yurii.foody.screens.cook.orders.CookOrdersViewModel
 import com.yurii.foody.screens.personal.PersonalInformationViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -103,4 +104,7 @@ object Injector {
     fun provideCookMainScreenViewModel(context: Context) = CookMainScreenViewModel.Factory(
         repository = provideUserRepository(context)
     )
+
+    fun provideCookOrdersViewModel(context: Context) =
+        CookOrdersViewModel.Factory(productsRepository = provideProductRepository(context))
 }

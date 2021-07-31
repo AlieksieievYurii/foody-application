@@ -31,7 +31,7 @@ data class Order(
 ) {
     val total = count * price
     val averageTime = convertToAverageTime(cookingTime)
-    val timestampDateTime = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).apply { Date(timestamp) }.toString()
+    val timestampDateTime: String = SimpleDateFormat("MM.dd.yyyy hh:mm", Locale.getDefault()).format(Date(timestamp))
 }
 
 class OrdersPagingSource(private val api: Service) : PagingSource<Int, Order>() {
@@ -47,6 +47,8 @@ class OrdersPagingSource(private val api: Service) : PagingSource<Int, Order>() 
                 return LoadResult.Error(EmptyListException())
             val productIds = orders.results.joinToString(",") { it.product.toString() }
             val products = api.productsService.getProducts(ids = productIds, size = params.loadSize)
+            val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+
             val productDefaultImages = api.productImage.getProductsImages(productIds = productIds, size = params.loadSize, isDefault = true)
             val result = orders.results.map { order ->
                 val product = products.results.find { it.id == order.product }!!
@@ -55,7 +57,7 @@ class OrdersPagingSource(private val api: Service) : PagingSource<Int, Order>() 
                     thumbnail = productDefaultImages.results.find { it.productId == order.product }!!.imageUrl,
                     client = order.user,
                     product = product,
-                    timestamp = 0,
+                    timestamp = dateTimeFormat.parse(order.timestamp)?.time ?: 0,
                     cookingTime = product.cookingTime,
                     price = product.price,
                     count = order.count

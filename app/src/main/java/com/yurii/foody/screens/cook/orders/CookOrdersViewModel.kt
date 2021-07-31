@@ -13,6 +13,9 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 
 class CookOrdersViewModel(private val productsRepository: ProductsRepository) : ViewModel() {
+    companion object {
+        private const val REFRESHING_TIME_IN_SECONDS = 5L
+    }
     sealed class Event {
         data class ShowError(val exception: Throwable) : Event()
         object RefreshList : Event()
@@ -28,13 +31,7 @@ class CookOrdersViewModel(private val productsRepository: ProductsRepository) : 
     private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
 
     private val _orders: MutableStateFlow<PagingData<Order>> = MutableStateFlow(PagingData.empty())
-    val orders: StateFlow<PagingData<Order>> = _orders.also {
-        netWorkScope.launch {
-            productsRepository.getOrdersPager().cachedIn(viewModelScope).collectLatest {
-                _orders.value = it
-            }
-        }
-    }
+    val orders: StateFlow<PagingData<Order>> = _orders
 
     private val _listState: MutableLiveData<ListFragment.State> = MutableLiveData(ListFragment.State.Loading)
     val listState: LiveData<ListFragment.State> = _listState
@@ -43,6 +40,19 @@ class CookOrdersViewModel(private val productsRepository: ProductsRepository) : 
 
     private val _eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow: Flow<Event> = _eventChannel.receiveAsFlow()
+
+    init {
+        netWorkScope.launch {
+            productsRepository.getOrdersPager().cachedIn(viewModelScope).collectLatest {
+                _orders.value = it
+            }
+
+            while(true) {
+                delay(REFRESHING_TIME_IN_SECONDS * 1000)
+                refreshList()
+            }
+        }
+    }
 
     fun refreshList() {
         viewModelScope.launch {

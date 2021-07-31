@@ -5,6 +5,9 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.yurii.foody.screens.cook.main.CookMainScreenViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,7 +35,7 @@
             android:layout_height="150dp"
             android:background="@drawable/button_circle_background"
             android:drawableTop="@drawable/ic_categories"
-            android:text="@string/label_categories"
+            android:text="@string/label_start"
             android:textColor="@color/black"
             app:backgroundTint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"

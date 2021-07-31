@@ -291,5 +291,8 @@
         <action
             android:id="@+id/action_cookMainScreenFragment_to_authenticationFragment"
             app:destination="@id/authenticationFragment" />
+        <action
+            android:id="@+id/action_cookMainScreenFragment_to_personalInformationFragment"
+            app:destination="@id/personalInformationFragment" />
     </fragment>
 </navigation>

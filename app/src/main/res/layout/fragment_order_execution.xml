@@ -8,8 +8,6 @@
         <variable
             name="viewModel"
             type="com.yurii.foody.screens.cook.execution.OrderExecutionViewModel" />
-
-        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,9 +18,9 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/loading"
+            isVisible="@{!viewModel.isInitialized}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{viewModel.isInitialized ? View.GONE : View.VISIBLE }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -33,9 +31,9 @@
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/main"
+            isVisible="@{viewModel.isInitialized}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="@{viewModel.isInitialized ? View.VISIBLE : View.GONE }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -201,7 +199,6 @@
                             android:id="@+id/description_separator"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:layout_marginTop="8dp"
                             android:background="@color/gray" />
 
                         <TextView
@@ -333,13 +330,62 @@
                 <Button
                     android:id="@+id/take_order"
                     style="@style/Button.Rounded.Navy"
+                    isVisible="@{!viewModel.isOrderTaken}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@string/label_take_order"
                     app:layout_constraintEnd_toStartOf="@+id/guideline23"
                     app:layout_constraintStart_toStartOf="@+id/guideline22"
-                    app:layout_constraintTop_toBottomOf="@+id/order_detail_card" />
+                    app:layout_constraintTop_toBottomOf="@+id/order_detail_card"
+                    tools:visibility="gone" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/order_execution_status_card"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    isVisible="@{viewModel.isOrderTaken}"
+                    app:cardCornerRadius="9dp"
+                    app:cardElevation="4dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline23"
+                    app:layout_constraintStart_toStartOf="@+id/guideline22"
+                    app:layout_constraintTop_toBottomOf="@+id/order_detail_card">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView2f"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/label_status"
+                            android:textAllCaps="true" />
+
+                        <View
+                            android:id="@+id/order_description_separatorf"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@color/gray" />
+
+                        <com.yurii.foody.screens.cook.execution.OrderStatusComponent
+                            android:id="@+id/order_status"
+                            android:layout_width="match_parent"
+                            status="@{viewModel.orderExecutionStatus}"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline22"

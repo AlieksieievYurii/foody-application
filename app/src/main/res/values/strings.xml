@@ -121,4 +121,6 @@
     <string name="message_take_order_confirmation">Would you like to take the order?</string>
     <string name="label_order_detail">Order detail</string>
     <string name="label_take_order">Take order</string>
+    <string name="label_order_detail_product_id">Product ID: #%s</string>
+    <string name="label_order_detail_timestamp">Timestamp: %s</string>
 </resources>

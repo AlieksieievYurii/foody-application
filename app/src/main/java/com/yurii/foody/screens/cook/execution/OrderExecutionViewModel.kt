@@ -1,8 +1,8 @@
 package com.yurii.foody.screens.cook.execution
 
 import androidx.lifecycle.*
-import com.yurii.foody.utils.ProductsRepository
-import com.yurii.foody.utils.convertToAverageTime
+import com.yurii.foody.api.Order
+import com.yurii.foody.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -17,9 +17,14 @@ data class ProductDetail(
     val isAvailable: Boolean,
     val isActive: Boolean,
     val rating: Float,
-    val imagesUrls: List<String>
+    val imagesUrls: List<String>,
+    val order: Order
 ) {
+    private val orderTimeStampInSeconds = toTimestampInSeconds(order.timestamp)
     val averageTime = convertToAverageTime(cookingTime)
+    val orderTimestampDateTime: String = toSimpleDateTime(orderTimeStampInSeconds)
+    val isDelayed: Boolean = isOrderDelayed(orderTimeStampInSeconds, cookingTime)
+    val total = order.price * order.count
 }
 
 class OrderExecutionViewModel(private val productsRepository: ProductsRepository, private val orderExecutionId: Long) : ViewModel() {
@@ -56,6 +61,7 @@ class OrderExecutionViewModel(private val productsRepository: ProductsRepository
     }
 
     private suspend fun loadProductDetail() {
+        //TODO(alieksiy) Should be done in the repository
         val orderExecutionId = productsRepository.getOrderExecution(orderExecutionId)
         val order = productsRepository.getOrder(orderExecutionId.order)
         val product = productsRepository.getProduct(order.product)
@@ -73,7 +79,8 @@ class OrderExecutionViewModel(private val productsRepository: ProductsRepository
                 isActive = availability.isActive,
                 isAvailable = availability.isAvailable,
                 rating = rating,
-                imagesUrls = productImages.map { it.imageUrl }
+                imagesUrls = productImages.map { it.imageUrl },
+                order = order,
             )
         )
     }

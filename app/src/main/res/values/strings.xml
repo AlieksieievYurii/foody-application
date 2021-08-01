@@ -112,11 +112,13 @@
     <string name="label_total">Total</string>
     <string name="label_total_number">Total: %.2f</string>
     <string name="label_order">Order</string>
-    <string name="label_rating">%d%%</string>
+    <string name="label_rating">%.1f%%</string>
     <string name="label_product_id">Product ID #%d</string>
     <string name="message_become_cook">You can become a cook. Your responsibily will be to take orders and cook. Do you want to become a cook?</string>
     <string name="message_you_became_cook">Congratulations! You have become a cook. Now wait utill the request will be approved by the administrar</string>
     <string name="label_start">Start</string>
-    <string name="label_take_order">Taking order</string>
+    <string name="label_taking_order">Taking order</string>
     <string name="message_take_order_confirmation">Would you like to take the order?</string>
+    <string name="label_order_detail">Order detail</string>
+    <string name="label_take_order">Take order</string>
 </resources>

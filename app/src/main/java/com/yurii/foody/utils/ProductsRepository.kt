@@ -122,6 +122,11 @@ class ProductsRepository(private val service: Service) {
 
     suspend fun createOrderExecution(order: OrderExecution): OrderExecutionResponse = service.ordersExecution.createOrderExecution(order)
 
+    suspend fun getProductRating(productId: Long): Float {
+        val result = service.productsRatings.getProductsRatings(productId.toString())
+        return result.firstOrNull()?.rating ?: 0f
+    }
+
     companion object {
         private var INSTANCE: ProductsRepository? = null
         fun create(api: Service): ProductsRepository {

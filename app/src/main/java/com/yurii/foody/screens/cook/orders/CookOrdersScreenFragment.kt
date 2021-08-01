@@ -54,7 +54,7 @@ class CookOrdersScreenFragment : Fragment(R.layout.fragment_cook_orders) {
     }
 
     private fun askUserToConfirm(callback: () -> Unit) {
-        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.label_take_order)
+        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.label_taking_order)
             .setMessage(R.string.message_take_order_confirmation)
             .setPositiveButton(R.string.label_yes) { _, _ -> callback.invoke() }
             .setNegativeButton(R.string.label_no) { _, _ -> }

@@ -6,7 +6,6 @@ import com.yurii.foody.utils.convertToAverageTime
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
-import timber.log.Timber
 
 data class ProductDetail(
     val id: Long,
@@ -17,7 +16,7 @@ data class ProductDetail(
     val available: Int,
     val isAvailable: Boolean,
     val isActive: Boolean,
-    val rating: Int,
+    val rating: Float,
     val imagesUrls: List<String>
 ) {
     val averageTime = convertToAverageTime(cookingTime)
@@ -31,7 +30,7 @@ class OrderExecutionViewModel(private val productsRepository: ProductsRepository
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         viewModelScope.launch {
-            Timber.i(exception.toString())
+            throw exception
             eventChannel.send(Event.ShowError(exception))
         }
     }
@@ -56,6 +55,7 @@ class OrderExecutionViewModel(private val productsRepository: ProductsRepository
             val product = productsRepository.getProduct(order.product)
             val availability = productsRepository.getProductAvailability(product.id)
             val productImages = productsRepository.getImages(product.id)
+            val rating = productsRepository.getProductRating(product.id)
             _product.postValue(
                 ProductDetail(
                     id = product.id,
@@ -66,7 +66,7 @@ class OrderExecutionViewModel(private val productsRepository: ProductsRepository
                     available = availability.available,
                     isActive = availability.isActive,
                     isAvailable = availability.isAvailable,
-                    rating = 54,
+                    rating = rating,
                     imagesUrls = productImages.map { it.imageUrl }
                 )
             )

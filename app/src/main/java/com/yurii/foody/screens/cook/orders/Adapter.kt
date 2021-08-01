@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yurii.foody.R
 import com.yurii.foody.api.*
 import com.yurii.foody.databinding.ItemOrderBinding
-import com.yurii.foody.utils.EmptyListException
-import com.yurii.foody.utils.convertToAverageTime
-import com.yurii.foody.utils.observeOnLifecycle
+import com.yurii.foody.utils.*
 import kotlinx.coroutines.flow.StateFlow
 import retrofit2.HttpException
 import java.io.IOException
@@ -31,9 +29,8 @@ data class Order(
 ) {
     val total = count * price
     val averageTime = convertToAverageTime(cookingTime)
-    val timestampDateTime: String = SimpleDateFormat("MM.dd.yyyy hh:mm", Locale.getDefault()).format(Date(timestamp))
-
-    val isDelayed: Boolean = System.currentTimeMillis() > (timestamp + (cookingTime * 1000))
+    val timestampDateTime: String = toSimpleDateTime(timestamp)
+    val isDelayed: Boolean = isOrderDelayed(timestamp, cookingTime)
 }
 
 class OrdersPagingSource(private val api: Service) : PagingSource<Int, Order>() {

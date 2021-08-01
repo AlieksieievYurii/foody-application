@@ -1,6 +1,7 @@
 package com.yurii.foody.screens.cook.main
 
 import androidx.lifecycle.*
+import com.yurii.foody.api.OrderExecutionResponse
 import com.yurii.foody.api.User
 import com.yurii.foody.utils.ProductsRepository
 import com.yurii.foody.utils.UserRepository
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class CookMainScreenViewModel(private val repository: UserRepository, private val productsRepository: ProductsRepository) : ViewModel() {
     sealed class Event {
@@ -55,9 +57,14 @@ class CookMainScreenViewModel(private val repository: UserRepository, private va
     fun beginWork() {
         viewModelScope.launch {
             _isLoading.value = true
-            productsRepository.getCurrentOrderExecution()?.run {
-                eventChannel.send(Event.NavigateToOrderExecution(this.id))
-            } ?: eventChannel.send(Event.NavigateToOrders)
+            val currentOrder: OrderExecutionResponse? = productsRepository.getCurrentOrderExecution()
+            if (currentOrder != null) {
+                eventChannel.send(Event.NavigateToOrderExecution(currentOrder.id))
+                Timber.i("There is the current order: $currentOrder")
+            } else {
+                eventChannel.send(Event.NavigateToOrders)
+                Timber.i("There is no current order")
+            }
             _isLoading.value = false
         }
     }

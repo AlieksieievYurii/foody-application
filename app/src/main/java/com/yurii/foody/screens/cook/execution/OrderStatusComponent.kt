@@ -7,10 +7,29 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.InverseBindingAdapter
+import androidx.databinding.InverseBindingListener
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentCookingStatusBinding
 import com.yurii.foody.utils.toPx
+
+@BindingAdapter("statusAttrChanged")
+fun setListener(orderStatusComponent: OrderStatusComponent, listener: InverseBindingListener) {
+    orderStatusComponent.setListener { listener.onChange() }
+}
+
+@BindingAdapter("status")
+fun setValue(orderStatusComponent: OrderStatusComponent, status: OrderStatusComponent.Status) {
+    if (orderStatusComponent.status != status)
+        orderStatusComponent.status = status
+}
+
+@InverseBindingAdapter(attribute = "status")
+fun getValue(orderStatusComponent: OrderStatusComponent): OrderStatusComponent.Status {
+    return orderStatusComponent.status
+}
 
 class OrderStatusComponent(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     enum class Status {

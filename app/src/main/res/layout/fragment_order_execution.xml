@@ -267,7 +267,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
-                            android:text="@{String.format(@string/label_order_detail_timestamp, viewModel.product.orderTimestampDateTime)}"
                             app:layout_constraintStart_toStartOf="@+id/guideline24"
                             app:layout_constraintTop_toBottomOf="@+id/tv_product_id"
                             tools:text="Timestamp: 19.04.2021 8:17" />
@@ -277,7 +276,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
-                            android:text="@{String.format(@string/label_amount, viewModel.product.order.count)}"
                             app:layout_constraintStart_toStartOf="@+id/guideline24"
                             app:layout_constraintTop_toBottomOf="@+id/textView8"
                             tools:text="Amount: 3" />
@@ -287,7 +285,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
-                            android:text="@{String.format(@string/label_price, viewModel.product.order.price)}"
                             app:layout_constraintStart_toStartOf="@+id/guideline24"
                             app:layout_constraintTop_toBottomOf="@+id/textView10"
                             tools:text="Price: 13,99 zł" />
@@ -297,7 +294,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
-                            android:text="@{String.format(@string/label_total_number, viewModel.product.total)}"
                             app:layout_constraintStart_toStartOf="@+id/guideline24"
                             app:layout_constraintTop_toBottomOf="@+id/textView11"
                             tools:text="Total: 42 zł" />

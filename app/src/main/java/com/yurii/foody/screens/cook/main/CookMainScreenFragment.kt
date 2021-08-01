@@ -59,7 +59,12 @@ class CookMainScreenFragment : Fragment(R.layout.fragment_navigation_cook_panel)
     }
 
     private fun navigateToOrderExecution(orderExecutionId: Long) {
-        findNavController().navigate(CookMainScreenFragmentDirections.actionCookMainScreenFragmentToOrderExecutionFragment(orderExecutionId))
+        findNavController().navigate(
+            CookMainScreenFragmentDirections.actionCookMainScreenFragmentToOrderExecutionFragment(
+                orderId = -1,
+                orderExecutionId = orderExecutionId
+            )
+        )
     }
 
     private fun navigateToOrders() {

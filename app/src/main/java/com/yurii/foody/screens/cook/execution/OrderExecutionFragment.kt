@@ -13,7 +13,9 @@ import com.yurii.foody.utils.Injector
 class OrderExecutionFragment : Fragment(R.layout.fragment_order_execution) {
     private val args: OrderExecutionFragmentArgs by navArgs()
     private val binding: FragmentOrderExecutionBinding by viewBinding()
-    private val viewModel: OrderExecutionViewModel by viewModels { Injector.provideOrderExecutionViewModel(requireContext(), args.orderExecutionId) }
+    private val viewModel: OrderExecutionViewModel by viewModels {
+        Injector.provideOrderExecutionViewModel(requireContext(), args.orderId, args.orderExecutionId)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.viewModel = viewModel

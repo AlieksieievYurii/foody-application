@@ -5,7 +5,6 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.yurii.foody.api.OrderExecution
 import com.yurii.foody.ui.ListFragment
 import com.yurii.foody.utils.EmptyListException
 import com.yurii.foody.utils.ProductsRepository
@@ -19,20 +18,16 @@ class CookOrdersViewModel(private val productsRepository: ProductsRepository) : 
     }
 
     sealed class Event {
-        data class NavigateToOrderExecution(val orderExecutionId: Long) : Event()
+        data class NavigateToOrderDetail(val orderId: Long) : Event()
         data class ShowError(val exception: Throwable) : Event()
         object RefreshList : Event()
     }
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         viewModelScope.launch {
-            _isLoading.value = false
             _eventChannel.send(Event.ShowError(exception))
         }
     }
-
-    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
 
     private val viewModelJob = SupervisorJob()
     private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + coroutineExceptionHandler)
@@ -61,12 +56,9 @@ class CookOrdersViewModel(private val productsRepository: ProductsRepository) : 
         }
     }
 
-    fun takeOrder(order: Order) {
+    fun openOrder(order: Order) {
         netWorkScope.launch {
-            _isLoading.value = true
-            val orderResponse = productsRepository.createOrderExecution(OrderExecution(orderId = order.id))
-            _isLoading.value = false
-            _eventChannel.send(Event.NavigateToOrderExecution(orderResponse.id))
+            _eventChannel.send(Event.NavigateToOrderDetail(order.id))
         }
     }
 

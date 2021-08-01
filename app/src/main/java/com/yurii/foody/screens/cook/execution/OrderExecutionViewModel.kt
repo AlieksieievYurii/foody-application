@@ -6,6 +6,7 @@ import com.yurii.foody.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
+import java.lang.IllegalStateException
 
 data class ProductDetail(
     val id: Long,
@@ -18,16 +19,15 @@ data class ProductDetail(
     val isActive: Boolean,
     val rating: Float,
     val imagesUrls: List<String>,
-    val order: Order
 ) {
-    private val orderTimeStampInSeconds = toTimestampInSeconds(order.timestamp)
     val averageTime = convertToAverageTime(cookingTime)
-    val orderTimestampDateTime: String = toSimpleDateTime(orderTimeStampInSeconds)
-    val isDelayed: Boolean = isOrderDelayed(orderTimeStampInSeconds, cookingTime)
-    val total = order.price * order.count
 }
 
-class OrderExecutionViewModel(private val productsRepository: ProductsRepository, private val orderExecutionId: Long) : ViewModel() {
+class OrderExecutionViewModel(
+    private val productsRepository: ProductsRepository,
+    private val orderId: Long? = null,
+    private val orderExecutionId: Long? = null
+) : ViewModel() {
     sealed class Event {
         data class ShowError(val exception: Throwable) : Event()
         object CloseScreen : Event()
@@ -50,24 +50,36 @@ class OrderExecutionViewModel(private val productsRepository: ProductsRepository
     private val _product: MutableLiveData<ProductDetail> = MutableLiveData()
     val product: LiveData<ProductDetail> = _product
 
+    private val _order: MutableLiveData<Order> = MutableLiveData()
+    val order: LiveData<Order> = _order
+
     private val _isInitialized: MutableLiveData<Boolean> = MutableLiveData(false)
     val isInitialized: LiveData<Boolean> = _isInitialized
 
     init {
         netWorkScope.launch {
-            loadProductDetail()
+            when {
+                orderId != null -> {
+                    val order = productsRepository.getOrder(orderId)
+                    loadProductDetail(order.product)
+                }
+                orderExecutionId != null -> {
+                    val orderExecution = productsRepository.getOrderExecution(orderExecutionId)
+                    val order = productsRepository.getOrder(orderExecution.order)
+                    loadProductDetail(order.product)
+                }
+                else -> throw IllegalStateException("OrderID and OrderExecution can not be defined at the same time")
+            }
             _isInitialized.postValue(true)
         }
     }
 
-    private suspend fun loadProductDetail() {
+    private suspend fun loadProductDetail(productId: Long) {
         //TODO(alieksiy) Should be done in the repository
-        val orderExecutionId = productsRepository.getOrderExecution(orderExecutionId)
-        val order = productsRepository.getOrder(orderExecutionId.order)
-        val product = productsRepository.getProduct(order.product)
-        val availability = productsRepository.getProductAvailability(product.id)
-        val productImages = productsRepository.getImages(product.id)
-        val rating = productsRepository.getProductRating(product.id)
+        val product = productsRepository.getProduct(productId)
+        val availability = productsRepository.getProductAvailability(productId)
+        val productImages = productsRepository.getImages(productId)
+        val rating = productsRepository.getProductRating(productId)
         _product.postValue(
             ProductDetail(
                 id = product.id,
@@ -80,16 +92,19 @@ class OrderExecutionViewModel(private val productsRepository: ProductsRepository
                 isAvailable = availability.isAvailable,
                 rating = rating,
                 imagesUrls = productImages.map { it.imageUrl },
-                order = order,
             )
         )
     }
 
-    class Factory(private val productsRepository: ProductsRepository, private val orderExecutionId: Long) : ViewModelProvider.Factory {
+    class Factory(
+        private val productsRepository: ProductsRepository,
+        private val orderId: Long? = null,
+        private val orderExecutionId: Long? = null
+    ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(OrderExecutionViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return OrderExecutionViewModel(productsRepository, orderExecutionId) as T
+                return OrderExecutionViewModel(productsRepository, orderId, orderExecutionId) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

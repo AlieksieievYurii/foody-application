@@ -111,6 +111,10 @@ object Injector {
     fun provideCookOrdersViewModel(context: Context) =
         CookOrdersViewModel.Factory(productsRepository = provideProductRepository(context))
 
-    fun provideOrderExecutionViewModel(context: Context, orderExecutionId: Long) =
-        OrderExecutionViewModel.Factory(productsRepository = provideProductRepository(context), orderExecutionId)
+    fun provideOrderExecutionViewModel(context: Context, orderId: Long, orderExecutionId: Long) =
+        OrderExecutionViewModel.Factory(
+            productsRepository = provideProductRepository(context),
+            if (orderId == -1L) null else orderId,
+            if (orderExecutionId == -1L) null else orderExecutionId
+        )
 }

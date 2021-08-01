@@ -138,6 +138,11 @@ fun convertToAverageTime(seconds: Int): String {
     return "$minTime-$maxTime"
 }
 
-fun toSimpleDateTime(timestamp: Long) = SimpleDateFormat("MM.dd.yyyy hh:mm", Locale.getDefault()).format(Date(timestamp))
+fun toSimpleDateTime(timestamp: Long): String = SimpleDateFormat("MM.dd.yyyy hh:mm", Locale.getDefault()).format(Date(timestamp))
 
 fun isOrderDelayed(timestamp: Long, cookingTime: Int) = System.currentTimeMillis() > (timestamp + (cookingTime * 1000))
+
+fun toTimestampInSeconds(timestamp: String): Long {
+    val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    return dateTimeFormat.parse(timestamp)?.time ?: 0
+}

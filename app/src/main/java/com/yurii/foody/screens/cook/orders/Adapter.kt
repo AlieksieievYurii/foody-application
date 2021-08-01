@@ -14,8 +14,6 @@ import com.yurii.foody.utils.*
 import kotlinx.coroutines.flow.StateFlow
 import retrofit2.HttpException
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
 
 data class Order(
     val id: Long,
@@ -46,8 +44,6 @@ class OrdersPagingSource(private val api: Service) : PagingSource<Int, Order>() 
                 return LoadResult.Error(EmptyListException())
             val productIds = orders.results.joinToString(",") { it.product.toString() }
             val products = api.productsService.getProducts(ids = productIds, size = params.loadSize)
-            val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-
             val productDefaultImages = api.productImage.getProductsImages(productIds = productIds, size = params.loadSize, isDefault = true)
             val result = orders.results.map { order ->
                 val product = products.results.find { it.id == order.product }!!
@@ -56,7 +52,7 @@ class OrdersPagingSource(private val api: Service) : PagingSource<Int, Order>() 
                     thumbnail = productDefaultImages.results.find { it.productId == order.product }!!.imageUrl,
                     client = order.user,
                     product = product,
-                    timestamp = dateTimeFormat.parse(order.timestamp)?.time ?: 0,
+                    timestamp = toTimestampInSeconds(order.timestamp),
                     cookingTime = product.cookingTime,
                     price = product.price,
                     count = order.count

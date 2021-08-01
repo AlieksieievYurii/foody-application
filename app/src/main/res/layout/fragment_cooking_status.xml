@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true">
+
+        <TextView
+            android:id="@+id/pending_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_yellow"
+            android:gravity="center"
+            android:text="@string/label_one"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/line_one"
+            android:layout_width="3dp"
+            android:layout_height="40dp"
+            android:background="@color/yellow"
+            app:layout_constraintEnd_toEndOf="@+id/pending_status"
+            app:layout_constraintStart_toStartOf="@+id/pending_status"
+            app:layout_constraintTop_toBottomOf="@+id/pending_status" />
+
+        <TextView
+            android:id="@+id/status_cooking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_yellow"
+            android:gravity="center"
+            android:text="@string/label_two"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/line_one" />
+
+        <View
+            android:id="@+id/line_two"
+            android:layout_width="3dp"
+            android:layout_height="40dp"
+            android:background="@color/gray"
+            app:layout_constraintEnd_toEndOf="@+id/status_cooking"
+            app:layout_constraintStart_toStartOf="@+id/status_cooking"
+            app:layout_constraintTop_toBottomOf="@+id/status_cooking" />
+
+        <TextView
+            android:id="@+id/status_finished"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_gray"
+            android:gravity="center"
+            android:text="@string/label_three"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/line_two" />
+
+        <View
+            android:id="@+id/line_three"
+            android:layout_width="3dp"
+            android:layout_height="40dp"
+            android:background="@color/gray"
+            app:layout_constraintEnd_toEndOf="@+id/status_finished"
+            app:layout_constraintStart_toStartOf="@+id/status_finished"
+            app:layout_constraintTop_toBottomOf="@+id/status_finished" />
+
+        <TextView
+            android:id="@+id/status_delivered"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/circle_gray"
+            android:gravity="center"
+            android:text="@string/label_four"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/line_three" />
+
+        <Button
+            android:id="@+id/delivered"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/label_delivered"
+            android:textColor="@color/navy_light"
+            app:layout_constraintBottom_toBottomOf="@+id/status_delivered"
+            app:layout_constraintStart_toEndOf="@+id/status_delivered"
+            app:layout_constraintTop_toTopOf="@+id/status_delivered"
+            tools:visibility="gone" />
+
+        <Button
+            android:id="@+id/finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/label_finished"
+            android:textColor="@color/navy_light"
+            app:layout_constraintBottom_toBottomOf="@+id/status_finished"
+            app:layout_constraintStart_toEndOf="@+id/status_finished"
+            app:layout_constraintTop_toBottomOf="@+id/line_two"
+            tools:visibility="gone" />
+
+        <Button
+            android:id="@+id/start_cooking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/label_start_cooking"
+            android:textColor="@color/navy_light"
+            app:layout_constraintBottom_toBottomOf="@+id/status_cooking"
+            app:layout_constraintStart_toEndOf="@+id/status_cooking"
+            app:layout_constraintTop_toBottomOf="@+id/line_one" />
+
+        <TextView
+            android:id="@+id/taking"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/label_taking"
+            app:layout_constraintBottom_toBottomOf="@+id/pending_status"
+            app:layout_constraintStart_toEndOf="@+id/pending_status"
+            app:layout_constraintTop_toTopOf="@+id/pending_status" />
+
+        <TextView
+            android:id="@+id/label_cooking"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/label_cooking"
+            app:layout_constraintBottom_toBottomOf="@+id/status_cooking"
+            app:layout_constraintStart_toEndOf="@+id/status_cooking"
+            app:layout_constraintTop_toBottomOf="@+id/line_one"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/label_finished"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/label_finished"
+            android:textColor="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@+id/status_finished"
+            app:layout_constraintStart_toEndOf="@+id/status_finished"
+            app:layout_constraintTop_toBottomOf="@+id/line_two"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/label_delivered"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/label_delivered"
+            android:textColor="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@+id/status_delivered"
+            app:layout_constraintStart_toEndOf="@+id/status_delivered"
+            app:layout_constraintTop_toBottomOf="@+id/line_three"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

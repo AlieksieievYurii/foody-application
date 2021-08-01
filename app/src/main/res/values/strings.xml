@@ -123,4 +123,14 @@
     <string name="label_take_order">Take order</string>
     <string name="label_order_detail_product_id">Product ID: #%s</string>
     <string name="label_order_detail_timestamp">Timestamp: %s</string>
+    <string name="label_one">1</string>
+    <string name="label_two">2</string>
+    <string name="label_four">4</string>
+    <string name="label_delivered">Delivered</string>
+    <string name="label_finished">Finished</string>
+    <string name="label_start_cooking">Start cooking</string>
+    <string name="label_taking">Taking</string>
+    <string name="label_cooking">Cooking</string>
+    <string name="label_three">3</string>
+    <string name="label_status">Status</string>
 </resources>

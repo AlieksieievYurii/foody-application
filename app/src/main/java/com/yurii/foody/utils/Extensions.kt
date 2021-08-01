@@ -3,8 +3,10 @@ package com.yurii.foody.utils
 import android.animation.Animator
 import android.app.Activity
 import android.content.Context
+import android.content.res.Resources
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
@@ -146,3 +148,5 @@ fun toTimestampInSeconds(timestamp: String): Long {
     val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     return dateTimeFormat.parse(timestamp)?.time ?: 0
 }
+
+val Number.toPx get() = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics).toInt()

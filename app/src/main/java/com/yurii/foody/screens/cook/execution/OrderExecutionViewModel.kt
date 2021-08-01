@@ -1,6 +1,7 @@
 package com.yurii.foody.screens.cook.execution
 
 import androidx.lifecycle.*
+import com.squareup.moshi.Json
 import com.yurii.foody.api.Order
 import com.yurii.foody.utils.*
 import kotlinx.coroutines.*
@@ -21,6 +22,20 @@ data class ProductDetail(
     val imagesUrls: List<String>,
 ) {
     val averageTime = convertToAverageTime(cookingTime)
+}
+
+data class OrderDetail(
+    val id: Long,
+    val product: Long,
+    val user: Long,
+    val count: Int,
+    val price: Float,
+    val cookingTime: Int,
+    val timestamp: Long
+) {
+    val timestampDateTime = toSimpleDateTime(timestamp)
+    val isDelayed = isOrderDelayed(timestamp, cookingTime)
+    val total = price * count
 }
 
 class OrderExecutionViewModel(
@@ -50,8 +65,8 @@ class OrderExecutionViewModel(
     private val _product: MutableLiveData<ProductDetail> = MutableLiveData()
     val product: LiveData<ProductDetail> = _product
 
-    private val _order: MutableLiveData<Order> = MutableLiveData()
-    val order: LiveData<Order> = _order
+    private val _order: MutableLiveData<OrderDetail> = MutableLiveData()
+    val order: LiveData<OrderDetail> = _order
 
     private val _isInitialized: MutableLiveData<Boolean> = MutableLiveData(false)
     val isInitialized: LiveData<Boolean> = _isInitialized
@@ -60,18 +75,34 @@ class OrderExecutionViewModel(
         netWorkScope.launch {
             when {
                 orderId != null -> {
-                    val order = productsRepository.getOrder(orderId)
+                    val order = loadOrder(orderId)
                     loadProductDetail(order.product)
                 }
                 orderExecutionId != null -> {
                     val orderExecution = productsRepository.getOrderExecution(orderExecutionId)
-                    val order = productsRepository.getOrder(orderExecution.order)
+                    val order = loadOrder(orderExecution.order)
                     loadProductDetail(order.product)
                 }
                 else -> throw IllegalStateException("OrderID and OrderExecution can not be defined at the same time")
             }
             _isInitialized.postValue(true)
         }
+    }
+
+    private suspend fun loadOrder(orderId: Long): Order {
+        val order = productsRepository.getOrder(orderId)
+        _order.postValue(
+            OrderDetail(
+                id = order.id,
+                product = order.product,
+                user = order.user,
+                count = order.count,
+                price = order.price,
+                cookingTime = order.cookingTime,
+                timestamp = toTimestampInSeconds(order.timestamp)
+            )
+        )
+        return order
     }
 
     private suspend fun loadProductDetail(productId: Long) {

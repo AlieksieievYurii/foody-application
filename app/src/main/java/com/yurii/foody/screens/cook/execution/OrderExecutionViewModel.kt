@@ -50,28 +50,32 @@ class OrderExecutionViewModel(private val productsRepository: ProductsRepository
 
     init {
         netWorkScope.launch {
-            val orderExecutionId = productsRepository.getOrderExecution(orderExecutionId)
-            val order = productsRepository.getOrder(orderExecutionId.order)
-            val product = productsRepository.getProduct(order.product)
-            val availability = productsRepository.getProductAvailability(product.id)
-            val productImages = productsRepository.getImages(product.id)
-            val rating = productsRepository.getProductRating(product.id)
-            _product.postValue(
-                ProductDetail(
-                    id = product.id,
-                    name = product.name,
-                    description = product.description,
-                    price = product.price,
-                    cookingTime = product.cookingTime,
-                    available = availability.available,
-                    isActive = availability.isActive,
-                    isAvailable = availability.isAvailable,
-                    rating = rating,
-                    imagesUrls = productImages.map { it.imageUrl }
-                )
-            )
+            loadProductDetail()
             _isInitialized.postValue(true)
         }
+    }
+
+    private suspend fun loadProductDetail() {
+        val orderExecutionId = productsRepository.getOrderExecution(orderExecutionId)
+        val order = productsRepository.getOrder(orderExecutionId.order)
+        val product = productsRepository.getProduct(order.product)
+        val availability = productsRepository.getProductAvailability(product.id)
+        val productImages = productsRepository.getImages(product.id)
+        val rating = productsRepository.getProductRating(product.id)
+        _product.postValue(
+            ProductDetail(
+                id = product.id,
+                name = product.name,
+                description = product.description,
+                price = product.price,
+                cookingTime = product.cookingTime,
+                available = availability.available,
+                isActive = availability.isActive,
+                isAvailable = availability.isAvailable,
+                rating = rating,
+                imagesUrls = productImages.map { it.imageUrl }
+            )
+        )
     }
 
     class Factory(private val productsRepository: ProductsRepository, private val orderExecutionId: Long) : ViewModelProvider.Factory {

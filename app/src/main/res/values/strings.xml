@@ -133,4 +133,6 @@
     <string name="label_cooking">Cooking</string>
     <string name="label_three">3</string>
     <string name="label_status">Status</string>
+    <string name="label_change_order_status">Order status</string>
+    <string name="message_change_order_status">Are you sure to change the sattus from %s to %s?</string>
 </resources>

@@ -11,6 +11,8 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentCookingStatusBinding
 import com.yurii.foody.utils.toPx
@@ -64,6 +66,16 @@ class OrderStatusComponent(context: Context, attrs: AttributeSet) : FrameLayout(
             startCooking.setOnClickListener(listener)
             finish.setOnClickListener(listener)
             delivered.setOnClickListener(listener)
+        }
+    }
+
+    fun observeLoading(isLoading: LiveData<Boolean>, lifecycleOwner: LifecycleOwner) {
+        isLoading.observe(lifecycleOwner) { loading ->
+            binding.apply {
+                startCooking.isEnabled = !loading
+                finish.isEnabled = !loading
+                delivered.isEnabled = !loading
+            }
         }
     }
 

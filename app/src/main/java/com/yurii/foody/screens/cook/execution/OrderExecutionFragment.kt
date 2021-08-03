@@ -24,16 +24,19 @@ class OrderExecutionFragment : Fragment(R.layout.fragment_order_execution) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.orderStatus.setListener(viewModel::onOrderStatusChanged)
-        binding.orderStatus.observeLoading(viewModel.changingOrderStatus, viewLifecycleOwner)
+        binding.orderStatus.apply {
+            lifecycleOwner = viewLifecycleOwner
+            setListener(viewModel::onOrderStatusChanged)
+            observeLoading(viewModel.changingOrderStatus)
+        }
         binding.takeOrder.setOnClickListener { askUserToConfirm(viewModel::takeOrder) }
         observeEvents()
     }
 
-    private fun askUserToAcceptChangingStatus(currentStatus: OrderExecutionStatus, nextOrderStatus: OrderStatusComponent) {
+    private fun askUserToAcceptChangingStatus(currentStatus: OrderExecutionStatus, nextOrderStatus: OrderExecutionStatus) {
         MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.label_change_order_status)
-            .setMessage(getString(R.string.message_change_order_status, currentStatus.status, nextOrderStatus))
-            .setPositiveButton(R.string.label_yes) { _, _ -> viewModel.performChangingOrderStatus() }
+            .setMessage(getString(R.string.message_change_order_status, currentStatus.status, nextOrderStatus.status))
+            .setPositiveButton(R.string.label_yes) { _, _ -> viewModel.performChangingOrderStatus(nextOrderStatus) }
             .setNegativeButton(R.string.label_no) { _, _ -> }
             .show()
     }

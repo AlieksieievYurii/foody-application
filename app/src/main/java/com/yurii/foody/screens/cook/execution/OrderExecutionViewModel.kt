@@ -1,8 +1,9 @@
 package com.yurii.foody.screens.cook.execution
 
 import androidx.lifecycle.*
-import com.squareup.moshi.Json
 import com.yurii.foody.api.Order
+import com.yurii.foody.api.OrderExecution
+import com.yurii.foody.api.OrderExecutionStatus
 import com.yurii.foody.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -41,16 +42,20 @@ data class OrderDetail(
 class OrderExecutionViewModel(
     private val productsRepository: ProductsRepository,
     private val orderId: Long? = null,
-    private val orderExecutionId: Long? = null
+    private var orderExecutionId: Long? = null
 ) : ViewModel() {
     sealed class Event {
+        data class AskUserToChangeOrderExecutionStatus(
+            val currentStatus: OrderExecutionStatus,
+            val nextOrderStatus: OrderExecutionStatus
+        ) : Event()
+
         data class ShowError(val exception: Throwable) : Event()
         object CloseScreen : Event()
     }
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         viewModelScope.launch {
-            throw exception
             eventChannel.send(Event.ShowError(exception))
         }
     }
@@ -71,17 +76,31 @@ class OrderExecutionViewModel(
     private val _isInitialized: MutableLiveData<Boolean> = MutableLiveData(false)
     val isInitialized: LiveData<Boolean> = _isInitialized
 
+    private val _isOrderTaken: MutableLiveData<Boolean> = MutableLiveData(orderExecutionId != null)
+    val isOrderTaken: LiveData<Boolean> = _isOrderTaken
+
+    private val _changingOrderStatus: MutableLiveData<Boolean> = MutableLiveData(false)
+    val changingOrderStatus: LiveData<Boolean> = _changingOrderStatus
+
+    private val _orderExecutionStatus: MutableLiveData<OrderExecutionStatus> = MutableLiveData(OrderExecutionStatus.PENDING)
+    val orderExecutionStatus: LiveData<OrderStatusComponent.Status> = Transformations.map(_orderExecutionStatus) { status ->
+        @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
+        return@map when (status) {
+            OrderExecutionStatus.PENDING -> OrderStatusComponent.Status.TAKING
+            OrderExecutionStatus.COOKING -> OrderStatusComponent.Status.COOKING
+            OrderExecutionStatus.FINISHED -> OrderStatusComponent.Status.FINISHED
+            OrderExecutionStatus.DELIVERED -> OrderStatusComponent.Status.DELIVERED
+        }
+    }
+
     init {
         netWorkScope.launch {
             when {
-                orderId != null -> {
-                    val order = loadOrder(orderId)
-                    loadProductDetail(order.product)
-                }
+                orderId != null -> loadProductDetail(productId = loadOrder(orderId).product)
                 orderExecutionId != null -> {
-                    val orderExecution = productsRepository.getOrderExecution(orderExecutionId)
-                    val order = loadOrder(orderExecution.order)
-                    loadProductDetail(order.product)
+                    val orderExecution = productsRepository.getOrderExecution(orderExecutionId!!)
+                    loadProductDetail(productId = loadOrder(orderExecution.order).product)
+                    _orderExecutionStatus.postValue(orderExecution.status)
                 }
                 else -> throw IllegalStateException("OrderID and OrderExecution can not be defined at the same time")
             }
@@ -106,7 +125,6 @@ class OrderExecutionViewModel(
     }
 
     private suspend fun loadProductDetail(productId: Long) {
-        //TODO(alieksiy) Should be done in the repository
         val product = productsRepository.getProduct(productId)
         val availability = productsRepository.getProductAvailability(productId)
         val productImages = productsRepository.getImages(productId)
@@ -125,6 +143,40 @@ class OrderExecutionViewModel(
                 imagesUrls = productImages.map { it.imageUrl },
             )
         )
+    }
+
+    fun takeOrder() {
+        netWorkScope.launch {
+            val orderExecution = productsRepository.createOrderExecution(OrderExecution(orderId = order.value!!.id))
+            orderExecutionId = orderExecution.id
+            _isOrderTaken.postValue(true)
+        }
+    }
+
+    fun performChangingOrderStatus(nextOrderStatus: OrderExecutionStatus) {
+        viewModelScope.launch {
+            _changingOrderStatus.postValue(true)
+            productsRepository.updateOrderExecution(orderExecutionId!!, status = nextOrderStatus)
+            delay(2000)
+            _changingOrderStatus.postValue(false)
+            _orderExecutionStatus.postValue(nextOrderStatus)
+        }
+    }
+
+    fun onOrderStatusChanged(statusComponent: OrderStatusComponent.Status) {
+        if (changingOrderStatus.value == true)
+            return
+
+        val nextStatus = when (statusComponent) {
+            OrderStatusComponent.Status.TAKING -> OrderExecutionStatus.COOKING
+            OrderStatusComponent.Status.COOKING -> OrderExecutionStatus.FINISHED
+            OrderStatusComponent.Status.FINISHED -> OrderExecutionStatus.DELIVERED
+            OrderStatusComponent.Status.DELIVERED -> throw IllegalStateException("Must not be called")
+        }
+
+        viewModelScope.launch {
+            eventChannel.send(Event.AskUserToChangeOrderExecutionStatus(_orderExecutionStatus.value!!, nextStatus))
+        }
     }
 
     class Factory(

@@ -83,6 +83,9 @@ dependencies {
     // ViewBiding delegator
     implementation "com.github.yogacp:android-viewbinding:$view_biding_delegate"
 
+    //Button with progressbar
+    implementation "com.github.razir.progressbutton:progressbutton:$progress_button"
+
     //Testing
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.hamcrest:hamcrest-all:$hamcrest_version"

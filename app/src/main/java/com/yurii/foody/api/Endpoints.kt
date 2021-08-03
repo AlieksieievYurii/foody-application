@@ -160,4 +160,7 @@ interface ApiOrderExecution {
 
     @POST("/orders/execution/")
     suspend fun createOrderExecution(@Body orderExecution: OrderExecution): OrderExecutionResponse
+
+    @PATCH("/orders/execution/{id}/")
+    suspend fun updateOrderExecution(@Path("id") orderExecutionId: Long, @Body body: OrderExecutionPatch): OrderExecutionResponse
 }

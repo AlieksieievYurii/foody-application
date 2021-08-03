@@ -127,6 +127,10 @@ class ProductsRepository(private val service: Service) {
         return result.firstOrNull()?.rating ?: 0f
     }
 
+    suspend fun updateOrderExecution(orderExecutionId: Long, status: OrderExecutionStatus? = null): OrderExecutionResponse {
+        return service.ordersExecution.updateOrderExecution(orderExecutionId, OrderExecutionPatch(status = status))
+    }
+
     companion object {
         private var INSTANCE: ProductsRepository? = null
         fun create(api: Service): ProductsRepository {

@@ -30,7 +30,10 @@ enum class OrderExecutionStatus(val status: String) {
     COOKING("cooking"),
 
     @Json(name = "finished")
-    FINISHED("finished")
+    FINISHED("finished"),
+
+    @Json(name = "delivered")
+    DELIVERED("delivered")
 }
 
 @JsonClass(generateAdapter = true)
@@ -198,3 +201,6 @@ data class OrderExecutionResponse(
     val order: Long,
     val executor: Long
 )
+
+@JsonClass(generateAdapter = true)
+data class OrderExecutionPatch(val status: OrderExecutionStatus?)

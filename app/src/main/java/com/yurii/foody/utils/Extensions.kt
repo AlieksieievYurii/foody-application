@@ -3,8 +3,10 @@ package com.yurii.foody.utils
 import android.animation.Animator
 import android.app.Activity
 import android.content.Context
+import android.content.res.Resources
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
@@ -21,6 +23,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.yurii.foody.R
 import com.yurii.foody.api.AuthResponseData
 import com.yurii.foody.api.UserRoleEnum
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun Fragment.statusBar(hide: Boolean) {
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
@@ -129,9 +133,20 @@ fun EditText.setOnQueryTextListener(callback: (text: String) -> Unit) {
     }
 }
 
-fun convertToAverageTime(seconds: Int) : String {
+fun convertToAverageTime(seconds: Int): String {
     val minutes = seconds / 60
     val minTime = (minutes - minutes * 0.1).toInt()
     val maxTime = (minutes + minutes * 0.1).toInt()
     return "$minTime-$maxTime"
 }
+
+fun toSimpleDateTime(timestamp: Long): String = SimpleDateFormat("MM.dd.yyyy hh:mm", Locale.getDefault()).format(Date(timestamp))
+
+fun isOrderDelayed(timestamp: Long, cookingTime: Int) = System.currentTimeMillis() > (timestamp + (cookingTime * 1000))
+
+fun toTimestampInSeconds(timestamp: String): Long {
+    val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    return dateTimeFormat.parse(timestamp)?.time ?: 0
+}
+
+val Number.toPx get() = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics).toInt()

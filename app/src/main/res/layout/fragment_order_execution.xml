@@ -7,9 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.yurii.foody.screens.client.products.detail.ProductDetailViewModel" />
-
-        <import type="android.view.View" />
+            type="com.yurii.foody.screens.cook.execution.OrderExecutionViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,9 +18,9 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/loading"
+            isVisible="@{!viewModel.isInitialized}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{viewModel.isInitialized ? View.GONE : View.VISIBLE }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -33,9 +31,9 @@
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/main"
+            isVisible="@{viewModel.isInitialized}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="@{viewModel.isInitialized ? View.VISIBLE : View.GONE }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -50,9 +48,9 @@
 
                 <com.yurii.foody.ui.ImageSlider
                     android:id="@+id/images"
+                    images="@{viewModel.product.imagesUrls}"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    images="@{viewModel.images}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -128,7 +126,7 @@
                             style="@style/TextAppearance.AppCompat.Body2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{String.format(@string/label_rating, 50)}"
+                            android:text="@{String.format(@string/label_rating, viewModel.product.rating)}"
                             android:textSize="22sp"
                             app:layout_constraintEnd_toStartOf="@+id/cooking_time"
                             app:layout_constraintStart_toEndOf="@+id/price"
@@ -201,7 +199,6 @@
                             android:id="@+id/description_separator"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:layout_marginTop="8dp"
                             android:background="@color/gray" />
 
                         <TextView
@@ -215,234 +212,182 @@
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/cost_breakdown_card"
+                    android:id="@+id/order_detail_card"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
                     app:cardCornerRadius="9dp"
                     app:cardElevation="4dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/guideline23"
                     app:layout_constraintStart_toStartOf="@+id/guideline22"
                     app:layout_constraintTop_toBottomOf="@+id/description_card">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="wrap_content">
 
                         <TextView
-                            android:id="@+id/textView9"
+                            android:id="@+id/textView2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
                             android:layout_marginTop="8dp"
-                            android:text="@string/label_cost_breakdown"
+                            android:text="@string/label_order_detail"
                             android:textAllCaps="true"
-                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/guideline24"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <View
-                            android:id="@+id/cost_breakdown_separator"
+                            android:id="@+id/order_description_separator"
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@color/gray"
+                            app:layout_constraintBottom_toBottomOf="@+id/textView2"
+                            app:layout_constraintEnd_toStartOf="@+id/guideline26"
+                            app:layout_constraintStart_toStartOf="@+id/guideline24"
+                            app:layout_constraintTop_toBottomOf="@+id/textView2"
+                            app:layout_constraintVertical_bias="0.0" />
+
+                        <TextView
+                            android:id="@+id/tv_product_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@{String.format(@string/label_order_detail_product_id, viewModel.product.id)}"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/guideline24"
+                            app:layout_constraintTop_toBottomOf="@+id/order_description_separator"
+                            tools:text="Product ID: #454" />
+
+                        <TextView
+                            android:id="@+id/textView8"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{String.format(@string/label_order_detail_timestamp, viewModel.order.timestampDateTime)}"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/guideline24"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_product_id"
+                            tools:text="Timestamp: 19.04.2021 8:17" />
+
+                        <TextView
+                            android:id="@+id/textView10"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{String.format(@string/label_amount, viewModel.order.count)}"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/guideline24"
+                            app:layout_constraintTop_toBottomOf="@+id/textView8"
+                            tools:text="Amount: 3" />
+
+                        <TextView
+                            android:id="@+id/textView11"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{String.format(@string/label_price, viewModel.order.price)}"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/guideline24"
+                            app:layout_constraintTop_toBottomOf="@+id/textView10"
+                            tools:text="Price: 13,99 zł" />
+
+                        <TextView
+                            android:id="@+id/textView12"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{String.format(@string/label_total_number, viewModel.order.total)}"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/guideline24"
+                            app:layout_constraintTop_toBottomOf="@+id/textView11"
+                            tools:text="Total: 42 zł" />
+
+                        <TextView
+                            android:id="@+id/textView13"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="Delivery Address: Rzgowska 17a, Dom D, 313A"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/guideline24"
+                            app:layout_constraintTop_toBottomOf="@+id/textView12" />
+
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideline24"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_begin="8dp" />
+
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideline26"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_end="8dp" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <Button
+                    android:id="@+id/take_order"
+                    style="@style/Button.Rounded.Navy"
+                    isVisible="@{!viewModel.isOrderTaken}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/label_take_order"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline23"
+                    app:layout_constraintStart_toStartOf="@+id/guideline22"
+                    app:layout_constraintTop_toBottomOf="@+id/order_detail_card"
+                    tools:visibility="gone" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/order_execution_status_card"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    isVisible="@{viewModel.isOrderTaken}"
+                    app:cardCornerRadius="9dp"
+                    app:cardElevation="4dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline23"
+                    app:layout_constraintStart_toStartOf="@+id/guideline22"
+                    app:layout_constraintTop_toBottomOf="@+id/order_detail_card">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView2f"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/label_status"
+                            android:textAllCaps="true" />
+
+                        <View
+                            android:id="@+id/order_description_separatorf"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:layout_marginStart="8dp"
-                            android:layout_marginTop="8dp"
                             android:layout_marginEnd="8dp"
-                            android:background="@color/gray"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/textView9" />
+                            android:background="@color/gray" />
 
-                        <LinearLayout
-                            android:id="@+id/availability_label"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:orientation="horizontal"
-                            app:layout_constraintEnd_toEndOf="@+id/cost_breakdown_separator"
-                            app:layout_constraintStart_toStartOf="@+id/cost_breakdown_separator"
-                            app:layout_constraintTop_toBottomOf="@+id/cost_breakdown_separator">
-
-                            <TextView
-                                android:id="@+id/label_available"
-                                style="@style/TextAppearance.AppCompat.Body2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:singleLine="true"
-                                android:text="@string/hint_available"
-                                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                            <View
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:background="@drawable/gap_line"
-                                android:layerType="software" />
-
-                            <TextView
-                                android:id="@+id/availability"
-                                style="@style/TextAppearance.AppCompat.Body2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:singleLine="true"
-                                android:text="@{Integer.toString(viewModel.availability.available)}"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                tools:text="12" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/price_label"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            app:layout_constraintEnd_toEndOf="@+id/cost_breakdown_separator"
-                            app:layout_constraintStart_toStartOf="@+id/cost_breakdown_separator"
-                            app:layout_constraintTop_toBottomOf="@+id/availability_label">
-
-                            <TextView
-                                android:id="@+id/label_price"
-                                style="@style/TextAppearance.AppCompat.Body2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:singleLine="true"
-                                android:text="@string/hint_price"
-                                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                            <View
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:background="@drawable/gap_line"
-                                android:layerType="software" />
-
-                            <TextView
-                                android:id="@+id/price_cost_breakdown"
-                                style="@style/TextAppearance.AppCompat.Body2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:singleLine="true"
-                                android:text="@{String.format(@string/label_product_price, viewModel.product.price)}"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                tools:text="12 zl" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/count_label"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            app:layout_constraintEnd_toEndOf="@+id/cost_breakdown_separator"
-                            app:layout_constraintStart_toStartOf="@+id/cost_breakdown_separator"
-                            app:layout_constraintTop_toBottomOf="@+id/price_label">
-
-                            <TextView
-                                android:id="@+id/tv_count"
-                                style="@style/TextAppearance.AppCompat.Body2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:singleLine="true"
-                                android:text="@string/label_count"
-                                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                            <View
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:background="@drawable/gap_line"
-                                android:layerType="software" />
-
-                            <TextView
-                                android:id="@+id/count"
-                                style="@style/TextAppearance.AppCompat.Body2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:singleLine="true"
-                                android:text="@{Integer.toString(viewModel.count)}"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                tools:text="12" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/total_label"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            app:layout_constraintEnd_toEndOf="@+id/cost_breakdown_separator"
-                            app:layout_constraintStart_toStartOf="@+id/cost_breakdown_separator"
-                            app:layout_constraintTop_toBottomOf="@+id/count_label">
-
-                            <TextView
-                                android:id="@+id/tv_total"
-                                style="@style/TextAppearance.AppCompat.Body2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:singleLine="true"
-                                android:text="@string/label_total"
-                                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                            <View
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:background="@drawable/gap_line"
-                                android:layerType="software" />
-
-                            <TextView
-                                android:id="@+id/total"
-                                style="@style/TextAppearance.AppCompat.Body2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:singleLine="true"
-                                android:text="@{String.format(@string/label_product_price,viewModel.total)}"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                tools:text="8" />
-                        </LinearLayout>
-
-                        <com.yurii.foody.ui.NumberSelection
-                            android:id="@+id/count_selection"
-                            android:layout_width="wrap_content"
+                        <com.yurii.foody.screens.cook.execution.OrderStatusComponent
+                            android:id="@+id/order_status"
+                            android:layout_width="match_parent"
+                            status="@{viewModel.orderExecutionStatus}"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
-                            app:layout_constraintBottom_toBottomOf="@+id/add_to_cart"
-                            app:layout_constraintStart_toStartOf="@+id/total_label"
-                            app:layout_constraintTop_toTopOf="@+id/add_to_cart"
-                            app:maxValue="@{viewModel.availability.available}"
-                            app:value="@={viewModel.count}" />
-
-                        <Button
-                            android:id="@+id/add_to_cart"
-                            style="@style/Button.Rounded.Yellow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="16dp"
-                            android:enabled="@{viewModel.isOrderingEnable}"
-                            android:onClick="@{() -> viewModel.addToCart()}"
-                            android:text="@string/label_add"
-                            android:textColor="@color/white"
-                            app:icon="@drawable/ic_baseline_shopping_cart_24"
-                            app:layout_constraintEnd_toEndOf="@+id/total_label"
-                            app:layout_constraintTop_toBottomOf="@+id/total_label" />
-
-                        <Button
-                            android:id="@+id/order"
-                            style="@style/Button.Rounded.Navy"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:layout_marginBottom="16dp"
-                            android:enabled="@{viewModel.isOrderingEnable}"
-                            android:onClick="@{() -> viewModel.order()}"
-                            android:text="@string/label_order"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="@+id/total_label"
-                            app:layout_constraintStart_toStartOf="@+id/total_label"
-                            app:layout_constraintTop_toBottomOf="@+id/add_to_cart" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                            android:layout_marginTop="16dp" />
+                    </LinearLayout>
                 </androidx.cardview.widget.CardView>
+
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline22"

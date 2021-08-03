@@ -18,6 +18,9 @@ import com.yurii.foody.screens.admin.requests.RoleRequestsViewModel
 import com.yurii.foody.screens.client.main.ClientMainScreenViewModel
 import com.yurii.foody.screens.client.products.ProductsViewModel
 import com.yurii.foody.screens.client.products.detail.ProductDetailViewModel
+import com.yurii.foody.screens.cook.execution.OrderExecutionViewModel
+import com.yurii.foody.screens.cook.main.CookMainScreenViewModel
+import com.yurii.foody.screens.cook.orders.CookOrdersViewModel
 import com.yurii.foody.screens.personal.PersonalInformationViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -98,4 +101,20 @@ object Injector {
 
     fun provideProductDetailViewModel(context: Context, productId: Long) =
         ProductDetailViewModel.Factory(repository = provideProductRepository(context), productId = productId)
+
+    fun provideCookMainScreenViewModel(context: Context) =
+        CookMainScreenViewModel.Factory(
+            repository = provideUserRepository(context),
+            productsRepository = provideProductRepository(context)
+        )
+
+    fun provideCookOrdersViewModel(context: Context) =
+        CookOrdersViewModel.Factory(productsRepository = provideProductRepository(context))
+
+    fun provideOrderExecutionViewModel(context: Context, orderId: Long, orderExecutionId: Long) =
+        OrderExecutionViewModel.Factory(
+            productsRepository = provideProductRepository(context),
+            if (orderId == -1L) null else orderId,
+            if (orderExecutionId == -1L) null else orderExecutionId
+        )
 }

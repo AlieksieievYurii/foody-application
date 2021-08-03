@@ -120,11 +120,6 @@
             app:destination="@id/authenticationFragment"
             app:popUpTo="@id/loadingFragment"
             app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_chooseRoleFragment_to_fragmentTest"
-            app:destination="@id/fragmentTest"
-            app:enterAnim="@anim/slide_in"
-            app:exitAnim="@anim/slide_out" />
         <argument
             android:name="selectNewRole"
             app:argType="boolean" />
@@ -141,22 +136,9 @@
             app:destination="@id/clientMainScreenFragment"
             app:popUpTo="@id/chooseRoleFragment"
             app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/fragmentTest"
-        android:name="com.yurii.foody.authorization.FragmentTest"
-        android:label="FragmentTest"
-        tools:layout="@layout/fragment_test">
         <action
-            android:id="@+id/action_fragmentTest_to_chooseRoleFragment"
-            app:destination="@id/chooseRoleFragment">
-            <argument
-                android:name="selectNewRole"
-                android:defaultValue="true" />
-        </action>
-        <argument
-            android:name="role"
-            app:argType="com.yurii.foody.api.UserRoleEnum" />
+            android:id="@+id/action_chooseRoleFragment_to_cookMainScreenFragment"
+            app:destination="@id/cookMainScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/adminPanelFragment"
@@ -297,5 +279,50 @@
         <argument
             android:name="product_id"
             app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/cookMainScreenFragment"
+        android:name="com.yurii.foody.screens.cook.main.CookMainScreenFragment"
+        android:label="CookMainScreenFragment"
+        tools:layout="@layout/fragment_navigation_cook_panel">
+        <action
+            android:id="@+id/action_cookMainScreenFragment_to_chooseRoleFragment"
+            app:destination="@id/chooseRoleFragment" />
+        <action
+            android:id="@+id/action_cookMainScreenFragment_to_authenticationFragment"
+            app:destination="@id/authenticationFragment" />
+        <action
+            android:id="@+id/action_cookMainScreenFragment_to_personalInformationFragment"
+            app:destination="@id/personalInformationFragment" />
+        <action
+            android:id="@+id/action_cookMainScreenFragment_to_cookOrdersScreenFragment"
+            app:destination="@id/cookOrdersScreenFragment" />
+        <action
+            android:id="@+id/action_cookMainScreenFragment_to_orderExecutionFragment"
+            app:destination="@id/orderExecutionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/cookOrdersScreenFragment"
+        android:name="com.yurii.foody.screens.cook.orders.CookOrdersScreenFragment"
+        android:label="CookOrdersScreenFragment"
+        tools:layout="@layout/fragment_cook_orders">
+        <action
+            android:id="@+id/action_cookOrdersScreenFragment_to_orderExecutionFragment"
+            app:destination="@id/orderExecutionFragment"
+            app:popUpTo="@id/cookMainScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderExecutionFragment"
+        android:name="com.yurii.foody.screens.cook.execution.OrderExecutionFragment"
+        android:label="OrderExecutionFragment"
+        tools:layout="@layout/fragment_order_execution">
+        <argument
+            android:name="orderExecutionId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="orderId"
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
 </navigation>

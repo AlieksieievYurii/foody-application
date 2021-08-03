@@ -49,8 +49,9 @@ interface ApiProducts {
         @Query("search") search: String? = null,
         @Query("availability__is_available") isAvailable: Boolean? = null,
         @Query("availability__is_active") isActive: Boolean? = null,
-        @Query("page") page: Int,
-        @Query("size") size: Int
+        @Query("ids") ids: String? = null,
+        @Query("page") page: Int? = null,
+        @Query("size") size: Int,
     ): Pagination<Product>
 
     @POST("/products/")
@@ -140,6 +141,26 @@ interface ApiProductCategory {
 }
 
 interface ApiOrders {
+    @GET("/orders/{id}/")
+    suspend fun getOrder(@Path("id") orderId: Long): Order
+
+    @GET("/orders/")
+    suspend fun getOrders(@Query("ordering") ordering: String? = null, @Query("page") page: Int? = null, @Query("size") size: Int): Pagination<Order>
+
     @POST("/orders/")
     suspend fun createOrder(@Body order: OrderForm): Order
+}
+
+interface ApiOrderExecution {
+    @GET("/orders/current_order_execution")
+    suspend fun getCurrentOrderExecution(): OrderExecutionResponse
+
+    @GET("/orders/execution/{id}/")
+    suspend fun getOrderExecution(@Path("id") orderExecutionId: Long): OrderExecutionResponse
+
+    @POST("/orders/execution/")
+    suspend fun createOrderExecution(@Body orderExecution: OrderExecution): OrderExecutionResponse
+
+    @PATCH("/orders/execution/{id}/")
+    suspend fun updateOrderExecution(@Path("id") orderExecutionId: Long, @Body body: OrderExecutionPatch): OrderExecutionResponse
 }

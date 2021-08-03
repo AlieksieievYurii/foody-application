@@ -59,6 +59,7 @@ class Service {
     val categories: ApiCategories by lazy { service.create(ApiCategories::class.java) }
     val productCategory: ApiProductCategory by lazy { service.create(ApiProductCategory::class.java) }
     val orders: ApiOrders by lazy { service.create(ApiOrders::class.java) }
+    val ordersExecution: ApiOrderExecution by lazy { service.create(ApiOrderExecution::class.java) }
 
     private fun createHttpClient(token: String) = OkHttpClient.Builder()
         .addInterceptor {

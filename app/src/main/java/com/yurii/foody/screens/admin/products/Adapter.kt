@@ -63,7 +63,7 @@ class ProductPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ProductData> {
         return try {
             val page = params.key ?: 1
-            val products = api.productsService.getProducts(query?.search, query?.isAvailable, query?.isActive, page, params.loadSize)
+            val products = api.productsService.getProducts(query?.search, query?.isAvailable, query?.isActive, page=page, size=params.loadSize)
 
             if (products.results.isEmpty())
                 return LoadResult.Error(EmptyListException())

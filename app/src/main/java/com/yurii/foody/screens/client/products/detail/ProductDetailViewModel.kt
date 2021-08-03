@@ -77,11 +77,7 @@ class ProductDetailViewModel(private val repository: ProductsRepository, private
             awaitAll(
                 async { _product.postValue(repository.getProduct(productId)) },
                 async { _availability.postValue(repository.getProductAvailability(productId)) },
-                async {
-                    val images = mutableListOf(repository.getMainProductImage(productId))
-                    images.addAll(repository.getAdditionalProductImages(productId))
-                    _images.postValue(images)
-                }
+                async { _images.postValue(repository.getImages(productId)) }
             )
             _isInitialized.postValue(true)
         }

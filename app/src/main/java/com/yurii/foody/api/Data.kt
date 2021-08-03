@@ -22,6 +22,20 @@ enum class UserRoleEnum(val role: String) {
     }
 }
 
+enum class OrderExecutionStatus(val status: String) {
+    @Json(name = "pending")
+    PENDING("pending"),
+
+    @Json(name = "cooking")
+    COOKING("cooking"),
+
+    @Json(name = "finished")
+    FINISHED("finished"),
+
+    @Json(name = "delivered")
+    DELIVERED("delivered")
+}
+
 @JsonClass(generateAdapter = true)
 data class Pagination<T>(val count: Int, val next: String?, val previous: String?, val results: List<T>)
 
@@ -176,3 +190,17 @@ data class OrderForm(
     val product: Long,
     val count: Int,
 )
+
+@JsonClass(generateAdapter = true)
+data class OrderExecution(@Json(name = "order") val orderId: Long)
+
+@JsonClass(generateAdapter = true)
+data class OrderExecutionResponse(
+    val id: Long,
+    val status: OrderExecutionStatus,
+    val order: Long,
+    val executor: Long
+)
+
+@JsonClass(generateAdapter = true)
+data class OrderExecutionPatch(val status: OrderExecutionStatus?)

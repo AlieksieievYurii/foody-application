@@ -6,8 +6,11 @@ import com.yurii.foody.api.*
 import com.yurii.foody.screens.admin.categories.CategoriesPagingSource
 import com.yurii.foody.screens.admin.products.ProductPagingSource
 import com.yurii.foody.screens.client.products.ProductsPagingSource
+import com.yurii.foody.screens.cook.orders.OrdersPagingSource
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import retrofit2.HttpException
+import java.net.HttpURLConnection
 
 class ProductsRepository(private val service: Service) {
 
@@ -20,6 +23,8 @@ class ProductsRepository(private val service: Service) {
         Pager(config = pagingConfig, pagingSourceFactory = { ProductPagingSource(service, query) }).flow
 
     fun getCategoriesPager() = Pager(config = pagingConfig, pagingSourceFactory = { CategoriesPagingSource(service) }).flow
+
+    fun getOrdersPager() = Pager(config = pagingConfig, pagingSourceFactory = { OrdersPagingSource(service) }).flow
 
     suspend fun deleteCategories(items: List<Long>) = service.categories.deleteCategories(items.joinToString(","))
 
@@ -56,7 +61,23 @@ class ProductsRepository(private val service: Service) {
             page = 1, size = 1, isDefault = true
         ).results.first()
 
+    suspend fun getImages(productId: Long): List<ProductImage> {
+        val images = mutableListOf(getMainProductImage(productId))
+        images.addAll(getAdditionalProductImages(productId))
+        return images
+    }
+
     suspend fun getCategories() = getAllCategories(page = 1)
+
+    suspend fun getCurrentOrderExecution(): OrderExecutionResponse? =
+        try {
+            service.ordersExecution.getCurrentOrderExecution()
+        } catch (error: HttpException) {
+            if (error.code() == HttpURLConnection.HTTP_NOT_FOUND)
+                null
+            else
+                throw error
+        }
 
     private suspend fun getAllCategories(page: Int): List<Category> {
         val res = service.categories.getCategories(page, size = 100)
@@ -94,6 +115,21 @@ class ProductsRepository(private val service: Service) {
     suspend fun updateCategory(category: Category): Category = service.categories.updateCategory(category.id, category)
 
     suspend fun createOrder(orderForm: OrderForm): Order = service.orders.createOrder(orderForm)
+
+    suspend fun getOrder(orderId: Long): Order = service.orders.getOrder(orderId)
+
+    suspend fun getOrderExecution(orderId: Long): OrderExecutionResponse = service.ordersExecution.getOrderExecution(orderId)
+
+    suspend fun createOrderExecution(order: OrderExecution): OrderExecutionResponse = service.ordersExecution.createOrderExecution(order)
+
+    suspend fun getProductRating(productId: Long): Float {
+        val result = service.productsRatings.getProductsRatings(productId.toString())
+        return result.firstOrNull()?.rating ?: 0f
+    }
+
+    suspend fun updateOrderExecution(orderExecutionId: Long, status: OrderExecutionStatus? = null): OrderExecutionResponse {
+        return service.ordersExecution.updateOrderExecution(orderExecutionId, OrderExecutionPatch(status = status))
+    }
 
     companion object {
         private var INSTANCE: ProductsRepository? = null

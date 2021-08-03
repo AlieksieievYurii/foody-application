@@ -75,3 +75,8 @@ fun setValue(spinner: Spinner, obj: Any) {
 fun getValue(spinner: Spinner): Any {
     return spinner.selectedItem
 }
+
+@BindingAdapter("isVisible")
+fun isVisible(view: View, isVisible: Boolean) {
+    view.isVisible = isVisible
+}

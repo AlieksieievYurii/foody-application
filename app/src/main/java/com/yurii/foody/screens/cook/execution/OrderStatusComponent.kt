@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -13,6 +14,10 @@ import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import com.github.razir.progressbutton.attachTextChangeAnimator
+import com.github.razir.progressbutton.bindProgressButton
+import com.github.razir.progressbutton.hideProgress
+import com.github.razir.progressbutton.showProgress
 import com.yurii.foody.R
 import com.yurii.foody.databinding.FragmentCookingStatusBinding
 import com.yurii.foody.utils.toPx
@@ -47,6 +52,20 @@ class OrderStatusComponent(context: Context, attrs: AttributeSet) : FrameLayout(
         R.layout.fragment_cooking_status, this, true
     )
 
+    var lifecycleOwner: LifecycleOwner? = null
+        set(value) {
+            field = value
+            value?.bindProgressButton(binding.startCooking)
+            value?.bindProgressButton(binding.finish)
+            value?.bindProgressButton(binding.delivered)
+
+            binding.apply {
+                startCooking.attachTextChangeAnimator()
+                finish.attachTextChangeAnimator()
+                delivered.attachTextChangeAnimator()
+            }
+        }
+
     var status: Status = Status.TAKING
         set(value) {
             field = value
@@ -69,14 +88,24 @@ class OrderStatusComponent(context: Context, attrs: AttributeSet) : FrameLayout(
         }
     }
 
-    fun observeLoading(isLoading: LiveData<Boolean>, lifecycleOwner: LifecycleOwner) {
-        isLoading.observe(lifecycleOwner) { loading ->
+    fun observeLoading(isLoading: LiveData<Boolean>) {
+        isLoading.observe(lifecycleOwner!!) { loading ->
             binding.apply {
-                startCooking.isEnabled = !loading
-                finish.isEnabled = !loading
-                delivered.isEnabled = !loading
+                setButtonLoadingStatus(startCooking, R.string.label_start_cooking, loading)
+                setButtonLoadingStatus(finish, R.string.label_finished, loading)
+                setButtonLoadingStatus(delivered, R.string.label_delivered, loading)
             }
         }
+    }
+
+    private fun setButtonLoadingStatus(button: Button, textRes: Int, isLoading: Boolean) {
+        if (isLoading)
+            button.showProgress {
+                progressColorRes = R.color.navy_light
+                buttonTextRes = R.string.label_processing
+            }
+        else
+            button.hideProgress(textRes)
     }
 
     private fun setStatusView() {

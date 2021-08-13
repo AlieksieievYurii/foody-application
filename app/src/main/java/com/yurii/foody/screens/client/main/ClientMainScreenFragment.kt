@@ -5,9 +5,11 @@ import android.view.View
 import android.viewbinding.library.fragment.viewBinding
 import android.widget.TextView
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
 import com.yurii.foody.api.UserRoleEnum
@@ -16,11 +18,17 @@ import com.yurii.foody.ui.InformationDialog
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.OnBackPressed
 import com.yurii.foody.utils.observeOnLifecycle
+import timber.log.Timber
 
 class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_panel), OnBackPressed {
     private val binding: FragmentNavigationClientPanelBinding by viewBinding()
     private val registrationHasDoneDialog by lazy { InformationDialog(requireContext()) }
     private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel(requireContext()) }
+    private val historyAndPendingItemsAdapter: HistoryAndPendingItemsAdapter by lazy {
+        HistoryAndPendingItemsAdapter(viewLifecycleOwner) {
+
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.content.openMenu.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
@@ -51,6 +59,29 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
         binding.content.products.setOnClickListener {
             findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToProductsFragment())
         }
+        val b = BottomSheetBehavior.from(binding.content.history.history)
+        b.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                binding.content.history.header.isVisible = newState != BottomSheetBehavior.STATE_EXPANDED
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                Timber.i(slideOffset.toString())
+            }
+
+        })
+
+        binding.content.history.historyList.apply {
+            setAdapter(historyAndPendingItemsAdapter)
+            observeListState(viewModel.historyAndPendingItemsListState)
+            setOnRefreshListener(viewModel::refreshHistoryAndPendingItemsList)
+            setOnRetryListener(historyAndPendingItemsAdapter::retry)
+        }
+
+        historyAndPendingItemsAdapter.apply {
+            observeData(viewModel.historyAndPendingItems)
+            bindListState(viewModel::onLoadStateChangeHistoryAndPendingItems)
+        }
     }
 
     private fun observeEvents() {
@@ -59,6 +90,7 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
                 ClientMainScreenViewModel.Event.NavigateToLogInScreen -> navigateToLogInScreen()
                 ClientMainScreenViewModel.Event.ShowDialogToBecomeCook -> showDialogToBecomeCook()
                 ClientMainScreenViewModel.Event.ShowDialogYouBecameCook -> registrationHasDoneDialog.show(getString(R.string.message_you_became_cook))
+                ClientMainScreenViewModel.Event.RefreshHistoryAndPendingItemsList -> historyAndPendingItemsAdapter.refresh()
             }
         }
     }

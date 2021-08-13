@@ -1,41 +1,62 @@
 package com.yurii.foody.screens.client.main
 
 import androidx.lifecycle.*
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.yurii.foody.api.User
 import com.yurii.foody.api.UserRoleEnum
+import com.yurii.foody.ui.ListFragment
+import com.yurii.foody.utils.EmptyListException
+import com.yurii.foody.utils.ProductsRepository
 import com.yurii.foody.utils.UserRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class ClientMainScreenViewModel(private val repository: UserRepository) : ViewModel() {
+class ClientMainScreenViewModel(private val userRepository: UserRepository, private val productsRepository: ProductsRepository) : ViewModel() {
 
     sealed class Event {
         object NavigateToLogInScreen : Event()
         object ShowDialogToBecomeCook : Event()
         object ShowDialogYouBecameCook : Event()
+        object RefreshHistoryAndPendingItemsList: Event()
     }
 
     private val _user: MutableLiveData<User> = MutableLiveData()
     val user: LiveData<User> = _user
+    private var isRefreshing = false
 
-    val role: Flow<UserRoleEnum?> = repository.getUserRoleFlow()
+    val role: Flow<UserRoleEnum?> = userRepository.getUserRoleFlow()
+
+    private val _historyAndPendingItems: MutableStateFlow<PagingData<Item>> = MutableStateFlow(PagingData.empty())
+    val historyAndPendingItems: StateFlow<PagingData<Item>> = _historyAndPendingItems
+
+    private val _historyAndPendingItemsListState: MutableLiveData<ListFragment.State> = MutableLiveData(ListFragment.State.Loading)
+    val historyAndPendingItemsListState: LiveData<ListFragment.State> = _historyAndPendingItemsListState
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow: Flow<Event> = eventChannel.receiveAsFlow()
 
+
     init {
         viewModelScope.launch {
-            repository.getSavedUser()?.run {
+            userRepository.getSavedUser()?.run {
                 _user.value = this
+            }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            productsRepository.getHistoryAndPendingItemsPager().cachedIn(viewModelScope).collectLatest {
+                _historyAndPendingItems.value = it
             }
         }
     }
 
     fun logOut() {
         viewModelScope.launch {
-            repository.logOut()
+            userRepository.logOut()
             eventChannel.send(Event.NavigateToLogInScreen)
         }
     }
@@ -48,18 +69,47 @@ class ClientMainScreenViewModel(private val repository: UserRepository) : ViewMo
 
     fun becomeCook() {
         viewModelScope.launch {
-            repository.becomeCook()
+            userRepository.becomeCook()
             eventChannel.send(Event.ShowDialogYouBecameCook)
-            repository.setUserRole(UserRoleEnum.EXECUTOR)
-            repository.setUserRoleStatus(false)
+            userRepository.setUserRole(UserRoleEnum.EXECUTOR)
+            userRepository.setUserRoleStatus(false)
         }
     }
 
-    class Factory(private val repository: UserRepository) : ViewModelProvider.Factory {
+    fun refreshHistoryAndPendingItemsList() {
+        viewModelScope.launch {
+            isRefreshing = true
+            eventChannel.send(Event.RefreshHistoryAndPendingItemsList)
+        }
+    }
+
+    fun onLoadStateChangeHistoryAndPendingItems(state: CombinedLoadStates) {
+        viewModelScope.launch {
+            when (state.refresh) {
+                is LoadState.NotLoading -> {
+                    isRefreshing = false
+                    _historyAndPendingItemsListState.value = ListFragment.State.Ready
+                }
+                LoadState.Loading ->
+                    if (!isRefreshing)
+                        _historyAndPendingItemsListState.value = ListFragment.State.Loading
+                is LoadState.Error -> {
+                    val loadStateError = state.refresh as LoadState.Error
+                    if (loadStateError.error is EmptyListException)
+                        _historyAndPendingItemsListState.value = ListFragment.State.Empty
+                    else
+                        _historyAndPendingItemsListState.value = ListFragment.State.Error(loadStateError.error)
+                }
+            }
+        }
+
+    }
+
+    class Factory(private val userRepository: UserRepository, private val productsRepository: ProductsRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ClientMainScreenViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return ClientMainScreenViewModel(repository) as T
+                return ClientMainScreenViewModel(userRepository, productsRepository) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

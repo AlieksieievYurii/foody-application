@@ -136,4 +136,6 @@
     <string name="label_change_order_status">Order status</string>
     <string name="message_change_order_status">Are you sure to change the status from %s to %s?</string>
     <string name="label_processing">processing</string>
+    <string name="content_description_header_swipe">Header, swipe</string>
+    <string name="content_description_arrow_upward">Arrow upward</string>
 </resources>

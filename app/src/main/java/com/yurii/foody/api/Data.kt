@@ -204,3 +204,17 @@ data class OrderExecutionResponse(
 
 @JsonClass(generateAdapter = true)
 data class OrderExecutionPatch(val status: OrderExecutionStatus?)
+
+@JsonClass(generateAdapter = true)
+data class History(
+    val id: Long,
+    val product: Long,
+    val user: Long,
+    val count: Int,
+    val price: Float,
+    @Json(name = "cooking_time") val cookingTime: Int,
+    val timestamp: String,
+    @Json(name = "delivery_address") val deliveryAddress: String,
+    val executor: Long,
+    @Json(name = "finish_time") val finishTime: String
+)

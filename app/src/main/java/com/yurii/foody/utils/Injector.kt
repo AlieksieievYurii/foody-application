@@ -94,7 +94,7 @@ object Injector {
         PersonalInformationViewModel.Factory(provideUserRepository(context))
 
     fun provideClientMainScreenViewModel(context: Context) =
-        ClientMainScreenViewModel.Factory(repository = provideUserRepository(context))
+        ClientMainScreenViewModel.Factory(userRepository = provideUserRepository(context), productsRepository = provideProductRepository(context))
 
     fun provideProductsViewModel(context: Context) =
         ProductsViewModel.Factory(repository = provideProductRepository(context))

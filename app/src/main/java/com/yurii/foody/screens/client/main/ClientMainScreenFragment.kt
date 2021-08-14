@@ -6,6 +6,7 @@ import android.viewbinding.library.fragment.viewBinding
 import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -18,7 +19,6 @@ import com.yurii.foody.ui.InformationDialog
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.OnBackPressed
 import com.yurii.foody.utils.observeOnLifecycle
-import timber.log.Timber
 
 class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_panel), OnBackPressed {
     private val binding: FragmentNavigationClientPanelBinding by viewBinding()
@@ -41,7 +41,7 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.item_personal_information -> navigateToPersonalInformation()
-                R.id.item_help -> {
+                R.id.item_help -> { /*TODO*/
                 }
                 R.id.item_change_role -> navigateToChangeRole()
                 R.id.item_become_cook -> viewModel.requestToBecomeCook()
@@ -51,25 +51,49 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
             false
         }
 
-        viewModel.user.observe(viewLifecycleOwner) {
-            setHeaderText("${it.firstName} ${it.lastName}")
-        }
+        viewModel.user.observe(viewLifecycleOwner) { setHeaderText("${it.firstName} ${it.lastName}") }
+
         observeEvents()
+        initBottomSheetHistoryView()
 
         binding.content.products.setOnClickListener {
             findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToProductsFragment())
         }
-        val b = BottomSheetBehavior.from(binding.content.history.history)
-        b.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+    }
+
+    private fun initBottomSheetHistoryView() {
+        val historyBottomSheet = BottomSheetBehavior.from(binding.content.history.history)
+        historyBottomSheet.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                binding.content.history.header.isVisible = newState != BottomSheetBehavior.STATE_EXPANDED
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    binding.content.history.apply {
+                        swipeHeader.isVisible = false
+                        appBarLayout.isVisible = true
+                    }
+                    historyBottomSheet.isDraggable = false
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    binding.content.history.apply {
+                        swipeHeader.isVisible = true
+                        appBarLayout.isVisible = false
+                    }
+                    historyBottomSheet.isDraggable = true
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                }
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                Timber.i(slideOffset.toString())
+                binding.content.history.swipeHeader.alpha = 1 - slideOffset
             }
-
         })
+
+        binding.content.history.open.setOnClickListener {
+            historyBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        binding.content.history.close.setOnClickListener {
+            historyBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
 
         binding.content.history.historyList.apply {
             setAdapter(historyAndPendingItemsAdapter)

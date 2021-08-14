@@ -86,6 +86,13 @@ interface ApiProductAvailability {
 }
 
 interface ApiProductRating {
+
+    @GET("/products/feedback/")
+    suspend fun getProductsUserRatings(
+        @Query("mine") mine: Boolean? = null,
+        @Query("product_ids") productsIds: String? = null
+    ): Pagination<ProductUserRating>
+
     @GET("/products/feedback/product-rating")
     suspend fun getProductsRatings(@Query("product_ids") productIds: String): List<ProductRating>
 }

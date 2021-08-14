@@ -122,7 +122,7 @@ class ProductsRepository(private val service: Service) {
 
     suspend fun getOrder(orderId: Long): Order = service.orders.getOrder(orderId)
 
-    suspend fun getOrderExecution(orderId: Long): OrderExecutionResponse = service.ordersExecution.getOrderExecution(orderId)
+    suspend fun getOrderExecution(orderExecutionId: Long): OrderExecutionResponse = service.ordersExecution.getOrderExecution(orderExecutionId)
 
     suspend fun createOrderExecution(order: OrderExecution): OrderExecutionResponse = service.ordersExecution.createOrderExecution(order)
 
@@ -136,6 +136,8 @@ class ProductsRepository(private val service: Service) {
     }
 
     suspend fun giveProductRating(productId: Long, rating: Int) = service.productsRatings.createFeedback(ProductUserFeedback(productId, rating))
+    suspend fun getOrderExecutionFromOrder(orderId: Long) =
+        service.ordersExecution.getOrdersExecutions(ordersIds = orderId.toString()).results.first()
 
     companion object {
         private var INSTANCE: ProductsRepository? = null

@@ -27,7 +27,17 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
     private val ratingDialog by lazy { RatingDialog(requireContext()) }
     private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel(requireContext()) }
     private val historyAndPendingItemsAdapter: HistoryAndPendingItemsAdapter by lazy {
-        HistoryAndPendingItemsAdapter(viewLifecycleOwner, onClick = {}, onGiveFeedback = this::onGiveFeedback)
+        HistoryAndPendingItemsAdapter(viewLifecycleOwner, onClick = { item ->
+            if (item is Item.HistoryItem)
+                navigateToProductDetail(item)
+
+        }, onGiveFeedback = this::onGiveFeedback)
+    }
+
+    private fun navigateToProductDetail(item: Item.HistoryItem) {
+        item.product?.run {
+            findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToProductDetailFragment(id))
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

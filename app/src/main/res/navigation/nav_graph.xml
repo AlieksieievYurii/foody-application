@@ -261,6 +261,9 @@
         <action
             android:id="@+id/action_clientMainScreenFragment_to_productsFragment"
             app:destination="@id/productsFragment" />
+        <action
+            android:id="@+id/action_clientMainScreenFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/productsFragment"

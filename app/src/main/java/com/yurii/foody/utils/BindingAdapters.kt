@@ -45,7 +45,7 @@ fun errorField(textView: TextView, fieldValidation: FieldValidation) {
 }
 
 @BindingAdapter("imageUrl")
-fun loadImage(imageView: ImageView, url: String) {
+fun loadImage(imageView: ImageView, url: String?) {
     imageView.load(url) {
         error(R.drawable.image_error_placeholder)
     }

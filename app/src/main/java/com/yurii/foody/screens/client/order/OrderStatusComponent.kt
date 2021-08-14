@@ -8,13 +8,19 @@ import android.widget.FrameLayout
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import com.yurii.foody.R
+import com.yurii.foody.api.OrderExecutionStatus
 import com.yurii.foody.databinding.FragmentOrderStatusBinding
 import com.yurii.foody.utils.toPx
 
 @BindingAdapter("status")
-fun setValue(orderStatusComponent: OrderStatusComponent, status: OrderStatusComponent.Status) {
-    if (orderStatusComponent.status != status)
-        orderStatusComponent.status = status
+fun setValue(orderStatusComponent: OrderStatusComponent, status: OrderExecutionStatus?) {
+    orderStatusComponent.status = when (status) {
+        OrderExecutionStatus.PENDING -> OrderStatusComponent.Status.PENDING
+        OrderExecutionStatus.COOKING -> OrderStatusComponent.Status.COOKING
+        OrderExecutionStatus.FINISHED -> OrderStatusComponent.Status.FINISHED
+        OrderExecutionStatus.DELIVERED -> OrderStatusComponent.Status.DELIVERED
+        else -> return
+    }
 }
 
 class OrderStatusComponent(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {

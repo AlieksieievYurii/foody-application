@@ -22,7 +22,7 @@ class ClientMainScreenViewModel(private val userRepository: UserRepository, priv
         object NavigateToLogInScreen : Event()
         object ShowDialogToBecomeCook : Event()
         object ShowDialogYouBecameCook : Event()
-        object RefreshHistoryAndPendingItemsList: Event()
+        object RefreshHistoryAndPendingItemsList : Event()
     }
 
     private val _user: MutableLiveData<User> = MutableLiveData()
@@ -103,6 +103,13 @@ class ClientMainScreenViewModel(private val userRepository: UserRepository, priv
             }
         }
 
+    }
+
+    fun giveFeedback(historyItem: Item.HistoryItem, rating: Int) {
+        viewModelScope.launch {
+            productsRepository.giveProductRating(productId = historyItem.product!!.id, rating)
+            eventChannel.send(Event.RefreshHistoryAndPendingItemsList)
+        }
     }
 
     class Factory(private val userRepository: UserRepository, private val productsRepository: ProductsRepository) : ViewModelProvider.Factory {

@@ -135,6 +135,7 @@ class ProductsRepository(private val service: Service) {
         return service.ordersExecution.updateOrderExecution(orderExecutionId, OrderExecutionPatch(status = status))
     }
 
+    suspend fun giveProductRating(productId: Long, rating: Int) = service.productsRatings.createFeedback(ProductUserFeedback(productId, rating))
 
     companion object {
         private var INSTANCE: ProductsRepository? = null

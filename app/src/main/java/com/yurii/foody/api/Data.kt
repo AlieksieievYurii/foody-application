@@ -134,6 +134,9 @@ data class ProductRating(@Json(name = "product") val productId: Long, val rating
 @JsonClass(generateAdapter = true)
 data class ProductUserRating(val id: Long, @Json(name = "product") val productId: Long, @Json(name = "user") val userId: Long, val rating: Int)
 
+@JsonClass(generateAdapter = true)
+data class ProductUserFeedback(val product: Long, val rating: Int)
+
 data class ProductImage(
     val id: Long,
     @Json(name = "image_url") val imageUrl: String,

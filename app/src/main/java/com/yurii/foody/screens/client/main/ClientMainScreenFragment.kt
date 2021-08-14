@@ -16,6 +16,7 @@ import com.yurii.foody.R
 import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.databinding.FragmentNavigationClientPanelBinding
 import com.yurii.foody.ui.InformationDialog
+import com.yurii.foody.ui.RatingDialog
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.OnBackPressed
 import com.yurii.foody.utils.observeOnLifecycle
@@ -23,9 +24,10 @@ import com.yurii.foody.utils.observeOnLifecycle
 class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_panel), OnBackPressed {
     private val binding: FragmentNavigationClientPanelBinding by viewBinding()
     private val registrationHasDoneDialog by lazy { InformationDialog(requireContext()) }
+    private val ratingDialog by lazy { RatingDialog(requireContext()) }
     private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel(requireContext()) }
     private val historyAndPendingItemsAdapter: HistoryAndPendingItemsAdapter by lazy {
-        HistoryAndPendingItemsAdapter(viewLifecycleOwner, onClick = {}, onGiveFeedback = {})
+        HistoryAndPendingItemsAdapter(viewLifecycleOwner, onClick = {}, onGiveFeedback = this::onGiveFeedback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,6 +59,10 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
         binding.content.products.setOnClickListener {
             findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToProductsFragment())
         }
+    }
+
+    private fun onGiveFeedback(historyItem: Item.HistoryItem) {
+        ratingDialog.show { rating -> viewModel.giveFeedback(historyItem, rating) }
     }
 
     private fun initBottomSheetHistoryView() {

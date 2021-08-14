@@ -87,6 +87,9 @@ interface ApiProductAvailability {
 
 interface ApiProductRating {
 
+    @POST("/products/feedback/")
+    suspend fun createFeedback(@Body feedback: ProductUserFeedback): ProductUserFeedback
+
     @GET("/products/feedback/")
     suspend fun getProductsUserRatings(
         @Query("mine") mine: Boolean? = null,

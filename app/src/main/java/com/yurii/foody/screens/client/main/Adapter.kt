@@ -48,18 +48,20 @@ sealed class Item(val id: Long) {
         val product: Product?,
         val productImage: String,
         val count: Int,
-        val price: Float
+        val price: Float,
+        val userFeedback: Int?
     ) : Item(idItem) {
         val total = price * count
 
         companion object {
-            fun createFrom(history: History, product: Product?, productImage: ProductImage?) =
+            fun createFrom(history: History, product: Product?, productImage: ProductImage?, userRating: ProductUserRating?) =
                 HistoryItem(
                     idItem = history.id,
                     product = product,
                     count = history.count,
                     productImage = productImage?.imageUrl ?: "",
-                    price = history.price
+                    price = history.price,
+                    userFeedback = userRating?.rating
                 )
         }
     }
@@ -76,11 +78,13 @@ class HistoryPagingSource(private val api: Service) : PagingSource<Int, Item>() 
             val myHistory = api.ordersExecution.getUserHistory(mine = true)
             val productsIds = myHistory.results.map { it.product }.joinToString(",")
             val products = api.productsService.getProducts(ids = productsIds).results
+            val userFeedback = api.productsRatings.getProductsUserRatings(mine = true, productsIds = productsIds).results
             val productsImages = api.productImage.getProductsImages(productIds = productsIds, isDefault = true).results
             results.addAll(myHistory.results.map {
                 Item.HistoryItem.createFrom(
                     it, product = products.find { product -> product.id == it.product },
-                    productImage = productsImages.find { productImage -> productImage.productId == it.product }
+                    productImage = productsImages.find { productImage -> productImage.productId == it.product },
+                    userRating = userFeedback.find { userFeedback -> userFeedback.productId == it.product }
                 )
             })
 
@@ -118,7 +122,11 @@ class HistoryPagingSource(private val api: Service) : PagingSource<Int, Item>() 
     }
 }
 
-class HistoryAndPendingItemsAdapter(private val lifecycleOwner: LifecycleOwner, private val onClick: (item: Item) -> Unit) :
+class HistoryAndPendingItemsAdapter(
+    private val lifecycleOwner: LifecycleOwner,
+    private val onClick: (item: Item) -> Unit,
+    private val onGiveFeedback: (item: Item.HistoryItem) -> Unit
+) :
     PagingDataAdapter<Item, HistoryAndPendingItemsAdapter.ItemViewHolder>(COMPARATOR) {
     companion object {
         private const val HISTORY_ITEM = 1
@@ -132,7 +140,7 @@ class HistoryAndPendingItemsAdapter(private val lifecycleOwner: LifecycleOwner, 
         }
     }
 
-    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) = holder.bind(getItem(position), onClick)
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) = holder.bind(getItem(position), onClick, onGiveFeedback)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         HISTORY_ITEM -> ItemViewHolder.HistoryItemViewHolder.create(parent)
@@ -159,7 +167,7 @@ class HistoryAndPendingItemsAdapter(private val lifecycleOwner: LifecycleOwner, 
     }
 
     sealed class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        abstract fun bind(item: Item?, onClick: (item: Item) -> Unit)
+        abstract fun bind(item: Item?, onClick: (item: Item) -> Unit, onGiveFeedback: (item: Item.HistoryItem) -> Unit)
 
         class PendingItemViewHolder private constructor(private val binding: ItemPendingOrderBinding) : ItemViewHolder(binding.root) {
             companion object {
@@ -170,7 +178,7 @@ class HistoryAndPendingItemsAdapter(private val lifecycleOwner: LifecycleOwner, 
                 }
             }
 
-            override fun bind(item: Item?, onClick: (item: Item) -> Unit) {
+            override fun bind(item: Item?, onClick: (item: Item) -> Unit, onGiveFeedback: (item: Item.HistoryItem) -> Unit) {
                 item?.run {
                     binding.pendingItem = this as Item.PendingItem
                     binding.body.setOnClickListener { onClick.invoke(item) }
@@ -187,10 +195,13 @@ class HistoryAndPendingItemsAdapter(private val lifecycleOwner: LifecycleOwner, 
                 }
             }
 
-            override fun bind(item: Item?, onClick: (item: Item) -> Unit) {
+            override fun bind(item: Item?, onClick: (item: Item) -> Unit, onGiveFeedback: (item: Item.HistoryItem) -> Unit) {
                 item?.run {
-                    binding.historyItem = this as Item.HistoryItem
-                    binding.body.setOnClickListener { onClick.invoke(item) }
+                    binding.apply {
+                        historyItem = item as Item.HistoryItem
+                        body.setOnClickListener { onClick.invoke(item) }
+                        giveFeedback.setOnClickListener { onGiveFeedback.invoke(item as Item.HistoryItem) }
+                    }
                 }
             }
         }

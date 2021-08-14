@@ -25,9 +25,7 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
     private val registrationHasDoneDialog by lazy { InformationDialog(requireContext()) }
     private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel(requireContext()) }
     private val historyAndPendingItemsAdapter: HistoryAndPendingItemsAdapter by lazy {
-        HistoryAndPendingItemsAdapter(viewLifecycleOwner) {
-
-        }
+        HistoryAndPendingItemsAdapter(viewLifecycleOwner, onClick = {}, onGiveFeedback = {})
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

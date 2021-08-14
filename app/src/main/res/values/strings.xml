@@ -142,4 +142,6 @@
     <string name="label_how_have_you_enjoyed">How have you enjoyed?</string>
     <string name="label_rate">Rate</string>
     <string name="label_history">History</string>
+    <string name="label_pending">Pending</string>
+    <string name="label_estimated_time">Estimated time</string>
 </resources>

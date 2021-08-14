@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true">
+
+        <TextView
+            android:id="@+id/pending_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/circle_yellow"
+            android:gravity="center"
+            android:text="@string/label_one"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/cooking_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_yellow"
+            android:gravity="center"
+            android:text="@string/label_two"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/line_one"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/finish_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_yellow"
+            android:gravity="center"
+            android:text="@string/label_three"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/line_two"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/delivered_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_yellow"
+            android:gravity="center"
+            android:text="@string/label_four"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/line_three"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/line_one"
+            android:layout_width="40dp"
+            android:layout_height="3dp"
+            android:background="@color/yellow"
+            app:layout_constraintBottom_toBottomOf="@+id/pending_status"
+            app:layout_constraintStart_toEndOf="@+id/pending_status"
+            app:layout_constraintTop_toTopOf="@+id/pending_status" />
+
+        <View
+            android:id="@+id/line_two"
+            android:layout_width="40dp"
+            android:layout_height="3dp"
+            android:background="@color/yellow"
+            app:layout_constraintBottom_toBottomOf="@+id/pending_status"
+            app:layout_constraintStart_toEndOf="@+id/cooking_status"
+            app:layout_constraintTop_toTopOf="@+id/pending_status" />
+
+        <View
+            android:id="@+id/line_three"
+            android:layout_width="40dp"
+            android:layout_height="3dp"
+            android:background="@color/yellow"
+            app:layout_constraintBottom_toBottomOf="@+id/pending_status"
+            app:layout_constraintStart_toEndOf="@+id/finish_status"
+            app:layout_constraintTop_toTopOf="@+id/pending_status" />
+
+        <TextView
+            android:id="@+id/textView15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_pending"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/pending_status"
+            app:layout_constraintStart_toStartOf="@+id/pending_status"
+            app:layout_constraintTop_toBottomOf="@+id/pending_status" />
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_cooking"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/cooking_status"
+            app:layout_constraintStart_toStartOf="@+id/cooking_status"
+            app:layout_constraintTop_toBottomOf="@+id/cooking_status" />
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_finished"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/finish_status"
+            app:layout_constraintStart_toStartOf="@+id/finish_status"
+            app:layout_constraintTop_toBottomOf="@+id/finish_status" />
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_delivered"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/delivered_status"
+            app:layout_constraintStart_toStartOf="@+id/delivered_status"
+            app:layout_constraintTop_toBottomOf="@+id/delivered_status" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

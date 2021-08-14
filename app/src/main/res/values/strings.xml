@@ -141,4 +141,5 @@
     <string name="content_description_give_feedback">Give feedback</string>
     <string name="label_how_have_you_enjoyed">How have you enjoyed?</string>
     <string name="label_rate">Rate</string>
+    <string name="label_history">History</string>
 </resources>

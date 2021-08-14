@@ -160,6 +160,9 @@ interface ApiOrderExecution {
     @GET("/orders/current_order_execution")
     suspend fun getCurrentOrderExecution(): OrderExecutionResponse
 
+    @GET("/orders/execution/")
+    suspend fun getOrdersExecutions(@Query("orders_ids") ordersIds: String? = null): Pagination<OrderExecutionResponse>
+
     @GET("/orders/execution/{id}/")
     suspend fun getOrderExecution(@Path("id") orderExecutionId: Long): OrderExecutionResponse
 

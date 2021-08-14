@@ -22,13 +22,23 @@ import java.lang.IllegalStateException
 sealed class Item(val id: Long) {
     data class PendingItem(
         val idItem: Long,
-        val title: String
+        val product: Product?,
+        val productImage: String,
+        val count: Int,
+        val price: Float,
+        val orderExecutionStatus: OrderExecutionStatus
     ) : Item(idItem) {
+        val total = price * count
+
         companion object {
-            fun createFrom(order: Order): PendingItem =
+            fun createFrom(order: Order, product: Product?, productImage: ProductImage?, orderExecution: OrderExecutionResponse?): PendingItem =
                 PendingItem(
                     idItem = order.id,
-                    title = order.product.toString()
+                    product = product,
+                    productImage = productImage?.imageUrl ?: "",
+                    count = order.count,
+                    price = order.price,
+                    orderExecutionStatus = orderExecution?.status ?: OrderExecutionStatus.PENDING
                 )
         }
     }
@@ -43,12 +53,12 @@ sealed class Item(val id: Long) {
         val total = price * count
 
         companion object {
-            fun createFrom(history: History, product: Product?, productImage: String) =
+            fun createFrom(history: History, product: Product?, productImage: ProductImage?) =
                 HistoryItem(
                     idItem = history.id,
                     product = product,
                     count = history.count,
-                    productImage = productImage,
+                    productImage = productImage?.imageUrl ?: "",
                     price = history.price
                 )
         }
@@ -70,7 +80,7 @@ class HistoryPagingSource(private val api: Service) : PagingSource<Int, Item>() 
             results.addAll(myHistory.results.map {
                 Item.HistoryItem.createFrom(
                     it, product = products.find { product -> product.id == it.product },
-                    productImage = productsImages.find { productImage -> productImage.productId == it.product }?.imageUrl ?: ""
+                    productImage = productsImages.find { productImage -> productImage.productId == it.product }
                 )
             })
 
@@ -88,7 +98,18 @@ class HistoryPagingSource(private val api: Service) : PagingSource<Int, Item>() 
 
     private suspend fun getPendingItems(loadSize: Int, page: Int = 1): MutableList<Item.PendingItem> {
         val myOrders = api.orders.getOrders(size = loadSize, mine = true, page = page)
-        val results = myOrders.results.map { Item.PendingItem.createFrom(it) }.toMutableList()
+        val ordersExecutions = api.ordersExecution.getOrdersExecutions(myOrders.results.map { it.id }.joinToString(",")).results
+        val productsIds = myOrders.results.map { it.product }.joinToString(",")
+        val products = api.productsService.getProducts(ids = productsIds).results
+        val productsImages = api.productImage.getProductsImages(productIds = productsIds, isDefault = true).results
+        val results = myOrders.results.map { order ->
+            Item.PendingItem.createFrom(
+                order = order,
+                product = products.find { product -> product.id == order.product },
+                productImage = productsImages.find { productImage -> productImage.productId == order.product },
+                orderExecution = ordersExecutions.find { orderExecution -> orderExecution.order == order.id }
+            )
+        }.toMutableList()
 
         if (myOrders.next != null)
             results.addAll(getPendingItems(loadSize, page + 1))

@@ -23,6 +23,7 @@ import com.yurii.foody.utils.observeOnLifecycle
 
 class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_panel), OnBackPressed {
     private val binding: FragmentNavigationClientPanelBinding by viewBinding()
+    private val historyBottomSheetBehavior by lazy { BottomSheetBehavior.from(binding.content.history.history) }
     private val registrationHasDoneDialog by lazy { InformationDialog(requireContext()) }
     private val ratingDialog by lazy { RatingDialog(requireContext()) }
     private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel(requireContext()) }
@@ -76,22 +77,21 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
     }
 
     private fun initBottomSheetHistoryView() {
-        val historyBottomSheet = BottomSheetBehavior.from(binding.content.history.history)
-        historyBottomSheet.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        historyBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     binding.content.history.apply {
                         swipeHeader.isVisible = false
                         appBarLayout.isVisible = true
                     }
-                    historyBottomSheet.isDraggable = false
+                    historyBottomSheetBehavior.isDraggable = false
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     binding.content.history.apply {
                         swipeHeader.isVisible = true
                         appBarLayout.isVisible = false
                     }
-                    historyBottomSheet.isDraggable = true
+                    historyBottomSheetBehavior.isDraggable = true
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 }
             }
@@ -102,11 +102,11 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
         })
 
         binding.content.history.open.setOnClickListener {
-            historyBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+            historyBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
         binding.content.history.close.setOnClickListener {
-            historyBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+            historyBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         binding.content.history.historyList.apply {
@@ -166,6 +166,12 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
     }
 
     override fun onBackPressed(): Boolean {
+
+        if (historyBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            historyBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            return true
+        }
+
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             return true

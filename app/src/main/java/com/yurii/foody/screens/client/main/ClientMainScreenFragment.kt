@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.viewbinding.library.fragment.viewBinding
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,18 +24,11 @@ import com.yurii.foody.utils.observeOnLifecycle
 
 class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_panel), OnBackPressed {
     private val binding: FragmentNavigationClientPanelBinding by viewBinding()
-    private val historyBottomSheetBehavior by lazy { BottomSheetBehavior.from(binding.content.history.history) }
     private val registrationHasDoneDialog by lazy { InformationDialog(requireContext()) }
+    private lateinit var historyBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     private val ratingDialog by lazy { RatingDialog(requireContext()) }
     private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel(requireContext()) }
-    private val historyAndPendingItemsAdapter: HistoryAndPendingItemsAdapter by lazy {
-        HistoryAndPendingItemsAdapter(viewLifecycleOwner, onClick = { item ->
-            when (item) {
-                is Item.HistoryItem -> navigateToProductDetail(item)
-                is Item.PendingItem -> navigateToOrderDetail(item)
-            }
-        }, onGiveFeedback = this::onGiveFeedback)
-    }
+    private lateinit var historyAndPendingItemsAdapter: HistoryAndPendingItemsAdapter
 
     private fun navigateToProductDetail(item: Item.HistoryItem) {
         item.product?.run {
@@ -48,6 +42,12 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.content.openMenu.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
+        historyAndPendingItemsAdapter = HistoryAndPendingItemsAdapter(viewLifecycleOwner, onClick = { item ->
+            when (item) {
+                is Item.HistoryItem -> navigateToProductDetail(item)
+                is Item.PendingItem -> navigateToOrderDetail(item)
+            }
+        }, onGiveFeedback = this::onGiveFeedback)
         viewModel.role.observeOnLifecycle(viewLifecycleOwner) { role ->
             binding.navView.menu.apply {
                 findItem(R.id.item_become_cook).isVisible = role == UserRoleEnum.CLIENT
@@ -81,6 +81,7 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
     }
 
     private fun initBottomSheetHistoryView() {
+        historyBottomSheetBehavior = BottomSheetBehavior.from(binding.content.history.history)
         historyBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED) {

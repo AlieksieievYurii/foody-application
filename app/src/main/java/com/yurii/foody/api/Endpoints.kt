@@ -159,7 +159,8 @@ interface ApiOrders {
         @Query("ordering") ordering: String? = null,
         @Query("page") page: Int? = null,
         @Query("size") size: Int,
-        @Query("mine") mine: Boolean = false
+        @Query("mine") mine: Boolean = false,
+        @Query("is_taken") isTaken: Boolean? = null
     ): Pagination<Order>
 
     @POST("/orders/")

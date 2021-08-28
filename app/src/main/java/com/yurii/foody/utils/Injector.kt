@@ -16,6 +16,7 @@ import com.yurii.foody.screens.admin.products.ProductsEditorViewModel
 import com.yurii.foody.screens.admin.products.editor.ProductEditorViewModel
 import com.yurii.foody.screens.admin.requests.RoleRequestsViewModel
 import com.yurii.foody.screens.client.main.ClientMainScreenViewModel
+import com.yurii.foody.screens.client.order.OrderDetailViewModel
 import com.yurii.foody.screens.client.products.ProductsViewModel
 import com.yurii.foody.screens.client.products.detail.ProductDetailViewModel
 import com.yurii.foody.screens.cook.execution.OrderExecutionViewModel
@@ -117,4 +118,8 @@ object Injector {
             if (orderId == -1L) null else orderId,
             if (orderExecutionId == -1L) null else orderExecutionId
         )
+
+    fun provideOrderDetailViewModel(context: Context, orderId: Long) = OrderDetailViewModel.Factory(
+        productsRepository = provideProductRepository(context), orderId = orderId
+    )
 }

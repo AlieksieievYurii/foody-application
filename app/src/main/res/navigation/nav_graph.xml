@@ -264,6 +264,9 @@
         <action
             android:id="@+id/action_clientMainScreenFragment_to_productDetailFragment"
             app:destination="@id/productDetailFragment" />
+        <action
+            android:id="@+id/action_clientMainScreenFragment_to_orderDetail"
+            app:destination="@id/orderDetail" />
     </fragment>
     <fragment
         android:id="@+id/productsFragment"
@@ -278,7 +281,7 @@
         android:id="@+id/productDetailFragment"
         android:name="com.yurii.foody.screens.client.products.detail.ProductDetailFragment"
         android:label="ProductDetailFragment"
-        tools:layout="@layout/fragment_product_detail" >
+        tools:layout="@layout/fragment_product_detail">
         <argument
             android:name="product_id"
             app:argType="long" />
@@ -321,11 +324,20 @@
         tools:layout="@layout/fragment_order_execution">
         <argument
             android:name="orderExecutionId"
-            app:argType="long"
-            android:defaultValue="-1L" />
+            android:defaultValue="-1L"
+            app:argType="long" />
         <argument
             android:name="orderId"
-            app:argType="long"
-            android:defaultValue="-1L" />
+            android:defaultValue="-1L"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetail"
+        android:name="com.yurii.foody.screens.client.order.OrderDetail"
+        android:label="OrderDetail"
+        tools:layout="@layout/fragment_order_detail" >
+        <argument
+            android:name="orderId"
+            app:argType="long" />
     </fragment>
 </navigation>

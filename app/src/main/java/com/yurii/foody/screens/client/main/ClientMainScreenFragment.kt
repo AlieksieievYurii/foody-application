@@ -29,9 +29,10 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
     private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel(requireContext()) }
     private val historyAndPendingItemsAdapter: HistoryAndPendingItemsAdapter by lazy {
         HistoryAndPendingItemsAdapter(viewLifecycleOwner, onClick = { item ->
-            if (item is Item.HistoryItem)
-                navigateToProductDetail(item)
-
+            when (item) {
+                is Item.HistoryItem -> navigateToProductDetail(item)
+                is Item.PendingItem -> navigateToOrderDetail(item)
+            }
         }, onGiveFeedback = this::onGiveFeedback)
     }
 
@@ -39,6 +40,10 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
         item.product?.run {
             findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToProductDetailFragment(id))
         }
+    }
+
+    private fun navigateToOrderDetail(item: Item.PendingItem) {
+        findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToOrderDetail(item.id))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

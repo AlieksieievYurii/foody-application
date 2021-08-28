@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:onClick="@{() -> viewModel.onClickSingUp()}"
-                android:text="@string/label_sing_up"
+                android:text="@string/label_sign_up"
                 app:layout_constraintEnd_toStartOf="@+id/guideline5"
                 app:layout_constraintTop_toTopOf="@+id/guideline2" />
 

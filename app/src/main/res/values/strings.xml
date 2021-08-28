@@ -3,7 +3,7 @@
     <string name="label_foody">Foody</string>
     <string name="label_log_in">Log in</string>
     <string name="label_yurii_alieksieiev_2021">Yurii Alieksieiev 2021</string>
-    <string name="label_sing_up">Sing Up</string>
+    <string name="label_sign_up">Sign Up</string>
     <string name="label_have_an_account">Have an account?</string>
     <string name="label_e_mail">E-Mail</string>
     <string name="label_password">Password</string>
@@ -25,7 +25,7 @@
     <string name="label_change_role">Change role</string>
     <string name="label_log_out">Log out</string>
     <string name="hint_confirmation_email">Please confirm your email.\nThe confirmation has been sent to your email</string>
-    <string name="hint_confirmation_executor_role">Your cook request has been sent. \nPlease wait until the request will be aproved</string>
+    <string name="hint_confirmation_executor_role">Your cook request has been sent. \nPlease wait until the request will be approved</string>
     <string name="label_choose_role">Choose Role</string>
     <string name="label_client">Client</string>
     <string name="label_cook">Cook</string>

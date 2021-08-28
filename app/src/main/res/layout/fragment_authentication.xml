@@ -34,7 +34,7 @@
             style="@style/Button.Rounded.NavyText.Display2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/label_sing_up"
+            android:text="@string/label_sign_up"
             app:layout_constraintBottom_toTopOf="@+id/label_author"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import coil.load
 import com.google.android.material.textfield.TextInputEditText
 import com.yurii.foody.R
+import java.lang.IllegalStateException
 
 interface CallBack {
     fun onChange()
@@ -38,7 +39,7 @@ fun errorField(textView: TextView, fieldValidation: FieldValidation) {
             FieldValidation.EmailIsAlreadyUsed -> R.string.label_email_is_already_used
             FieldValidation.WrongEmailFormat -> R.string.label_wrong_email
             FieldValidation.WrongPhoneFormat -> R.string.label_wrong_phone_format
-            FieldValidation.DoesNotFitRequirements -> TODO()
+            FieldValidation.DoesNotFitRequirements -> throw IllegalStateException("Must not be called")
             FieldValidation.NoPhoto -> R.string.error_no_photo
         }
     )

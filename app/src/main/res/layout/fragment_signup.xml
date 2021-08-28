@@ -276,8 +276,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
                     android:onClick="@{() -> viewModel.singUp()}"
                     android:text="@string/label_sing_up"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/guideline7"
                     app:layout_constraintStart_toStartOf="@+id/guideline6"
                     app:layout_constraintTop_toBottomOf="@id/cook" />

@@ -137,7 +137,7 @@ class ProductsRepository(private val service: Service) {
 
     suspend fun giveProductRating(productId: Long, rating: Int) = service.productsRatings.createFeedback(ProductUserFeedback(productId, rating))
     suspend fun getOrderExecutionFromOrder(orderId: Long) =
-        service.ordersExecution.getOrdersExecutions(ordersIds = orderId.toString()).results.first()
+        service.ordersExecution.getOrdersExecutions(ordersIds = orderId.toString()).results.firstOrNull()
 
     companion object {
         private var INSTANCE: ProductsRepository? = null

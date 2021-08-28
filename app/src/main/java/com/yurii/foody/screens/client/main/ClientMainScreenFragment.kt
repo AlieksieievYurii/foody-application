@@ -57,8 +57,7 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.item_personal_information -> navigateToPersonalInformation()
-                R.id.item_help -> { /*TODO*/
-                }
+                R.id.item_help -> findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToHelpFragment())
                 R.id.item_change_role -> navigateToChangeRole()
                 R.id.item_become_cook -> viewModel.requestToBecomeCook()
                 R.id.item_log_out -> askUserToAcceptLoggingOut { viewModel.logOut() }

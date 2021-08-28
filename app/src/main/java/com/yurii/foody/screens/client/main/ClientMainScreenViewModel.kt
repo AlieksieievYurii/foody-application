@@ -13,10 +13,14 @@ import com.yurii.foody.utils.ProductsRepository
 import com.yurii.foody.utils.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ClientMainScreenViewModel(private val userRepository: UserRepository, private val productsRepository: ProductsRepository) : ViewModel() {
+    companion object {
+        private const val REFRESH_HISTORY_INTERVAL_MS = 5000L
+    }
 
     sealed class Event {
         object NavigateToLogInScreen : Event()
@@ -47,10 +51,21 @@ class ClientMainScreenViewModel(private val userRepository: UserRepository, priv
                 _user.value = this
             }
         }
-        viewModelScope.launch(Dispatchers.IO) {
-            productsRepository.getHistoryAndPendingItemsPager().cachedIn(viewModelScope).collectLatest {
-                _historyAndPendingItems.value = it
-            }
+        initHistoryAndPendingItemsPager()
+        startUpdatingHistoryAndPendingItems()
+    }
+
+    private fun initHistoryAndPendingItemsPager() = viewModelScope.launch(Dispatchers.IO) {
+        productsRepository.getHistoryAndPendingItemsPager().cachedIn(viewModelScope).collectLatest {
+            _historyAndPendingItems.value = it
+        }
+    }
+
+    private fun startUpdatingHistoryAndPendingItems() = viewModelScope.launch {
+        while (true) {
+            delay(REFRESH_HISTORY_INTERVAL_MS)
+            isRefreshing = true
+            eventChannel.send(Event.RefreshHistoryAndPendingItemsList)
         }
     }
 

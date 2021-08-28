@@ -128,7 +128,7 @@
                             style="@style/TextAppearance.AppCompat.Body2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{String.format(@string/label_rating, 50f)}"
+                            android:text="@{String.format(@string/label_rating, viewModel.rating)}"
                             android:textSize="22sp"
                             app:layout_constraintEnd_toStartOf="@+id/cooking_time"
                             app:layout_constraintStart_toEndOf="@+id/price"

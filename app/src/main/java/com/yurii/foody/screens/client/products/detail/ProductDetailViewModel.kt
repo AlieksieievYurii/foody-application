@@ -46,6 +46,9 @@ class ProductDetailViewModel(private val repository: ProductsRepository, private
     private val _total: MutableLiveData<Float> = MutableLiveData(0f)
     val total: LiveData<Float> = _total
 
+    private val _rating: MutableLiveData<Float> = MutableLiveData(0f)
+    val rating: LiveData<Float> = _rating
+
     private val _isOrderingEnable: MutableLiveData<Boolean> = MutableLiveData()
     val isOrderingEnable: LiveData<Boolean> = _isOrderingEnable
 
@@ -77,7 +80,8 @@ class ProductDetailViewModel(private val repository: ProductsRepository, private
             awaitAll(
                 async { _product.postValue(repository.getProduct(productId)) },
                 async { _availability.postValue(repository.getProductAvailability(productId)) },
-                async { _images.postValue(repository.getImages(productId)) }
+                async { _images.postValue(repository.getImages(productId)) },
+                async { _rating.postValue(repository.getProductRating(productId) * 20) }
             )
             _isInitialized.postValue(true)
         }

@@ -160,6 +160,8 @@ class OrderExecutionViewModel(
             delay(2000)
             _changingOrderStatus.postValue(false)
             _orderExecutionStatus.postValue(nextOrderStatus)
+            if (nextOrderStatus == OrderExecutionStatus.DELIVERED)
+                eventChannel.send(Event.CloseScreen)
         }
     }
 

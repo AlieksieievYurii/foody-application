@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import com.yurii.foody.api.*
 import com.yurii.foody.screens.admin.categories.CategoriesPagingSource
 import com.yurii.foody.screens.admin.products.ProductPagingSource
+import com.yurii.foody.screens.client.main.HistoryPagingSource
 import com.yurii.foody.screens.client.products.ProductsPagingSource
 import com.yurii.foody.screens.cook.orders.OrdersPagingSource
 import okhttp3.MediaType
@@ -21,6 +22,9 @@ class ProductsRepository(private val service: Service) {
 
     fun getProductsPager(query: ProductPagingSource.Query? = null) =
         Pager(config = pagingConfig, pagingSourceFactory = { ProductPagingSource(service, query) }).flow
+
+    fun getHistoryAndPendingItemsPager() =
+        Pager(config = pagingConfig, pagingSourceFactory = { HistoryPagingSource(service) }).flow
 
     fun getCategoriesPager() = Pager(config = pagingConfig, pagingSourceFactory = { CategoriesPagingSource(service) }).flow
 
@@ -118,7 +122,7 @@ class ProductsRepository(private val service: Service) {
 
     suspend fun getOrder(orderId: Long): Order = service.orders.getOrder(orderId)
 
-    suspend fun getOrderExecution(orderId: Long): OrderExecutionResponse = service.ordersExecution.getOrderExecution(orderId)
+    suspend fun getOrderExecution(orderExecutionId: Long): OrderExecutionResponse = service.ordersExecution.getOrderExecution(orderExecutionId)
 
     suspend fun createOrderExecution(order: OrderExecution): OrderExecutionResponse = service.ordersExecution.createOrderExecution(order)
 
@@ -130,6 +134,10 @@ class ProductsRepository(private val service: Service) {
     suspend fun updateOrderExecution(orderExecutionId: Long, status: OrderExecutionStatus? = null): OrderExecutionResponse {
         return service.ordersExecution.updateOrderExecution(orderExecutionId, OrderExecutionPatch(status = status))
     }
+
+    suspend fun giveProductRating(productId: Long, rating: Int) = service.productsRatings.createFeedback(ProductUserFeedback(productId, rating))
+    suspend fun getOrderExecutionFromOrder(orderId: Long) =
+        service.ordersExecution.getOrdersExecutions(ordersIds = orderId.toString()).results.firstOrNull()
 
     companion object {
         private var INSTANCE: ProductsRepository? = null

@@ -51,7 +51,7 @@ interface ApiProducts {
         @Query("availability__is_active") isActive: Boolean? = null,
         @Query("ids") ids: String? = null,
         @Query("page") page: Int? = null,
-        @Query("size") size: Int,
+        @Query("size") size: Int? = null,
     ): Pagination<Product>
 
     @POST("/products/")
@@ -86,6 +86,16 @@ interface ApiProductAvailability {
 }
 
 interface ApiProductRating {
+
+    @POST("/products/feedback/")
+    suspend fun createFeedback(@Body feedback: ProductUserFeedback): ProductUserFeedback
+
+    @GET("/products/feedback/")
+    suspend fun getProductsUserRatings(
+        @Query("mine") mine: Boolean? = null,
+        @Query("product_ids") productsIds: String? = null
+    ): Pagination<ProductUserRating>
+
     @GET("/products/feedback/product-rating")
     suspend fun getProductsRatings(@Query("product_ids") productIds: String): List<ProductRating>
 }
@@ -94,7 +104,7 @@ interface ApiProductImage {
     @GET("/products/images/")
     suspend fun getProductsImages(
         @Query("page") page: Int? = null,
-        @Query("size") size: Int,
+        @Query("size") size: Int? = null,
         @Query("product_ids") productIds: String,
         @Query("is_default") isDefault: Boolean,
     ): Pagination<ProductImage>
@@ -145,7 +155,13 @@ interface ApiOrders {
     suspend fun getOrder(@Path("id") orderId: Long): Order
 
     @GET("/orders/")
-    suspend fun getOrders(@Query("ordering") ordering: String? = null, @Query("page") page: Int? = null, @Query("size") size: Int): Pagination<Order>
+    suspend fun getOrders(
+        @Query("ordering") ordering: String? = null,
+        @Query("page") page: Int? = null,
+        @Query("size") size: Int,
+        @Query("mine") mine: Boolean = false,
+        @Query("is_taken") isTaken: Boolean? = null
+    ): Pagination<Order>
 
     @POST("/orders/")
     suspend fun createOrder(@Body order: OrderForm): Order
@@ -155,6 +171,9 @@ interface ApiOrderExecution {
     @GET("/orders/current_order_execution")
     suspend fun getCurrentOrderExecution(): OrderExecutionResponse
 
+    @GET("/orders/execution/")
+    suspend fun getOrdersExecutions(@Query("orders_ids") ordersIds: String? = null): Pagination<OrderExecutionResponse>
+
     @GET("/orders/execution/{id}/")
     suspend fun getOrderExecution(@Path("id") orderExecutionId: Long): OrderExecutionResponse
 
@@ -163,4 +182,7 @@ interface ApiOrderExecution {
 
     @PATCH("/orders/execution/{id}/")
     suspend fun updateOrderExecution(@Path("id") orderExecutionId: Long, @Body body: OrderExecutionPatch): OrderExecutionResponse
+
+    @GET("/orders/history/")
+    suspend fun getUserHistory(@Query("mine") mine: Boolean): Pagination<History>
 }

@@ -7,37 +7,46 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/test"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/yellow">
+        android:layout_height="match_parent">
 
-        <ImageButton
-            android:id="@+id/open_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/label_open_left_menu"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_outline_account_circle_24" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/yellow">
+
+            <ImageButton
+                android:id="@+id/open_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/label_open_left_menu"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_outline_account_circle_24" />
 
 
-        <Button
-            android:id="@+id/products"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="@drawable/button_circle_background"
-            android:drawableTop="@drawable/ic_food"
-            android:text="All"
-            android:textColor="@color/black"
-            app:backgroundTint="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/products"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:background="@drawable/button_circle_background"
+                android:drawableTop="@drawable/ic_food"
+                android:text="All"
+                android:textColor="@color/black"
+                app:backgroundTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            android:id="@+id/history"
+            layout="@layout/sheet_client_history" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

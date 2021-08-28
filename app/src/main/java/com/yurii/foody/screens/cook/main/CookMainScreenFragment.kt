@@ -28,8 +28,7 @@ class CookMainScreenFragment : Fragment(R.layout.fragment_navigation_cook_panel)
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.item_personal_information -> viewModel.changePersonalInformation()
-                R.id.item_help -> {
-                }
+                R.id.item_help -> findNavController().navigate(CookMainScreenFragmentDirections.actionCookMainScreenFragmentToHelpFragment())
                 R.id.item_change_role -> viewModel.changeRole()
                 R.id.item_log_out -> askUserToAcceptLoggingOut {
                     viewModel.logOut()

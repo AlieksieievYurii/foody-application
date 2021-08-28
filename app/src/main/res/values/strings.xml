@@ -136,4 +136,13 @@
     <string name="label_change_order_status">Order status</string>
     <string name="message_change_order_status">Are you sure to change the status from %s to %s?</string>
     <string name="label_processing">processing</string>
+    <string name="content_description_header_swipe">Header, swipe</string>
+    <string name="content_description_arrow_upward">Arrow upward</string>
+    <string name="content_description_give_feedback">Give feedback</string>
+    <string name="label_how_have_you_enjoyed">How have you enjoyed?</string>
+    <string name="label_rate">Rate</string>
+    <string name="label_history">History</string>
+    <string name="label_pending">Pending</string>
+    <string name="label_estimated_time">Estimated time</string>
+    <string name="label_remain_minutes">%d min</string>
 </resources>

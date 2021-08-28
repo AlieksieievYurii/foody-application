@@ -131,6 +131,12 @@ data class ProductAvailability(
 @JsonClass(generateAdapter = true)
 data class ProductRating(@Json(name = "product") val productId: Long, val rating: Float)
 
+@JsonClass(generateAdapter = true)
+data class ProductUserRating(val id: Long, @Json(name = "product") val productId: Long, @Json(name = "user") val userId: Long, val rating: Int)
+
+@JsonClass(generateAdapter = true)
+data class ProductUserFeedback(val product: Long, val rating: Int)
+
 data class ProductImage(
     val id: Long,
     @Json(name = "image_url") val imageUrl: String,
@@ -204,3 +210,17 @@ data class OrderExecutionResponse(
 
 @JsonClass(generateAdapter = true)
 data class OrderExecutionPatch(val status: OrderExecutionStatus?)
+
+@JsonClass(generateAdapter = true)
+data class History(
+    val id: Long,
+    val product: Long,
+    val user: Long,
+    val count: Int,
+    val price: Float,
+    @Json(name = "cooking_time") val cookingTime: Int,
+    val timestamp: String,
+    @Json(name = "delivery_address") val deliveryAddress: String,
+    val executor: Long,
+    @Json(name = "finish_time") val finishTime: String
+)

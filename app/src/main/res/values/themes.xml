@@ -35,6 +35,13 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="Badge1">
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/background_navy</item>
+    </style>
+
     <style name="TextAppearance.Gray.Body1" parent="TextAppearance.AppCompat.Display4">
         <item name="android:textColor">@color/gray</item>
         <item name="android:textSize">20sp</item>

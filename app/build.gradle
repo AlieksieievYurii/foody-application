@@ -86,6 +86,8 @@ dependencies {
     //Button with progressbar
     implementation "com.github.razir.progressbutton:progressbutton:$progress_button"
 
+    implementation "com.github.sujithkanna:smileyrating:$smiley_rating"
+
     //Testing
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.hamcrest:hamcrest-all:$hamcrest_version"

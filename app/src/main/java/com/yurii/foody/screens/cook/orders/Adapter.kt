@@ -39,7 +39,7 @@ class OrdersPagingSource(private val api: Service) : PagingSource<Int, Order>() 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Order> {
         return try {
             val page = params.key ?: 1
-            val orders = api.orders.getOrders(page = page, size = params.loadSize, ordering = "timestamp")
+            val orders = api.orders.getOrders(page = page, size = params.loadSize, ordering = "timestamp", isTaken = false)
             if (orders.results.isEmpty())
                 return LoadResult.Error(EmptyListException())
             val productIds = orders.results.joinToString(",") { it.product.toString() }

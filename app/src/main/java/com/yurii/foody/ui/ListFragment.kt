@@ -90,7 +90,6 @@ class ListFragment(context: Context, attrs: AttributeSet) : FrameLayout(context,
     }
 
     fun observeListState(state: LiveData<State>) {
-        //TODO(Specify lifecycleOwner directly in the parameters)
         state.observe(context as LifecycleOwner) {
             this.state = it
         }

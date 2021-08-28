@@ -48,11 +48,15 @@ class CookOrdersViewModel(private val productsRepository: ProductsRepository) : 
             productsRepository.getOrdersPager().cachedIn(viewModelScope).collectLatest {
                 _orders.value = it
             }
+        }
 
-            while (true) {
-                delay(REFRESHING_TIME_IN_SECONDS * 1000)
-                refreshList()
-            }
+        initAutoListRefreshing()
+    }
+
+    private fun initAutoListRefreshing() = viewModelScope.launch {
+        while (true) {
+            delay(REFRESHING_TIME_IN_SECONDS * 1000)
+            refreshList()
         }
     }
 

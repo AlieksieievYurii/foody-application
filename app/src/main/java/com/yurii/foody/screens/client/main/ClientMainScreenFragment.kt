@@ -5,25 +5,51 @@ import android.view.View
 import android.viewbinding.library.fragment.viewBinding
 import android.widget.TextView
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.foody.R
 import com.yurii.foody.api.UserRoleEnum
 import com.yurii.foody.databinding.FragmentNavigationClientPanelBinding
 import com.yurii.foody.ui.InformationDialog
+import com.yurii.foody.ui.RatingDialog
 import com.yurii.foody.utils.Injector
 import com.yurii.foody.utils.OnBackPressed
+import com.yurii.foody.utils.lifecycleAwareLazy
 import com.yurii.foody.utils.observeOnLifecycle
 
 class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_panel), OnBackPressed {
     private val binding: FragmentNavigationClientPanelBinding by viewBinding()
-    private val registrationHasDoneDialog by lazy { InformationDialog(requireContext()) }
+    private val registrationHasDoneDialog by lifecycleAwareLazy { InformationDialog(requireContext()) }
+    private val historyBottomSheetBehavior by lifecycleAwareLazy { BottomSheetBehavior.from(binding.content.history.history) }
+    private val ratingDialog by lifecycleAwareLazy { RatingDialog(requireContext()) }
     private val viewModel: ClientMainScreenViewModel by viewModels { Injector.provideClientMainScreenViewModel(requireContext()) }
+    private val historyAndPendingItemsAdapter: HistoryAndPendingItemsAdapter by lifecycleAwareLazy {
+        HistoryAndPendingItemsAdapter(viewLifecycleOwner, onClick = { item ->
+            when (item) {
+                is Item.HistoryItem -> navigateToProductDetail(item)
+                is Item.PendingItem -> navigateToOrderDetail(item)
+            }
+        }, onGiveFeedback = this::onGiveFeedback)
+    }
+
+    private fun navigateToProductDetail(item: Item.HistoryItem) {
+        item.product?.run {
+            findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToProductDetailFragment(id))
+        }
+    }
+
+    private fun navigateToOrderDetail(item: Item.PendingItem) {
+        findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToOrderDetail(item.id))
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.content.openMenu.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
+
         viewModel.role.observeOnLifecycle(viewLifecycleOwner) { role ->
             binding.navView.menu.apply {
                 findItem(R.id.item_become_cook).isVisible = role == UserRoleEnum.CLIENT
@@ -33,8 +59,7 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.item_personal_information -> navigateToPersonalInformation()
-                R.id.item_help -> {
-                }
+                R.id.item_help -> findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToHelpFragment())
                 R.id.item_change_role -> navigateToChangeRole()
                 R.id.item_become_cook -> viewModel.requestToBecomeCook()
                 R.id.item_log_out -> askUserToAcceptLoggingOut { viewModel.logOut() }
@@ -43,13 +68,63 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
             false
         }
 
-        viewModel.user.observe(viewLifecycleOwner) {
-            setHeaderText("${it.firstName} ${it.lastName}")
-        }
+        viewModel.user.observe(viewLifecycleOwner) { setHeaderText("${it.firstName} ${it.lastName}") }
+
         observeEvents()
+        initBottomSheetHistoryView()
 
         binding.content.products.setOnClickListener {
             findNavController().navigate(ClientMainScreenFragmentDirections.actionClientMainScreenFragmentToProductsFragment())
+        }
+    }
+
+    private fun onGiveFeedback(historyItem: Item.HistoryItem) {
+        ratingDialog.show { rating -> viewModel.giveFeedback(historyItem, rating) }
+    }
+
+    private fun initBottomSheetHistoryView() {
+        historyBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    binding.content.history.apply {
+                        swipeHeader.isVisible = false
+                        appBarLayout.isVisible = true
+                    }
+                    historyBottomSheetBehavior.isDraggable = false
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    binding.content.history.apply {
+                        swipeHeader.isVisible = true
+                        appBarLayout.isVisible = false
+                    }
+                    historyBottomSheetBehavior.isDraggable = true
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                binding.content.history.swipeHeader.alpha = 1 - slideOffset
+            }
+        })
+
+        binding.content.history.open.setOnClickListener {
+            historyBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        binding.content.history.close.setOnClickListener {
+            historyBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.content.history.historyList.apply {
+            setAdapter(historyAndPendingItemsAdapter)
+            observeListState(viewModel.historyAndPendingItemsListState)
+            setOnRefreshListener(viewModel::refreshHistoryAndPendingItemsList)
+            setOnRetryListener(historyAndPendingItemsAdapter::retry)
+        }
+
+        historyAndPendingItemsAdapter.apply {
+            observeData(viewModel.historyAndPendingItems)
+            bindListState(viewModel::onLoadStateChangeHistoryAndPendingItems)
         }
     }
 
@@ -59,6 +134,7 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
                 ClientMainScreenViewModel.Event.NavigateToLogInScreen -> navigateToLogInScreen()
                 ClientMainScreenViewModel.Event.ShowDialogToBecomeCook -> showDialogToBecomeCook()
                 ClientMainScreenViewModel.Event.ShowDialogYouBecameCook -> registrationHasDoneDialog.show(getString(R.string.message_you_became_cook))
+                ClientMainScreenViewModel.Event.RefreshHistoryAndPendingItemsList -> historyAndPendingItemsAdapter.refresh()
             }
         }
     }
@@ -96,6 +172,12 @@ class ClientMainScreenFragment : Fragment(R.layout.fragment_navigation_client_pa
     }
 
     override fun onBackPressed(): Boolean {
+
+        if (historyBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            historyBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            return true
+        }
+
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             return true

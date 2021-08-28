@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="pendingItem"
+            type="com.yurii.foody.screens.client.main.Item.PendingItem" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/transparent"
+        app:cardCornerRadius="9dp"
+        app:cardElevation="2dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/thumbnail"
+                imageUrl="@{pendingItem.productImage}"
+                android:layout_width="130dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toTopOf="@+id/progress"
+                app:layout_constraintStart_toStartOf="@+id/guideline_left"
+                app:layout_constraintTop_toTopOf="@+id/guideline_top"
+                app:riv_corner_radius="9dp"
+                app:riv_mutate_background="true"
+                app:riv_oval="false"
+                app:riv_tile_mode="clamp"
+                tools:src="@tools:sample/avatars" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="8dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="8dp" />
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_end="8dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="8dp" />
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/TextAppearance.Black.Body2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{pendingItem.product.name}"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@+id/textView6"
+                app:layout_constraintStart_toEndOf="@+id/thumbnail"
+                app:layout_constraintTop_toTopOf="@+id/guideline_top"
+                tools:text="@tools:sample/lorem/random" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{String.format(@string/label_amount, pendingItem.count)}"
+                app:layout_constraintEnd_toStartOf="@+id/guideline_right"
+                app:layout_constraintTop_toTopOf="@+id/guideline_top"
+                tools:text="Amount: 4" />
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="@{pendingItem.product.description}"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="@+id/title"
+                app:layout_constraintStart_toEndOf="@+id/thumbnail"
+                app:layout_constraintTop_toBottomOf="@+id/title"
+                tools:ignore="SmallSp"
+                tools:text="@tools:sample/lorem/random" />
+
+            <TextView
+                style="@style/TextAppearance.Black.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@{String.format(@string/label_total_number, pendingItem.total)}"
+                app:layout_constraintBottom_toTopOf="@+id/progress"
+                app:layout_constraintStart_toStartOf="@+id/description"
+                tools:text="Total: 34 zl" />
+
+            <TextView
+                style="@style/Badge1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@{pendingItem.orderExecutionStatus.toString()}"
+                app:layout_constraintBottom_toTopOf="@+id/progress"
+                app:layout_constraintEnd_toStartOf="@+id/guideline_right"
+                tools:text="PENDING" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                app:layout_constraintBottom_toBottomOf="@id/guideline_bottom"
+                app:layout_constraintEnd_toStartOf="@+id/guideline_right"
+                app:layout_constraintStart_toStartOf="@+id/guideline_left" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+</layout>

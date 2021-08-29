@@ -65,6 +65,23 @@ Once the cook has accepted some order, the detailed view is opened where the coo
 <img src="git-res/18.png" width=200>&nbsp;
 <img src="git-res/19.png" width=200>&nbsp;
 
+### 4 Administrator view
+This view represents a control panel where the administator can do the following:
+* Accept cook request
+* Add/Edit category
+* Add/Edit product
+
+<img src="git-res/20.png" width=200>&nbsp;
+
+On the "Request" view the administator accepts the cook requests:
+
+<img src="git-res/21.png" width=200>&nbsp;
+
+On the "Category" view the adminstator can add new categories as well as edit.
+
+<img src="git-res/22.png" width=200>&nbsp;
+<img src="git-res/24.png" width=200>&nbsp;
+
 
 ## Change log
 * 1.0.0-beta1

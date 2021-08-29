@@ -101,3 +101,22 @@ On the "Products" view the administrator can add new products as well as edit ol
   * Ordering process
   * Editing personal information
   * Implement searching on Administrator and Client views
+
+## What I've learnt?
+* 1.0.0-beta1
+  * MVVM 
+  * Navigation Component
+  * LottieFiles Animations
+  * Timber
+  * Retrofit
+  * Kotlin Coroutines
+  * Kotlin Flow
+  * New Datastore Preferences
+  * Paging 3
+  * Coil
+  * Kotlin Delegates
+  * Android testing
+  * Rotating screens experience
+  * Data Binding
+  * Authentication & authorization process
+  * Recycler View

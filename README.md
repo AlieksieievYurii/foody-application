@@ -1,5 +1,5 @@
 # foody-application
-This is my playground project where I integrate new things which I've been learning in order to get a better experience. The project consists of a backend written on Django and a native android application.
+This is my playground project where I integrate new things which I've been learning in order to get a better experience. The project consists of [the backend](https://github.com/AlieksieievYurii/foody-backend) written on Django and a native android application.
 The project itself is a food order service. I fancy Glovo design therefore I use almost the same design and colours.
 
 # Overview

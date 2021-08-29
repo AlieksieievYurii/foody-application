@@ -21,6 +21,40 @@ In order to get access to the application user must sign up and then confirm an 
 When the user is cook or administrator, then there is a view to select a specific role.
 
 <img src="git-res/5.png" width=200>&nbsp;
+<img src="git-res/8.png" width=200>&nbsp;
+
+### 2 Client view
+On the client view user can order some food. There is rouned buttons which represents food categories(this is not impemented in the beta version). 
+
+<img src="git-res/6.png" width=200>&nbsp;
+
+Once the user selected a specific category or selected "All", the view with the list of available food is opened:
+
+<img src="git-res/11.png" width=200>&nbsp;
+
+If the user clicks any item, the detail view will be opened:
+
+<img src="git-res/12.png" width=200>&nbsp;
+<img src="git-res/13.png" width=200>&nbsp;
+
+On the detail screen the user can order one or more food. Alternatively the user can add to the cart.
+Desides, on the client view the user has drawer view with additional options:
+
+<img src="git-res/9.png" width=200>&nbsp;
+
+The user is able to edit the current personal information:
+
+<img src="git-res/10.png" width=200>&nbsp;
+
+Moreover on the client view, there is a bottom swipable view. That view represents a history or pending items:
+
+<img src="git-res/14.png" width=200>&nbsp;
+
+If the user clicks history item, he will be redirected to that product detail, however if the user cliecs 'pending' item, the current status view will be opened:
+
+<img src="git-res/15.png" width=200>&nbsp;
+
+### 3 Cook view
 
 
 ## Change log

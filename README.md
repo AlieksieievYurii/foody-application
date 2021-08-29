@@ -55,6 +55,15 @@ If the user clicks history item, he will be redirected to that product detail, h
 <img src="git-res/15.png" width=200>&nbsp;
 
 ### 3 Cook view
+This view is similar to the client view except there is only one button. Once that button is cliecked, the cook is able to see the list of currently opened orders. The cook can select and hanle one. The most delayed orders are highlited and at the top of the list.
+
+<img src="git-res/16.png" width=200>&nbsp;
+<img src="git-res/17.png" width=200>&nbsp;
+
+Once the cook has accepted some order, the detailed view is opened where the cook can change the current progress:
+
+<img src="git-res/18.png" width=200>&nbsp;
+<img src="git-res/19.png" width=200>&nbsp;
 
 
 ## Change log

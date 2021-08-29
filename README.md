@@ -91,4 +91,13 @@ On the "Products" view the administrator can add new products as well as edit ol
 
 ## Change log
 * 1.0.0-beta1
-  * 123
+  * Authentication & authorization
+  * Create Client view
+  * Create Cook view
+  * Create Administrator view
+  * Add history list view
+  * Implement adding/removing/editing products/categories
+  * Giving feedback
+  * Ordering process
+  * Editing personal information
+  * Implement searching on Administrator and Client views

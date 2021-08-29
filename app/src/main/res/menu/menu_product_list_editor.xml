@@ -12,7 +12,7 @@
     <item
         android:id="@+id/filter_available"
         android:contentDescription=""
-        android:title="@string/label_available"
+        android:title="@string/label_is_available"
         android:checkable="true"
         app:showAsAction="never" />
 

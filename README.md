@@ -1,10 +1,9 @@
 # foody-application
-This is my playground project where I integrate new things which I've been learning in order to get better experience. The project constists of backend written on Django and a native android application.
-The project itself is food ordery service. I fency Glovo design therefore I use almost the same design, colors.
+This is my playground project where I integrate new things which I've been learning in order to get a better experience. The project consists of a backend written on Django and a native android application.
+The project itself is a food order service. I fancy Glovo design therefore I use almost the same design and colours.
 
 # Overview
-The android application consists of three modes. One mode is for clients where they can order food. Second mode is for cooks where they can accept and handle orders. And the last mode
-is for administrative purposes where is implemented adding, removing and editing products.
+The android application consists of three modes. The first mode is for clients where they can order food. The second mode is for cooks where they can accept and handle orders. And the last mode is for administrative purposes where is implemented adding, removing and editing products.
 
 ### 1.1 Authentication & Authorization view
 Authentication is done by Token-based protocol.
@@ -12,19 +11,19 @@ Authentication is done by Token-based protocol.
 <img src="git-res/2.png" width=200>&nbsp;
 <img src="git-res/3.png" width=200>&nbsp;
 
-In order to get access to the application user must sign up and then confirm an email. If the user checked "I want to cook", it is also needed to be accepter by the administrator.
+In order to get access to the application user must sign up and then confirm an email. If the user checked "I want to cook", it is also needed to be accepted by the administrator.
 
 <img src="git-res/1.png" width=200>&nbsp;
 <img src="git-res/4.png" width=200>&nbsp;
 <img src="git-res/7.png" width=200>&nbsp;
 
-When the user is cook or administrator, then there is a view to select a specific role.
+When the user is a cook or administrator, then there is a view to select a specific role.
 
 <img src="git-res/5.png" width=200>&nbsp;
 <img src="git-res/8.png" width=200>&nbsp;
 
 ### 2 Client view
-On the client view user can order some food. There is rouned buttons which represents food categories(this is not impemented in the beta version). 
+In the client view, the user can order some food. There are round buttons that represent food categories(this is not implemented in the beta version). 
 
 <img src="git-res/6.png" width=200>&nbsp;
 
@@ -37,8 +36,8 @@ If the user clicks any item, the detail view will be opened:
 <img src="git-res/12.png" width=200>&nbsp;
 <img src="git-res/13.png" width=200>&nbsp;
 
-On the detail screen the user can order one or more food. Alternatively the user can add to the cart.
-Desides, on the client view the user has drawer view with additional options:
+In the detail screen, the user can order one or more food. Alternatively, the user can add to the cart.
+Besides, on the client view the user has drawer view with additional options:
 
 <img src="git-res/9.png" width=200>&nbsp;
 
@@ -46,16 +45,16 @@ The user is able to edit the current personal information:
 
 <img src="git-res/10.png" width=200>&nbsp;
 
-Moreover on the client view, there is a bottom swipable view. That view represents a history or pending items:
+Moreover, in the client view, there is a bottom swipeable view. That view represents a history or pending items:
 
 <img src="git-res/14.png" width=200>&nbsp;
 
-If the user clicks history item, he will be redirected to that product detail, however if the user cliecs 'pending' item, the current status view will be opened:
+If the user clicks history item, he will be redirected to that product detail, however if the user clicks 'pending' item, the current status view will be opened:
 
 <img src="git-res/15.png" width=200>&nbsp;
 
 ### 3 Cook view
-This view is similar to the client view except there is only one button. Once that button is cliecked, the cook is able to see the list of currently opened orders. The cook can select and hanle one. The most delayed orders are highlited and at the top of the list.
+This view is similar to the client view except there is only one button. Once that button is clicked, the cook is able to see the list of currently opened orders. The cook can select and handle one. The most delayed orders are highlighted and at the top of the list.
 
 <img src="git-res/16.png" width=200>&nbsp;
 <img src="git-res/17.png" width=200>&nbsp;
@@ -73,16 +72,16 @@ This view represents a control panel where the administator can do the following
 
 <img src="git-res/20.png" width=200>&nbsp;
 
-On the "Request" view the administator accepts the cook requests:
+In the "Request" view the administator accepts the cook requests:
 
 <img src="git-res/21.png" width=200>&nbsp;
 
-On the "Category" view the adminstator can add new categories as well as edit.
+In the "Category" view the adminstator can add new categories as well as edit olds.
 
 <img src="git-res/22.png" width=200>&nbsp;
 <img src="git-res/23.png" width=200>&nbsp;
 
-On the "Products" view the administrator can add new products as well as edit olds:
+In the "Products" view the administrator can add new products as well as edit olds:
 
 <img src="git-res/24.png" width=200>&nbsp;
 <img src="git-res/25.png" width=200>&nbsp;

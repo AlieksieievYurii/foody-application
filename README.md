@@ -80,7 +80,13 @@ On the "Request" view the administator accepts the cook requests:
 On the "Category" view the adminstator can add new categories as well as edit.
 
 <img src="git-res/22.png" width=200>&nbsp;
+<img src="git-res/23.png" width=200>&nbsp;
+
+On the "Products" view the administrator can add new products as well as edit olds:
+
 <img src="git-res/24.png" width=200>&nbsp;
+<img src="git-res/25.png" width=200>&nbsp;
+<img src="git-res/26.png" width=200>&nbsp;
 
 
 ## Change log

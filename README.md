@@ -1,6 +1,6 @@
 # foody-application
 This is my playground project where I integrate new things which I've been learning in order to get a better experience. The project consists of [the backend](https://github.com/AlieksieievYurii/foody-backend) written on Django and a native android application.
-The project itself is a food order service. I fancy Glovo design therefore I use almost the same design and colours.
+The project itself is a food order service. I fancy Glovo design therefore I use almost the same design and colours. I've sketched the design by [Figma](https://www.figma.com/). The Figma project you can find by this [link](https://www.figma.com/file/zAv3s06qS2lBhQRxe1gUFV/Foody)
 
 # Overview
 The android application consists of three modes. The first mode is for clients where they can order food. The second mode is for cooks where they can accept and handle orders. And the last mode is for administrative purposes where is implemented adding, removing and editing products.

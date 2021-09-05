@@ -81,7 +81,7 @@ In the "Category" view the adminstator can add new categories as well as edit/re
 <img src="git-res/22.png" width=200>&nbsp;
 <img src="git-res/23.png" width=200>&nbsp;
 
-In the "Products" view the administrator can add new products as well as edit/remore olds:
+In the "Products" view the administrator can add new products as well as edit/remore olds. Moreover, searching together with filtering is implemented:
 
 <img src="git-res/24.png" width=200>&nbsp;
 <img src="git-res/25.png" width=200>&nbsp;

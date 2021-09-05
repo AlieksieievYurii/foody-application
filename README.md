@@ -11,7 +11,7 @@ Authentication is done by Token-based protocol.
 <img src="git-res/2.png" width=200>&nbsp;
 <img src="git-res/3.png" width=200>&nbsp;
 
-In order to get access to the application user must sign up and then confirm an email. If the user checked "I want to cook", it is also needed to be accepted by the administrator.
+To get access to the application user must sign up and then confirm an email. If the user checked "I want to cook", it is also needed to be accepted by the administrator.
 
 <img src="git-res/1.png" width=200>&nbsp;
 <img src="git-res/4.png" width=200>&nbsp;
@@ -37,11 +37,11 @@ If the user clicks any item, the detail view will be opened:
 <img src="git-res/13.png" width=200>&nbsp;
 
 In the detail screen, the user can order one or more food. Alternatively, the user can add to the cart.
-Besides, on the client view the user has drawer view with additional options:
+Besides, on the client view the user has a drawer view with additional options:
 
 <img src="git-res/9.png" width=200>&nbsp;
 
-The user is able to edit the current personal information:
+The user can to edit the current personal information:
 
 <img src="git-res/10.png" width=200>&nbsp;
 
@@ -49,12 +49,12 @@ Moreover, in the client view, there is a bottom swipeable view. That view repres
 
 <img src="git-res/14.png" width=200>&nbsp;
 
-If the user clicks history item, he will be redirected to that product detail, however if the user clicks 'pending' item, the current status view will be opened:
+If the user clicks the history item, he will be redirected to that product detail, however, if the user clicks 'pending' item, the current status view will be opened:
 
 <img src="git-res/15.png" width=200>&nbsp;
 
 ### 3 Cook view
-This view is similar to the client view except there is only one button. Once that button is clicked, the cook is able to see the list of currently opened orders. The cook can select and handle one. The most delayed orders are highlighted and at the top of the list.
+This view is similar to the client view except there is only one button. Once that button is clicked, the cook can see the list of currently opened orders. The cook can select and handle one. The most delayed orders are highlighted and at the top of the list.
 
 <img src="git-res/16.png" width=200>&nbsp;
 <img src="git-res/17.png" width=200>&nbsp;
@@ -65,23 +65,23 @@ Once the cook has accepted some order, the detailed view is opened where the coo
 <img src="git-res/19.png" width=200>&nbsp;
 
 ### 4 Administrator view
-This view represents a control panel where the administator can do the following:
+This view represents a control panel where the administrator can do the following:
 * Accept cook request
-* Add/Edit category
-* Add/Edit product
+* Add/Edit/Remove category
+* Add/Edit/Remove product
 
 <img src="git-res/20.png" width=200>&nbsp;
 
-In the "Request" view the administator accepts the cook requests:
+In the "Request" view the administrator accepts the cook requests:
 
 <img src="git-res/21.png" width=200>&nbsp;
 
-In the "Category" view the adminstator can add new categories as well as edit olds.
+In the "Category" view the adminstator can add new categories as well as edit/remove olds.
 
 <img src="git-res/22.png" width=200>&nbsp;
 <img src="git-res/23.png" width=200>&nbsp;
 
-In the "Products" view the administrator can add new products as well as edit olds:
+In the "Products" view the administrator can add new products as well as edit/remore olds:
 
 <img src="git-res/24.png" width=200>&nbsp;
 <img src="git-res/25.png" width=200>&nbsp;
